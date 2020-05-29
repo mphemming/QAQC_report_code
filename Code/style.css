@@ -1,0 +1,24 @@
+body {
+  /*Background color for entire page*/
+  background-color: #BBE7D4;
+}
+
+
+ol {
+  color : blue;
+}
+
+h3 {
+  font-style : "Helvetica";
+}
+
+#example {
+  background-color: yellow;
+}
+
+.mystyle {
+
+     color: green;
+     font-size: 30px;
+
+}
