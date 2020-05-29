@@ -1,24 +1,45 @@
 body {
   /*Background color for entire page*/
-  background-color: #BBE7D4;
+  background-color: white;
+  margin-left: 30px;
+  margin-right: 150px;
 }
 
-
-ol {
-  color : blue;
-}
-
-h3 {
-  font-style : "Helvetica";
-}
-
-#example {
-  background-color: yellow;
-}
-
-.mystyle {
-
-     color: green;
-     font-size: 30px;
+/* ############################################################################# */
+/* ############################################################################# */
+/* Classes */
+.section_main {
+  border-bottom-style: solid;
+  border-color: black;
+  border-width: thin;
 
 }
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.section {
+  border-style: solid;
+  border-color: black;
+  border-width: thin;
+  border-radius: 5px;
+  margin-top: 100px;
+  margin-bottom: 100px;
+  margin-right: 100px;
+  margin-left: 80px;
+}
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.images {
+  margin-left: 20px;
+}
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.header {
+  text-align: justify;
+  color : #033962;
+  font-size: 50px;
+}
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.sub_header {
+  text-align: justify;
+  color : #033962;
+  font-size: 30px;
+  margin-left: 10px;
+}
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
