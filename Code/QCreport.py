@@ -27,7 +27,7 @@ import pandas as pd
 import matplotlib
 from pylab import title, figure, xlabel, ylabel, xticks, bar, legend, axis, savefig
 from fpdf import FPDF
-from PyPDF2 import PdfFileReader
+from PyPDF2 import PdfFileReader, PdfFileWriter, PdfFileMerger
 from numpy import loadtxt
 
 
@@ -60,10 +60,14 @@ report = form.format_doc(paths.name_of_reportmaker)
 # -----------------------------------------------------------------------------------------------
 # Sections
 
+# Deployment Details
 report.add_page(orientation='p')
 form.section_header('Deployment Details')
 DD = report.add_link()
 report.set_link(DD)
+# import Section content
+import QCreport_DeploymentDetails as DepDet
+
 
 report.add_page(orientation='p')
 form.section_header('Deployment Instruments')
@@ -127,7 +131,40 @@ report.output(saving_dir + paths.site_name + '_' + paths.deployment + '_QC_repor
 # -----------------------------------------------------------------------------------------------
 # Reorganise PDF report so that title and table of contents is at the beginning of the document
 
-PDF_report = PdfFileReader(saving_dir + paths.site_name + '_' + paths.deployment + '_QC_report.pdf')
+# THIS METHOD DOES NOT WORK. THE TOC LINKS NO LONGER WORK... LOOK FOR ANOTHER METHOD
+
+#PDF_report = PdfFileReader(saving_dir + paths.site_name + '_' + paths.deployment + '_QC_report.pdf')
+#pdf_bulk_writer = PdfFileWriter()
+#output_filename_bulk = "bulk.pdf"
+#pdf_TOC_writer = PdfFileWriter()
+#output_filename_TOC = "TOC.pdf"
+#
+#for page in range(PDF_report.getNumPages()):
+#    current_page = PDF_report.getPage(page)
+#    if page == PDF_report.getNumPages()-1:
+#        pdf_TOC_writer.addPage(current_page)
+#    if page <= PDF_report.getNumPages()-2:
+#        pdf_bulk_writer.addPage(current_page)
+#        
+## Write the data to disk
+#with open(output_filename_TOC, "wb") as out:
+#     pdf_TOC_writer.write(out)
+#     print("created", output_filename_TOC)       
+#
+## Write the data to disk
+#with open(output_filename_bulk, "wb") as out:
+#     pdf_bulk_writer.write(out)
+#     print("created", output_filename_bulk)   
+#
+#pdfs = ['TOC.pdf', 'bulk.pdf']
+#
+#merger = PdfFileMerger()
+#
+#for pdf in pdfs:
+#    merger.append(pdf)
+#    
+#merger.write("result.pdf")
+#merger.close()
 
 # NOTES: USE PyPDF to REORGANISE THE DOCUMENT AFTERWARDS
 # https://pythonhosted.org/PyPDF2/PageObject.html
