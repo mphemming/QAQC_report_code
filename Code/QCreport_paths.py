@@ -16,6 +16,7 @@
 
 # o   Modify the site and deployment number
 # o   Modify the paths for your use
+# o   PLEASE ENSURE TO INCLUDE FINAL '/' IN YOUR PATHS
 
 
 # -----------------------------------------------------------------------------------------------
@@ -30,13 +31,13 @@ name_of_reportmaker = 'Michael Hemming'
 # netCDF files
 
 def ncdir():
-    netCDF_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29'
+    netCDF_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/'
     return netCDF_dir
 # -----------------------------------------------------------------------------------------------
 # Toolbox plots
 
 def tbdir():
-    toolboxplots_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Toolbox_Plots'
+    toolboxplots_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Toolbox_Plots/'
     return toolboxplots_dir
 # -----------------------------------------------------------------------------------------------
 # Report saving location
