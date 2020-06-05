@@ -45,9 +45,14 @@ def add_line():
     report.ln(5)
     return report
 
+def add_space():
+    report.ln(5)
+    return report
+
 def TOC(TOC_string,TOC_ID):
     report.set_font_size(14)
     report.write(5, TOC_string,TOC_ID) 
     report.ln(10)    
     return report
+
     
