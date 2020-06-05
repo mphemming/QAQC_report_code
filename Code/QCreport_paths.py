@@ -33,12 +33,22 @@ name_of_reportmaker = 'Michael Hemming'
 def ncdir():
     netCDF_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/'
     return netCDF_dir
+
+# -----------------------------------------------------------------------------------------------
+# Mooring diagram location
+
+def mddir():
+    md_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/BMP070_120_mooring_diagram.png'
+    return md_dir
+
+
 # -----------------------------------------------------------------------------------------------
 # Toolbox plots
 
 def tbdir():
     toolboxplots_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Toolbox_Plots/'
     return toolboxplots_dir
+
 # -----------------------------------------------------------------------------------------------
 # Report saving location
 

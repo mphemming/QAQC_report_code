@@ -67,19 +67,18 @@ DD = report.add_link()
 report.set_link(DD)
 # import Section content
 import QCreport_DeploymentDetails as DepDet
-DepDet.Table(report)
+DepDet.intro_table(report)
+DepDet.instrument_table(report)
 
-
-report.add_page(orientation='p')
-form.section_header('Deployment Instruments')
-DI = report.add_link()
-report.set_link(DI)
-
+# Mooring diagram
 report.add_page(orientation='p')
 form.section_header('Mooring Diagram')
 MD = report.add_link()
 report.set_link(MD)
+# Add image
+report.image(paths.mddir())
 
+# Toolbox Plots
 report.add_page(orientation='l')
 form.section_header('Toolbox Plots')
 TBP = report.add_link()
@@ -114,7 +113,6 @@ report.ln(30)
 form.section_header('Report Contents')
 
 form.TOC('Deployment Details',DD)
-form.TOC('Deployment Instruments',DI)
 form.TOC('Mooring Diagram',MD)
 form.TOC('Toolbox Plots',TBP)
 
