@@ -67,6 +67,7 @@ DD = report.add_link()
 report.set_link(DD)
 # import Section content
 import QCreport_DeploymentDetails as DepDet
+DepDet.Table(report)
 
 
 report.add_page(orientation='p')
