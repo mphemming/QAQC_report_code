@@ -69,6 +69,9 @@ report.set_link(DD)
 import QCreport_DeploymentDetails as DepDet
 DepDet.intro_table(report)
 DepDet.instrument_table(report)
+DepDet.timeinout_table(report)
+DepDet.files_table(report)
+DepDet.instrument_bullets(report)
 
 # Mooring diagram
 report.add_page(orientation='p')
@@ -77,6 +80,8 @@ MD = report.add_link()
 report.set_link(MD)
 # Add image
 report.image(paths.mddir())
+
+# Quality Control 
 
 # Toolbox Plots
 report.add_page(orientation='l')
