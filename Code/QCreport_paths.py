@@ -19,7 +19,7 @@
 # o   PLEASE ENSURE TO INCLUDE FINAL '/' IN YOUR PATHS
 
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # Choose site, deployment, add name of report maker 
 
 site_name = 'BMP070'
@@ -27,29 +27,37 @@ deployment = '29'
 deployment_file_date_identifier = '1904'
 name_of_reportmaker = 'Michael Hemming'
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # netCDF files
 
-def ncdir():
-    netCDF_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/'
-    return netCDF_dir
+def ncdir_TEMP():
+    netCDF_TEMP_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/TEMPERATURE/'
+    return netCDF_TEMP_dir
 
-# -----------------------------------------------------------------------------------------------
+def ncdir_CURR():
+    netCDF_CURR_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/CURRENT/'
+    return netCDF_CURR_dir
+
+def ncdir_BGC():
+    netCDF_BGC_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/BGC/'
+    return netCDF_BGC_dir
+
+# %% -----------------------------------------------------------------------------------------------
 # Mooring diagram location
 
 def mddir():
-    md_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/BMP070_120_mooring_diagram.png'
+    md_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/Mooring_Diagram/BMP070_120_mooring_diagram.png'
     return md_dir
 
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # Toolbox plots
 
 def tbdir():
     toolboxplots_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Toolbox_Plots/'
     return toolboxplots_dir
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # Report saving location
 
 def savedir():
