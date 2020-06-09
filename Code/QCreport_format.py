@@ -6,7 +6,7 @@
 # contact email: m.hemming@unsw.edu.au
 
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # Import packages
 
 from fpdf import FPDF
@@ -14,14 +14,14 @@ import fpdf
 import os
 import QCreport_paths as paths
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # Create title
 
 title = paths.site_name + '  |  ' + paths.deployment + '  |  Quality Control Report'
 title_1 = paths.site_name + ' Deployment ' + paths.deployment
 title_2 = 'Quality Control Report'
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # define format of report
 
 report = FPDF()  
@@ -63,7 +63,7 @@ def TOC(TOC_string,TOC_ID):
     report.ln(10)    
     return report
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # get bullet points
 fpdf.set_global("SYSTEM_TTFONTS", '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Code/Fonts/NotoSans-unhinted/')
 report.add_font("NotoSans", style="", fname="NotoSans-Regular.ttf", uni=True)    
@@ -72,9 +72,13 @@ def bullet_point(bullet_text):
     
     s = str('\u2022')
     report.set_font("NotoSans", size=16)
-    report.cell(80,8,s + '   ' + bullet_text,0,0,'L');   
+    report.cell(180,8,s + '   ' + bullet_text,0,0,'L');   
 
-
+def bullet_point_multi(bullet_text):
+    
+    s = str('\u2022')
+    report.set_font("NotoSans", size=16)
+    report.multi_cell(180,5,s + '   ' + bullet_text,0,0,'L');   
 
 
 
