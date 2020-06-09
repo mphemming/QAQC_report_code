@@ -49,7 +49,7 @@ depth_comment = {}
 
 def get_netCDF(path):
     # Get list of netCDF files in folder
-    nc_files = glob.glob(path + "*.nc")
+    nc_files = glob.glob(path + "*" + paths.site_name + "*" + paths.deployment_file_date_identifier + "*.nc")
     
     # Get netCDF attributes for each file
     for file in range(len(nc_files)):
