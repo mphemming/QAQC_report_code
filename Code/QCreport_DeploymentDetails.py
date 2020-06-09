@@ -7,7 +7,7 @@
 # Section: Deployment Details
 
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # Import packages
 
 from fpdf import FPDF
@@ -16,12 +16,23 @@ import QCreport_format as form
 import QCreport_netCDF as nc
 import numpy as np
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # get netCDF attributes for section
 
-attributes = nc.get_netCDF(paths.ncdir())
+attributes_TEMP = nc.get_netCDF(paths.ncdir_TEMP())
+attributes_CURR = nc.get_netCDF(paths.ncdir_CURR())
+attributes_BGC = nc.get_netCDF(paths.ncdir_BGC())
+# combine all attributes
+class_fields = dir(attributes_TEMP)
+class_fields = class_fields[-25:-1]
 
-# -----------------------------------------------------------------------------------------------
+for n_atts in range(len(class_fields)-1):
+    
+    exec('att_' + str(class_fields[n_atts]) + ' = [attributes_TEMP.' + str(class_fields[n_atts]) 
+        + ', attributes_CURR.' + str(class_fields[n_atts]) + ', attributes_BGC.' + str(class_fields[n_atts]) + ']')
+
+
+# %% -----------------------------------------------------------------------------------------------
 # Useful functions
 
 # Function to get unique strings in attributes (i.e. from n number of netCDF files)
@@ -35,9 +46,59 @@ def remove_characters(string):
     string = string.replace('[','')
     string = string.replace(']','')
     string = string.replace("'",'')
+    string = string.replace('odict_keys(','')
+    string = string.replace(')','')
+    string = string.replace('\n','')
     return string
 
-# -----------------------------------------------------------------------------------------------
+def param_avail(string):
+    
+    param_list_TIME = []
+    param_list_TEMP = []
+    param_list_PRES = []
+    param_list_DEPTH = []
+    param_list_PSAL = []
+    
+    for n_files in range(len(attributes.instrument)-1):
+        vn_file = remove_characters(str(attributes.var_names[n_files]))
+        # TIME available?
+        if vn_file.find('TIME') > -1 :
+            n = 1
+            param_list_TIME.append(n)
+        else:
+            n = 0
+            param_list_TIME.append(n)                
+        # TEMP available?
+        if vn_file.find('TEMP') > -1 :
+            n = 1
+            param_list_TEMP.append(n)
+        else:
+            n = 0
+            param_list_TEMP.append(n)
+        # PSAL available?
+        if vn_file.find('PSAL') > -1 :
+            n = 1
+            param_list_PSAL.append(n)
+        else:
+            n = 0
+            param_list_PSAL.append(n)               
+        # PRES available?
+        if vn_file.find('PRES') > -1 or vn_file.find('PRES_REL') > -1:
+            n = 1
+            param_list_PRES.append(n)
+        else:
+            n = 0
+            param_list_PRES.append(n) 
+        # DEPTH available?
+        if vn_file.find('DEPTH') > -1 :
+            n = 1
+            param_list_DEPTH.append(n)
+        else:
+            n = 0
+            param_list_DEPTH.append(n)             
+            
+
+# %% -----------------------------------------------------------------------------------------------
 # Determine date range of deployment
     
 # Possible future issues:
@@ -85,7 +146,7 @@ end_date = remove_characters(str(end_date))
 if len(end_date) > 10:
     end_date = end_date[0:10]
 
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # Other information for section
     
     
@@ -96,10 +157,11 @@ lat = str(attributes.geospatial_lat_min[0]) # assuming min/max is the same, and 
 lon = lon[0:6]
 lat = lat[0:6]
 tb_vers = remove_characters(str(get_unique(attributes.toolbox_version)))
+ltz = remove_characters(str(round(int(get_unique(attributes.local_time_zone)))))
+tu = remove_characters(str(get_unique(attributes.time_units)))
+vn = remove_characters(str(get_unique(attributes.var_names)))
 
-
-
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # Create intro table of details    
 
 def intro_table(report):
@@ -159,7 +221,7 @@ def intro_table(report):
        
     
     
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
 # Create instrument table
     
 def instrument_table(report):
@@ -198,7 +260,25 @@ def instrument_table(report):
 
 # IDEA FOR LATER, COLOR THE CELLS WHEE THERE IS A PT SENSOR
         
-# -----------------------------------------------------------------------------------------------
+# %% -----------------------------------------------------------------------------------------------
+# Create parameters table  
+        
+#def parameter_table(report):
+      
+    
+    
+    
+
+
+# %% -----------------------------------------------------------------------------------------------
+# Create instrument Time in / Time out table
+     
+def timeinout_table(report):  
+     
+    form.sub_header('Instruments times in / out')
+    report.set_font_size(12)    
+     
+# %% -----------------------------------------------------------------------------------------------
 # Create instrument file table and details bullet list
     
 def files_table(report):
@@ -230,16 +310,10 @@ def files_table(report):
 def instrument_bullets(report):
     
     form.add_space()     
-    form.add_space()       
+    form.add_space() 
+    report.set_font_size(12)         
     form.bullet_point('Toolbox version: ' + tb_vers)
     
-# -----------------------------------------------------------------------------------------------
-# Create instrument Time in / Time out table
-     
-def timeinout_table(report):  
-     
-    form.sub_header('Instruments times in / out')
-    report.set_font_size(12)        
     
     
     
