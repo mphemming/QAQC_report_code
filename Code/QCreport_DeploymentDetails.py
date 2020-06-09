@@ -30,6 +30,13 @@ def get_unique(dict):
     unique_dicts = np.unique(list_dict)
     return unique_dicts
 
+def remove_characters(string):
+    
+    string = string.replace('[','')
+    string = string.replace(']','')
+    string = string.replace("'",'')
+    return string
+
 # -----------------------------------------------------------------------------------------------
 # Determine date range of deployment
     
@@ -51,13 +58,10 @@ if len(start_date) > 1:
     un_sd = str(un_sd.tolist())
     start_date = un_sd
 # convert from array to string    
-start_date = str(start_date)
+start_date = remove_characters(str(start_date))
 # if string is too long, it include hours, mins, etc. 
 # remove unuseful string characters and select date only
 if len(start_date) > 10:
-    start_date = start_date.replace('[','')
-    start_date = start_date.replace(']','')
-    start_date = start_date.replace("'","")
     start_date = start_date[0:10]
     
 # end date
@@ -72,22 +76,17 @@ if len(end_date) > 1:
         ed.append(dt)
     un_ed = np.unique(ed)
     un_ed = str(un_ed.tolist())
-    un_ed = un_ed.replace('[','')
-    un_ed = un_ed.replace(']','')
-    un_ed = un_ed.replace("'","")
     end_date = un_ed
+    
 # convert from array to string       
-end_date = str(end_date)
+end_date = remove_characters(str(end_date))
 # if string is too long, it include hours, mins, etc. 
 # remove unuseful string characters and select date only
 if len(end_date) > 10:
-    end_date = end_date.replace('[','')
-    end_date = end_date.replace(']','')
-    end_date = end_date.replace("'","")
     end_date = end_date[0:10]
 
 # -----------------------------------------------------------------------------------------------
-# Other information for table
+# Other information for section
     
     
 PO = str(attributes.principal_investigator[0])  
@@ -96,6 +95,8 @@ lon = str(attributes.geospatial_lon_min[0]) # assuming min/max is the same, and 
 lat = str(attributes.geospatial_lat_min[0]) # assuming min/max is the same, and same for each file
 lon = lon[0:6]
 lat = lat[0:6]
+tb_vers = remove_characters(str(get_unique(attributes.toolbox_version)))
+
 
 
 # -----------------------------------------------------------------------------------------------
@@ -162,7 +163,8 @@ def intro_table(report):
 # Create instrument table
     
 def instrument_table(report):
-    
+
+    form.sub_header('Instrument Serial Numbers and Nominal Depths')    
     report.set_font_size(12)    
     form.add_space()  
     form.add_space()
@@ -183,7 +185,7 @@ def instrument_table(report):
     
         inst = str(attributes.instrument[row_n])
         sn = str(attributes.instrument_serial_number[row_n])
-        nd = str(attributes.instrument_nominal_depth[row_n])
+        nd = str(int(attributes.instrument_nominal_depth[row_n]))
         ti = 'INSERT'
         to = 'INSERT'      
         
@@ -197,20 +199,47 @@ def instrument_table(report):
 # IDEA FOR LATER, COLOR THE CELLS WHEE THERE IS A PT SENSOR
         
 # -----------------------------------------------------------------------------------------------
-# Create instrument file table
+# Create instrument file table and details bullet list
     
-# attributes.toolbox_input_file
+def files_table(report):
+     
+    report.add_page()
+    form.sub_header('File Locations')
+    report.set_font_size(12)    
+    form.add_space()  
+    form.add_space()
+    form.add_space()
+    #---------------------------------
+    # Header
+    report.set_font('Helvetica',style='B')
+    report.cell(80,8,"Instrument & nom. depth",1,0,'C');     
+    report.cell(100,8,"File Location",1,0,'C');  
+    report.ln()    
+    #---------------------------------
+    # add rows using loop      
+    for row_n in range(len(attributes.instrument)): 
+        
+        inst = str(attributes.instrument[row_n])
+        nd = str(int(round(attributes.instrument_nominal_depth[row_n])))        
+        file = str(attributes.toolbox_input_file[row_n])
+        report.set_font('Helvetica',style='B')
+        report.cell(80,18,inst + '  ' + nd + ' m',1,0,'L');
+        report.set_font('Helvetica',style='')
+        report.multi_cell(100,6,file,1,0,'C'); 
+        
+def instrument_bullets(report):
     
+    form.add_space()     
+    form.add_space()       
+    form.bullet_point('Toolbox version: ' + tb_vers)
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+# -----------------------------------------------------------------------------------------------
+# Create instrument Time in / Time out table
+     
+def timeinout_table(report):  
+     
+    form.sub_header('Instruments times in / out')
+    report.set_font_size(12)        
     
     
     
