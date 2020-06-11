@@ -71,6 +71,7 @@ DepDet.intro_table(report)
 DepDet.instrument_table(report)
 #DepDet.parameter_bullets(report)
 DepDet.timeinout_table(report)
+DepDet.parameter_table(report)
 DepDet.files_table(report)
 DepDet.instrument_bullets(report)
 
@@ -89,6 +90,9 @@ report.add_page(orientation='l')
 form.section_header('Toolbox Plots')
 TBP = report.add_link()
 report.set_link(TBP)
+# import Section content
+import QCreport_ToolboxPlots as tbp
+tbp.toolbox_plots(paths.tbdir(),report)
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
