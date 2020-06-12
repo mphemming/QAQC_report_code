@@ -9,24 +9,54 @@
 
 # %% -----------------------------------------------------------------------------------------------
 # Import packages
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
 
-from fpdf import FPDF
+# Python Packages
+import numpy as np
+from datetime import datetime
+# QC report modules
 import QCreport_paths as paths
 import QCreport_format as form
 import QCreport_netCDF as nc
-import numpy as np
+
+
+#------------------------------------------------------------
+# Information 
+#-------------
+
+# These are the Python and QC report modules required to run 
+# this script. The python modules should be installed using 
+# 'pip/condo install', the QCreport modules need to be in 
+# the same folder as this script.
+
+#------------------------------------------------------------
+
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
 
 # %% -----------------------------------------------------------------------------------------------
 # get netCDF attributes for section
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
 
+# get attributes for temperature, biogeochemistry and velocity files
 attributes_TEMP = nc.get_netCDF(paths.ncdir_TEMP())
 attributes_CURR = nc.get_netCDF(paths.ncdir_CURR())
 attributes_BGC = nc.get_netCDF(paths.ncdir_BGC())
 # combine all attributes
+# get list of attributes
 class_fields = dir(attributes_TEMP)
-class_fields = class_fields[-27:-1]
+class_fields = class_fields[-27:-1]; # index determined after looking at class_fields
+# execute string combinations as python code, substituting in each attribute name 
+# the result: variables for each attribute and file ('atts_{attribute name>')
 for n_atts in range(len(class_fields)):
+    # create empty dictionary
     exec('atts_' + str(class_fields[n_atts]) + ' = {}')
+    # combine all attributes from each sensor file
     for n_keys in range(len(attributes_TEMP.abstract)):
         exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_TEMP.' + str(class_fields[n_atts]) + '[n_keys]]')  
     for n_keys in range(len(attributes_CURR.abstract)):
@@ -34,10 +64,34 @@ for n_atts in range(len(class_fields)):
         exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CURR.' + str(class_fields[n_atts]) + '[n_keys]]')          
     for n_keys in range(len(attributes_BGC.abstract)):
         n_keys_n = n_keys+len(attributes_TEMP.abstract)+len(attributes_CURR.abstract)
-        exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_BGC.' + str(class_fields[n_atts]) + '[n_keys]]')            
+        exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_BGC.' + str(class_fields[n_atts]) + '[n_keys]]')  
+        
+        
+#------------------------------------------------------------
+# Information 
+#-------------
+
+# This part loads attributes from netCDF files available in 
+# data folder, for different kinds of sensors, and combines
+# them into one variable per attribute (starting 'atts_')
+        
+# This part needs improving as the 'exec' function is 
+# lazy programming .. 
+        
+# WARNING: as 'exec' uses strings as input, be very careful 
+# what strings you use if editing! 
+
+#------------------------------------------------------------        
+        
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________         
 
 # %% -----------------------------------------------------------------------------------------------
 # Useful functions
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
 
 # Function to get unique strings in attributes (i.e. from n number of netCDF files) 
     
@@ -64,6 +118,15 @@ def remove_characters(string):
     string = string.replace("'",'')
     string = string.replace('odict_keys(','')
     string = string.replace(')','')
+    string = string.replace('\n','')
+    return string
+
+def remove_characters_QC(string):
+    
+    string = string.replace('[','')
+    string = string.replace(']','')
+    string = string.replace("'",'')
+    string = string.replace('odict_keys(','')
     string = string.replace('\n','')
     return string
 
@@ -195,14 +258,15 @@ def param_avail(string):
     return param_list
 
 
-
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
 
 # %% -----------------------------------------------------------------------------------------------
-# Determine date range of deployment
-    
-# Possible future issues:
-# o deployments where data were collected/retrieved on different days (comparing instrument files)
-# o Improvement may be to use min/max dates in those circumstances
+# Determine date range of deployment    
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________    
 
 # Start date
 # -------------------
@@ -215,8 +279,14 @@ if len(start_date) > 1:
         dt = dt[0:10]
         sd.append(dt)
     un_sd = np.unique(sd)
-    un_sd = str(un_sd.tolist())
+    un_sd_ts = []
+    for n in range(len(un_sd)):
+        conversion = datetime.fromisoformat(un_sd[n]).timestamp()
+        un_sd_ts.append(conversion) 
+    
+    un_sd = str(datetime.fromtimestamp(np.min(np.array(un_sd_ts))))
     start_date = un_sd
+    
 # convert from array to string    
 start_date = remove_characters(str(start_date))
 # if string is too long, it include hours, mins, etc. 
@@ -235,7 +305,12 @@ if len(end_date) > 1:
         dt = dt[0:10]
         ed.append(dt)
     un_ed = np.unique(ed)
-    un_ed = str(un_ed.tolist())
+    un_ed_ts = []
+    for n in range(len(un_ed)):
+        conversion = datetime.fromisoformat(un_ed[n]).timestamp()
+        un_ed_ts.append(conversion) 
+    
+    un_ed = str(datetime.fromtimestamp(np.max(np.array(un_ed_ts))))
     end_date = un_ed
     
 # convert from array to string       
@@ -244,10 +319,16 @@ end_date = remove_characters(str(end_date))
 # remove unuseful string characters and select date only
 if len(end_date) > 10:
     end_date = end_date[0:10]
+    
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________    
 
 # %% -----------------------------------------------------------------------------------------------
 # Other information for section
-    
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________    
     
 PO = remove_characters(str(atts_principal_investigator[0]))  
 FT = remove_characters(str(atts_author[0]))
@@ -261,7 +342,10 @@ tu = remove_characters(str(get_unique(atts_time_units)))
 vn = remove_characters(str(get_unique(atts_var_names)))
 
 # %% -----------------------------------------------------------------------------------------------
-# Create intro table of details    
+# Create intro table of details
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________    
 
 def intro_table(report):
     
@@ -318,10 +402,15 @@ def intro_table(report):
     report.cell(80,8,FT,1,0,'C');
     report.ln()
        
-    
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________    
     
 # %% -----------------------------------------------------------------------------------------------
 # Create instrument table
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
     
 def instrument_table(report):
 
@@ -352,10 +441,15 @@ def instrument_table(report):
         report.cell(40,8,nd,1,0,'C'); 
         report.ln() 
 
-# IDEA FOR LATER, COLOR THE CELLS WHEE THERE IS A PT SENSOR
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
         
 # %% -----------------------------------------------------------------------------------------------
 # Create parameters table  
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________        
         
 def parameter_table(report):
     
@@ -476,11 +570,17 @@ def parameter_table(report):
         nd = str(int(float(nd)))
         report.cell(50,4,'# ' + str(n_inst+1) + '  =  ' + inst + ' ' + sn + ' ' + nd + ' m',0,0,'L');    
         report.ln()
-    
+
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________    
     
 # %% -----------------------------------------------------------------------------------------------
 # Create instrument Time in / Time out table
-     
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+        
 def timeinout_table(report): 
 
     report.add_page()    
@@ -511,11 +611,17 @@ def timeinout_table(report):
         report.cell(40,8,ti,1,0,'C');         
         report.cell(40,8,to,1,0,'C'); 
         report.ln()     
-    
+
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________   
      
 # %% -----------------------------------------------------------------------------------------------
 # Create instrument file table and details bullet list
-    
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+        
 def files_table(report):
      
     report.add_page()
@@ -552,7 +658,10 @@ def instrument_bullets(report):
     form.add_space() 
     report.set_font_size(12)         
     form.bullet_point('Toolbox version: ' + tb_vers)
-    
+
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________    
     
     
     
