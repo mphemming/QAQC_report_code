@@ -8,28 +8,37 @@
 # What does this script do?
 
 # o   Create a QC report for a selected site and deployment
-# o   Uses the Python FPDF package t create a PDF report
-# o   TBC
-# o   TBC
+# o   Uses the Python FPDF module to create a PDF report
+# o   Incorporates paths, variables, and functions from all 'QCreport_< name>.py' scripts
 
 # Instructions:
 
-# o   Modify script 'QCreport_format.py' to setup QC report
+# o   Modify script 'QCreport_format.py' to setup QC report paths
 # o   Run this script
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # %% -----------------------------------------------------------------------------------------------
-# Import packages
+# Import modules
 
-import pandas as pd
-import matplotlib
-from pylab import title, figure, xlabel, ylabel, xticks, bar, legend, axis, savefig
-from fpdf import FPDF
-from PyPDF2 import PdfFileReader, PdfFileWriter, PdfFileMerger
-from numpy import loadtxt
+# QCreport modules
+import QCreport_paths as paths
+import QCreport_format as form
+import QCreport_DeploymentDetails as DepDet
+import QCreport_QualityControl as QCR
+import QCreport_DeploymentPhotographs as DepPhoto
+import QCreport_ToolboxPlots as tbp
 
+#------------------------------------------------------------
+# Information 
+#-------------
+
+# These are the QC report modules required to run 
+# this script. The QCreport modules need to be in 
+# the same folder as this script.
+
+#------------------------------------------------------------
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -37,21 +46,31 @@ from numpy import loadtxt
 # %% -----------------------------------------------------------------------------------------------
 # Determine Paths
 
-# import script variables and functions
-import QCreport_paths as paths
 # obtain paths
 netCDF_dir = paths.ncdir_TEMP()
 toolbox_dir = paths.tbdir()
 saving_dir = paths.savedir()
+mooring_dir = paths.mddir()
+depphoto_dir = paths.dppdir()
+
+#------------------------------------------------------------
+# Information 
+#-------------
+
+# These are the paths required to run this script, obtained
+# from module QCreport_paths.py. These must be altered to 
+# the correct paths before running the script. Refer to 
+# script QCreport_paths.py to do this.
+
+#------------------------------------------------------------
+
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # %% -----------------------------------------------------------------------------------------------
 # Create document and set Format
 
-# import script variables and functions
-import QCreport_format as form
-# call function to format document
+# call function to format PDF document
 report = form.format_doc(paths.name_of_reportmaker)
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -60,52 +79,90 @@ report = form.format_doc(paths.name_of_reportmaker)
 # %% -----------------------------------------------------------------------------------------------
 # Sections
 
-# Deployment Details
+# --------------------------------------------
+# Section: Deployment Details
+# --------------------------------------------
+
+# Deployment Details heading
 report.add_page(orientation='p')
 form.section_header('Deployment Details')
+# setup table of contents link
 DD = report.add_link()
 report.set_link(DD)
-# import Section content
-import QCreport_DeploymentDetails as DepDet
+# Add content
 DepDet.intro_table(report)
 DepDet.instrument_table(report)
-#DepDet.parameter_bullets(report)
 DepDet.timeinout_table(report)
 DepDet.parameter_table(report)
 DepDet.files_table(report)
 DepDet.instrument_bullets(report)
 
-# Mooring diagram
+# --------------------------------------------
+# Section: Mooring Diagram
+# --------------------------------------------
+
+# Mooring diagram heading
 report.add_page(orientation='p')
 form.section_header('Mooring Diagram')
+# setup table of contents link
 MD = report.add_link()
 report.set_link(MD)
 # Add image
-report.image(paths.mddir())
+report.image(mooring_dir)
 
-# Quality Control 
+# --------------------------------------------
+# Section: Quality Control
+# --------------------------------------------
+
+# Quality Control heading
 report.add_page(orientation='p')
 form.section_header('Quality Control')
+# setup table of contents link
 QC = report.add_link()
 report.set_link(QC)
-# import Section content
-import QCreport_QualityControl as QCR
+# Add content
 QCR.QC_comments(report)
+QCR.further_comments(report)
 
-# Toolbox Plots
+# --------------------------------------------
+# Section: Deployment Photographs
+# --------------------------------------------
+
+# Deployment Photos heading
+report.add_page(orientation='p')
+form.section_header('Deployment Photographs')
+# setup table of contents link
+DPP = report.add_link()
+report.set_link(DPP)
+# Add content
+DepPhoto.include_photos(depphoto_dir,report)
+
+# --------------------------------------------
+# Section: Toolbox Plots
+# --------------------------------------------
+
+# Toolbox Plots heading
 report.add_page(orientation='l')
 form.section_header('Toolbox Plots')
+# setup table of contents link
 TBP = report.add_link()
 report.set_link(TBP)
-# import Section content
-import QCreport_ToolboxPlots as tbp
-tbp.toolbox_plots(paths.tbdir(),report)
+# Add content
+tbp.toolbox_plots(toolbox_dir,report)
 
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#------------------------------------------------------------
+# Information 
+#-------------
 
-# %% -----------------------------------------------------------------------------------------------
-# Plots
+# This part creates the main bulk of the PDF document.  
+# Each section has a corresponding python script/module that 
+# creates the section and adds content.
+
+# If there is an error related to the PDF content, it likely
+# originates from one of the above functions - see 
+# corresponding python scripts/modules.  
+
+#------------------------------------------------------------
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -132,7 +189,20 @@ form.section_header('Report Contents')
 form.TOC('Deployment Details',DD)
 form.TOC('Mooring Diagram',MD)
 form.TOC('Quality Control',QC)
+form.TOC('Deployment Photographs',DPP)
 form.TOC('Toolbox Plots',TBP)
+
+#------------------------------------------------------------
+# Information 
+#-------------
+
+# This part creates an interactive table of contents. This
+# is not fully working as hoped yet as the table of contents
+# needs to be at the start of the document, rather than at
+# the end. I haven't yet figured out how to include it at 
+# the start without the links ceasing to work. 
+
+#------------------------------------------------------------
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
