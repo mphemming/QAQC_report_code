@@ -74,13 +74,11 @@ def bullet_point(bullet_text):
     report.set_font("NotoSans", size=16)
     report.cell(180,8,s + '   ' + bullet_text,0,0,'L');   
 
-def bullet_point_multi(bullet_text):
+def bullet_point_multi(bullet_text,font_size):
     
     s = str('\u2022')
-    report.set_font("NotoSans", size=16)
+    report.set_font("NotoSans", size=font_size)
     report.multi_cell(180,5,s + '   ' + bullet_text,0,0,'L');   
-
-
 
 
 
