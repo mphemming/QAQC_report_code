@@ -84,6 +84,13 @@ report.set_link(MD)
 report.image(paths.mddir())
 
 # Quality Control 
+report.add_page(orientation='p')
+form.section_header('Quality Control')
+QC = report.add_link()
+report.set_link(QC)
+# import Section content
+import QCreport_QualityControl as QCR
+QCR.QC_comments(report)
 
 # Toolbox Plots
 report.add_page(orientation='l')
@@ -124,6 +131,7 @@ form.section_header('Report Contents')
 
 form.TOC('Deployment Details',DD)
 form.TOC('Mooring Diagram',MD)
+form.TOC('Quality Control',QC)
 form.TOC('Toolbox Plots',TBP)
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
