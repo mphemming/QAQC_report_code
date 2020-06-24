@@ -40,17 +40,29 @@ name_of_reportmaker = 'Michael Hemming'
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-def ncdir_TEMP():
-    netCDF_TEMP_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/TEMPERATURE/'
-    return netCDF_TEMP_dir
+if 'BMP070' in site_name:
 
-def ncdir_CURR():
-    netCDF_CURR_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/CURRENT/'
-    return netCDF_CURR_dir
+    def ncdir_TEMP():
+        netCDF_TEMP_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/TEMPERATURE/'
+        return netCDF_TEMP_dir
+    
+    def ncdir_CURR():
+        netCDF_CURR_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/CURRENT/'
+        return netCDF_CURR_dir
+    
+    def ncdir_BGC():
+        netCDF_BGC_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/BGC/'
+        return netCDF_BGC_dir
 
-def ncdir_BGC():
-    netCDF_BGC_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/BGC/'
-    return netCDF_BGC_dir
+
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# Select paths for site selected
+# Need to update this section when working from the server
+
+#------------------------------------------------------------
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -62,9 +74,20 @@ def ncdir_BGC():
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-def mddir():
-    md_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/Mooring_Diagram/BMP070_120_mooring_diagram.png'
-    return md_dir
+if 'BMP070' in site_name:
+
+    def mddir():
+        md_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/Mooring_Diagram/BMP070_120_mooring_diagram.png'
+        return md_dir
+
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# Select paths for site mooring diagram file
+# Need to update this section when working from the server
+
+#------------------------------------------------------------
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -76,9 +99,20 @@ def mddir():
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-def dppdir():
-    dpp_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/Deployment_photographs/'
-    return dpp_dir
+if 'BMP070' in site_name:
+
+    def dppdir():
+        dpp_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/Deployment_photographs/'
+        return dpp_dir
+    
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# Select paths for deployment photographs
+# Need to update this section when working from the server
+
+#------------------------------------------------------------    
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -89,10 +123,21 @@ def dppdir():
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
+  
+if 'BMP070' in site_name:    
     
-def tbdir():
-    toolboxplots_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Toolbox_Plots/'
-    return toolboxplots_dir
+    def tbdir():
+        toolboxplots_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Toolbox_Plots/'
+        return toolboxplots_dir
+
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# Select paths for stored Toolbox plots
+# Need to update this section when working from the server
+
+#------------------------------------------------------------   
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
