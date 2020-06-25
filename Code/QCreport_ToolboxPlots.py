@@ -15,6 +15,7 @@
 
 # Python Packages
 import glob
+import QCreport_paths as paths
 
 #------------------------------------------------------------
 # Information 
@@ -23,6 +24,7 @@ import glob
 # This is the Python package required to run 
 # this script. The python modules should be installed using 
 # 'pip/condo install'. 
+# paths imported
 
 #------------------------------------------------------------
 
@@ -39,7 +41,7 @@ import glob
 def toolbox_plots(path, report):   
  
     # Get list of toolbox plots
-    images = glob.glob(path + '*.png')
+    images = glob.glob(path + '*-' +paths.deployment_file_date_identifier + '*.png')
     # include toolbox plots
     for plots in range(len(images)):
         if plots > 0:
