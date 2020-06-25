@@ -46,12 +46,11 @@ import QCreport_ToolboxPlots as tbp
 # %% -----------------------------------------------------------------------------------------------
 # Determine Paths
 
-# obtain paths
-netCDF_dir = paths.ncdir_TEMP()
-toolbox_dir = paths.tbdir()
+# obtain paths 
+toolbox_dir = paths.tb_dir
 saving_dir = paths.savedir()
-mooring_dir = paths.mddir()
-depphoto_dir = paths.dppdir()
+mooring_dir = paths.md_dir
+depphoto_dir = paths.dpp_dir
 
 #------------------------------------------------------------
 # Information 
