@@ -44,9 +44,11 @@ import QCreport_netCDF as nc
 # __________________________________________________________________________________________________
 
 # get attributes for temperature, biogeochemistry and velocity files
-attributes_TEMP = nc.get_netCDF(paths.ncdir_TEMP())
-attributes_CURR = nc.get_netCDF(paths.ncdir_CURR())
-attributes_BGC = nc.get_netCDF(paths.ncdir_BGC())
+attributes_TEMP = nc.get_netCDF(paths.netCDF_TEMP_dir)
+attributes_SBE37 = nc.get_netCDF(paths.netCDF_SBE37_dir)
+attributes_CTD = nc.get_netCDF(paths.netCDF_CTD_dir)
+attributes_CURR = nc.get_netCDF(paths.netCDF_CURR_dir)
+attributes_BGC = nc.get_netCDF(paths.netCDF_BGC_dir)
 # combine all attributes
 # get list of attributes
 class_fields = dir(attributes_TEMP)
@@ -57,16 +59,26 @@ for n_atts in range(len(class_fields)):
     # create empty dictionary
     exec('atts_' + str(class_fields[n_atts]) + ' = {}')
     # combine all attributes from each sensor file
-    for n_keys in range(len(attributes_TEMP.abstract)):
-        exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_TEMP.' + str(class_fields[n_atts]) + '[n_keys]]')  
-    for n_keys in range(len(attributes_CURR.abstract)):
-        n_keys_n = n_keys+len(attributes_TEMP.abstract)
-        exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CURR.' + str(class_fields[n_atts]) + '[n_keys]]')          
-    for n_keys in range(len(attributes_BGC.abstract)):
-        n_keys_n = n_keys+len(attributes_TEMP.abstract)+len(attributes_CURR.abstract)
-        exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_BGC.' + str(class_fields[n_atts]) + '[n_keys]]')  
-        
-        
+    if isinstance(attributes_TEMP,str) == 0:
+        for n_keys in range(len(attributes_TEMP.abstract)):
+            exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_TEMP.' + str(class_fields[n_atts]) + '[n_keys]]')  
+    if isinstance(attributes_SBE37,str) == 0:
+        for n_keys in range(len(attributes_SBE37.abstract)):
+            exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_SBE37.' + str(class_fields[n_atts]) + '[n_keys]]')     
+    if isinstance(attributes_CURR,str) == 0:    
+        for n_keys in range(len(attributes_CURR.abstract)):
+            n_keys_n = n_keys+len(attributes_TEMP.abstract)
+            exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CURR.' + str(class_fields[n_atts]) + '[n_keys]]')          
+    if isinstance(attributes_BGC,str) == 0:    
+        for n_keys in range(len(attributes_BGC.abstract)):
+            n_keys_n = n_keys+len(attributes_TEMP.abstract)+len(attributes_CURR.abstract)
+            exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_BGC.' + str(class_fields[n_atts]) + '[n_keys]]')  
+    if isinstance(attributes_CTD,str) == 0:    
+        for n_keys in range(len(attributes_CTD.abstract)):
+            n_keys_n = n_keys+len(attributes_CTD.abstract)+len(attributes_CTD.abstract)
+            exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CTD.' + str(class_fields[n_atts]) + '[n_keys]]')  
+                        
+            
 #------------------------------------------------------------
 # Information 
 #-------------
