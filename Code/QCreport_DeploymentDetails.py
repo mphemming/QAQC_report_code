@@ -77,7 +77,17 @@ for n_atts in range(len(class_fields)):
         for n_keys in range(len(attributes_CTD.abstract)):
             n_keys_n = n_keys+len(attributes_CTD.abstract)+len(attributes_CTD.abstract)
             exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CTD.' + str(class_fields[n_atts]) + '[n_keys]]')  
-                        
+# remove full file directory from 'atts_toolbox_input_file'
+atts_toolbox_input_file_name = [] 
+for n_atts in range(len(atts_toolbox_input_file)):
+    
+    a = str(atts_toolbox_input_file[n_atts])
+    for n_char in range(len(a)-1):
+        a_n = a[n_char:n_char+1]
+        if a_n.find("\\") > -1:
+            last_char = n_char       
+    atts_toolbox_input_file_name.append(a[last_char+1:-1])
+    
             
 #------------------------------------------------------------
 # Information 
@@ -105,13 +115,16 @@ for n_atts in range(len(class_fields)):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-# Function to get unique strings in attributes (i.e. from n number of netCDF files) 
-    
+
+#------------------------------------------------------------   
+# Function to get unique strings in attributes (i.e. from n number of netCDF files)     
 def get_unique(dict):
     list_dict = list(dict.values())
     unique_dicts = np.unique(list_dict)
     return unique_dicts
-
+#------------------------------------------------------------   
+# Function to remove indices where no data exists 
+# if is a string 'No data'
 def rm_nodata(array):
     n_save = 0
     new_array = {}
@@ -121,10 +134,9 @@ def rm_nodata(array):
             new_array[n_save] = a
         n_save = n_save +1          
     return new_array
-    
-
+#------------------------------------------------------------   
+# Function to remove unnecessary characters
 def remove_characters(string):
-    
     string = string.replace('[','')
     string = string.replace(']','')
     string = string.replace("'",'')
@@ -132,18 +144,21 @@ def remove_characters(string):
     string = string.replace(')','')
     string = string.replace('\n','')
     return string
-
+#------------------------------------------------------------   
+# Function to remove unnecessary characters
+# For use with QC information
 def remove_characters_QC(string):
-    
     string = string.replace('[','')
     string = string.replace(']','')
     string = string.replace("'",'')
     string = string.replace('odict_keys(','')
     string = string.replace('\n','')
     return string
-
+#------------------------------------------------------------   
+# Function to determine which parameters are available
+# in netCDF files
 def param_avail(string):
-    
+    # Create list objects
     param_list_TIME = []
     param_list_TEMP = []
     param_list_PRES = []
@@ -157,7 +172,7 @@ def param_avail(string):
     param_list_FLU = []
     param_list_VCUR = []
     param_list_UCUR = []
-    
+    # produce index indicating whether parameters available or not
     for n_files in range(len(atts_instrument)):
         vn_file = remove_characters(str(atts_var_names[n_files]))
         # TIME available?
@@ -251,7 +266,7 @@ def param_avail(string):
         else:
             n = 0
             param_list_DEPTH.append(n) 
-            
+    # save parameter indices in class called 'param_list'         
     class param_list:
         TIME = param_list_TIME
         TEMP = param_list_TEMP
@@ -265,10 +280,18 @@ def param_avail(string):
         CNDC = param_list_CNDC
         FLU = param_list_FLU
         VCUR = param_list_VCUR
-        UCUR = param_list_UCUR
-        
+        UCUR = param_list_UCUR   
     return param_list
 
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# The above are functions that are useful to sort and prepare
+# attribute information from the netCDF files for use in the
+# PDF report. 
+
+#------------------------------------------------------------
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -280,10 +303,11 @@ def param_avail(string):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________    
 
+#------------------------------------------------------------
 # Start date
-# -------------------
+#------------------------------------------------------------
 start_date = get_unique(atts_time_coverage_start)
-# if multiple start dates, get unique dates
+# if multiple start dates (if not all files same), get unique dates
 if len(start_date) > 1:
     sd = []
     for n_sd in range(len(start_date)-1):
@@ -298,18 +322,17 @@ if len(start_date) > 1:
     
     un_sd = str(datetime.fromtimestamp(np.min(np.array(un_sd_ts))))
     start_date = un_sd
-    
 # convert from array to string    
 start_date = remove_characters(str(start_date))
 # if string is too long, it include hours, mins, etc. 
 # remove unuseful string characters and select date only
 if len(start_date) > 10:
     start_date = start_date[0:10]
-    
+ #------------------------------------------------------------   
 # end date
-# -------------------
+#------------------------------------------------------------
 end_date = get_unique(atts_time_coverage_end)
-# if multiple end dates, get unique dates
+# if multiple start dates (if not all files same), get unique dates
 if len(end_date) > 1:
     ed = []
     for n_ed in range(len(end_date)-1):
@@ -324,13 +347,25 @@ if len(end_date) > 1:
     
     un_ed = str(datetime.fromtimestamp(np.max(np.array(un_ed_ts))))
     end_date = un_ed
-    
 # convert from array to string       
 end_date = remove_characters(str(end_date))
 # if string is too long, it include hours, mins, etc. 
 # remove unuseful string characters and select date only
 if len(end_date) > 10:
     end_date = end_date[0:10]
+    
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# This section determines the start and end date of the 
+# deployment for use in the intro table on page 1 of the report.
+
+# If more than one date is available for the start and end dates, 
+# the start and end date used is the minimum and maximum time
+# number, respectively.
+
+#------------------------------------------------------------    
     
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -342,16 +377,32 @@ if len(end_date) > 10:
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________    
     
+# Principle Investigator
 PO = remove_characters(str(atts_principal_investigator[0]))  
+# Author
 FT = remove_characters(str(atts_author[0]))
+# Location
 lon = str(atts_geospatial_lon_min[0]) # assuming min/max is the same, and same for each file
 lat = str(atts_geospatial_lat_min[0]) # assuming min/max is the same, and same for each file
 lon = remove_characters(lon[0:6])
 lat = remove_characters(lat[0:6])
+# Toolbox version
 tb_vers = remove_characters(str(get_unique(atts_toolbox_version)))
+# local time zone
 ltz = remove_characters(str(round(int(get_unique(rm_nodata(atts_local_time_zone))))))
+# time units
 tu = remove_characters(str(get_unique(atts_time_units)))
+# variable names
 vn = remove_characters(str(get_unique(atts_var_names)))
+
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# Information extraction: things like Principle investigator, 
+# location, variable names, for use in QC report.
+
+#------------------------------------------------------------  
 
 # %% -----------------------------------------------------------------------------------------------
 # Create intro table of details
@@ -413,6 +464,17 @@ def intro_table(report):
     report.set_font('Helvetica',style='')
     report.cell(80,8,FT,1,0,'C');
     report.ln()
+    
+    
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# This function creates the introduction table on the first
+# page showing things like Site ID, Principle Investigator, 
+# date range etc..
+
+#------------------------------------------------------------      
        
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -452,6 +514,15 @@ def instrument_table(report):
         report.cell(35,8,sn,1,0,'C');         
         report.cell(40,8,nd,1,0,'C'); 
         report.ln() 
+
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# This function creates the inctrument table including serial
+# numbers and nominal depths.
+
+#------------------------------------------------------------ 
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -582,6 +653,15 @@ def parameter_table(report):
         nd = str(int(float(nd)))
         report.cell(50,4,'# ' + str(n_inst+1) + '  =  ' + inst + ' ' + sn + ' ' + nd + ' m',0,0,'L');    
         report.ln()
+        
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# This function creates the 'Available Parameters' table.
+# Not all parameters are currently shown.
+
+#------------------------------------------------------------         
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -623,6 +703,14 @@ def timeinout_table(report):
         report.cell(40,8,ti,1,0,'C');         
         report.cell(40,8,to,1,0,'C'); 
         report.ln()     
+        
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# This function creates the 'Instrument times in / out table.
+
+#------------------------------------------------------------         
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -655,14 +743,12 @@ def files_table(report):
         inst = remove_characters(str(atts_instrument[row_n]))
         nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
         nd = str(int(float(nd)))       
-        file = remove_characters(str(atts_toolbox_input_file[row_n]))
-        if len(file) < 90:
-            file = file + '                    .' # not working, check later
+        file = remove_characters(str(atts_toolbox_input_file_name[row_n]))
 
         report.set_font('Helvetica',style='B')
         report.cell(80,18,inst + '  ' + nd + ' m',1,0,'L');
         report.set_font('Helvetica',style='')
-        report.multi_cell(100,6,file,1,0,'C');            
+        report.multi_cell(100,6,'Raw:' + file + '   ' + 'Processed:' + 'thredds_link_here',1,0,'C');            
         
 def instrument_bullets(report):
     
@@ -670,6 +756,15 @@ def instrument_bullets(report):
     form.add_space() 
     report.set_font_size(12)         
     form.bullet_point('Toolbox version: ' + tb_vers)
+    
+    
+#------------------------------------------------------------
+# Information 
+#-------------
+        
+# This function creates the File location table.
+
+#------------------------------------------------------------ 
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
