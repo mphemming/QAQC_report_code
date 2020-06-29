@@ -721,7 +721,7 @@ def timeinout_table(report):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
-        
+    
 def files_table(report):
      
     report.add_page()
@@ -733,28 +733,29 @@ def files_table(report):
     #---------------------------------
     # Header
     report.set_font('Helvetica',style='B')
-    report.cell(80,8,"Instrument & nom. depth",1,0,'C');     
-    report.cell(100,8,"File Location",1,0,'C');  
+    report.cell(60,8,"Instrument & nom. depth",1,0,'C');     
+    report.cell(120,8,"File Location",1,0,'C');  
     report.ln()    
     #---------------------------------
     # add rows using loop      
     for row_n in range(len(atts_instrument)): 
-        
+        # get information for table
         inst = remove_characters(str(atts_instrument[row_n]))
         nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
         nd = str(int(float(nd)))       
         file = remove_characters(str(atts_toolbox_input_file_name[row_n]))
-
-        report.set_font('Helvetica',style='B')
-        report.cell(80,18,inst + '  ' + nd + ' m',1,0,'L');
-        report.set_font('Helvetica',style='')
-        report.multi_cell(100,6,'Raw:' + file + '   ' + 'Processed:' + 'thredds_link_here',1,0,'C');            
+        OPenDAP = nc.OPeNDAP_links[row_n]
+        
+        report.set_font('Helvetica',style='B',size=10)
+        report.cell(60,25,inst + '  ' + nd + ' m',1,0,'L');
+        report.set_font('Helvetica',style='',size=10)
+        report.multi_cell(120,5,'Original:  ' + file + '   ' + 'Processed:' + OPenDAP,1,0,'C');           
         
 def instrument_bullets(report):
     
     form.add_space()     
     form.add_space() 
-    report.set_font_size(12)         
+    report.set_font_size(10)         
     form.bullet_point('Toolbox version: ' + tb_vers)
     
     
