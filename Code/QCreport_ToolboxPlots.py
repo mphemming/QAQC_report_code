@@ -15,7 +15,7 @@
 
 # Python Packages
 import glob
-import QCreport_paths as paths
+import QCreport_setup as setup
 
 #------------------------------------------------------------
 # Information 
@@ -41,7 +41,7 @@ import QCreport_paths as paths
 def toolbox_plots(path, report):   
  
     # Get list of toolbox plots
-    images = glob.glob(path + '*-' +paths.deployment_file_date_identifier + '*.png')
+    images = glob.glob(path + '*-' +setup.deployment_file_date_identifier + '*.png')
     # include toolbox plots
     for plots in range(len(images)):
         if plots > 0:
