@@ -29,6 +29,7 @@ import QCreport_DeploymentDetails as DepDet
 import QCreport_QualityControl as QCR
 import QCreport_DeploymentPhotographs as DepPhoto
 import QCreport_ToolboxPlots as tbp
+import QCreport_setup as setup
 
 #------------------------------------------------------------
 # Information 
@@ -39,6 +40,8 @@ import QCreport_ToolboxPlots as tbp
 # the same folder as this script.
 
 #------------------------------------------------------------
+
+print('Modules loaded')
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -63,6 +66,8 @@ depphoto_dir = paths.dpp_dir
 
 #------------------------------------------------------------
 
+print('Paths loaded')
+
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -70,7 +75,7 @@ depphoto_dir = paths.dpp_dir
 # Create document and set Format
 
 # call function to format PDF document
-report = form.format_doc(paths.name_of_reportmaker)
+report = form.format_doc(setup.name_of_reportmaker)
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -90,38 +95,14 @@ DD = report.add_link()
 report.set_link(DD)
 # Add content
 DepDet.intro_table(report)
+QCR.intro_comments(report)
 DepDet.instrument_table(report)
-DepDet.timeinout_table(report)
 DepDet.parameter_table(report)
+DepDet.timeinout_table(report)
 DepDet.files_table(report)
-DepDet.instrument_bullets(report)
+DepDet.toolbox_bullet(report)
 
-# --------------------------------------------
-# Section: Mooring Diagram
-# --------------------------------------------
-
-# Mooring diagram heading
-report.add_page(orientation='p')
-form.section_header('Mooring Diagram')
-# setup table of contents link
-MD = report.add_link()
-report.set_link(MD)
-# Add image
-report.image(mooring_dir)
-
-# --------------------------------------------
-# Section: Quality Control
-# --------------------------------------------
-
-# Quality Control heading
-report.add_page(orientation='p')
-form.section_header('Quality Control')
-# setup table of contents link
-QC = report.add_link()
-report.set_link(QC)
-# Add content
-QCR.QC_comments(report)
-QCR.further_comments(report)
+print('Section: ''Deployment Details'' added')
 
 # --------------------------------------------
 # Section: Deployment Photographs
@@ -136,6 +117,23 @@ report.set_link(DPP)
 # Add content
 DepPhoto.include_photos(depphoto_dir,report)
 
+print('Section: ''Deployment Photographs'' added')
+
+# --------------------------------------------
+# Section: Quality Control
+# --------------------------------------------
+
+# Quality Control heading
+report.add_page(orientation='p')
+form.section_header('Quality Control')
+# setup table of contents link
+QC = report.add_link()
+report.set_link(QC)
+# Add content
+QCR.QC_comments(report)
+
+print('Section: ''Quality Control'' added')
+
 # --------------------------------------------
 # Section: Toolbox Plots
 # --------------------------------------------
@@ -148,6 +146,24 @@ TBP = report.add_link()
 report.set_link(TBP)
 # Add content
 tbp.toolbox_plots(toolbox_dir,report)
+
+print('Section: ''Toolbox Plots'' added')
+
+# --------------------------------------------
+# Section: Mooring Diagram
+# --------------------------------------------
+
+# Mooring diagram heading
+report.add_page(orientation='p')
+form.section_header('Mooring Diagram')
+# setup table of contents link
+MD = report.add_link()
+report.set_link(MD)
+# Add image
+report.image(mooring_dir)
+
+print('Section: ''Mooring Diagrams'' added')
+
 
 #------------------------------------------------------------
 # Information 
@@ -191,6 +207,8 @@ form.TOC('Quality Control',QC)
 form.TOC('Deployment Photographs',DPP)
 form.TOC('Toolbox Plots',TBP)
 
+print('Table of Contents added')
+
 #------------------------------------------------------------
 # Information 
 #-------------
@@ -209,7 +227,9 @@ form.TOC('Toolbox Plots',TBP)
 # %% -----------------------------------------------------------------------------------------------
 # Save report
 
-report.output(saving_dir + paths.site_name + '_' + paths.deployment + '_QC_report.pdf', 'F')
+print('Saving report in: ' + saving_dir)
+report.output(saving_dir + setup.site_name + '_' + setup.deployment + '_QC_report.pdf', 'F')
+print('Report saved.')
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -219,7 +239,7 @@ report.output(saving_dir + paths.site_name + '_' + paths.deployment + '_QC_repor
 
 # THIS METHOD DOES NOT WORK. THE TOC LINKS NO LONGER WORK... LOOK FOR ANOTHER METHOD
 
-#PDF_report = PdfFileReader(saving_dir + paths.site_name + '_' + paths.deployment + '_QC_report.pdf')
+#PDF_report = PdfFileReader(saving_dir + setup.site_name + '_' + setup.deployment + '_QC_report.pdf')
 #pdf_bulk_writer = PdfFileWriter()
 #output_filename_bulk = "bulk.pdf"
 #pdf_TOC_writer = PdfFileWriter()
