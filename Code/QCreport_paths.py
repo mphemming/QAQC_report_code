@@ -22,6 +22,7 @@
 # Import modules
 
 import os
+import QCreport_setup as setup
 
 #------------------------------------------------------------
 # Information 
@@ -33,22 +34,6 @@ import os
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-# %% -----------------------------------------------------------------------------------------------
-# Choose site, deployment, add name of report maker 
-# __________________________________________________________________________________________________
-# __________________________________________________________________________________________________
-# __________________________________________________________________________________________________
-
-site_name = 'BMP070'
-deployment = '29'
-deployment_file_date_identifier = '1904'
-name_of_reportmaker = 'Michael Hemming'
-
-# __________________________________________________________________________________________________
-# __________________________________________________________________________________________________
-# __________________________________________________________________________________________________
 
 # %% -----------------------------------------------------------------------------------------------
 # Determine main paths
@@ -183,11 +168,11 @@ def ncdir_CTD(site_name):
     return netCDF_CTD_dir
 #------------------------------------------------------------
 # get netCDF paths
-netCDF_TEMP_dir = ncdir_TEMP(site_name) 
-netCDF_SBE37_dir = ncdir_SBE37(site_name) 
-netCDF_CURR_dir = ncdir_CURR(site_name) 
-netCDF_BGC_dir = ncdir_BGC(site_name) 
-netCDF_CTD_dir = ncdir_CTD(site_name) 
+netCDF_TEMP_dir = ncdir_TEMP(setup.site_name) 
+netCDF_SBE37_dir = ncdir_SBE37(setup.site_name) 
+netCDF_CURR_dir = ncdir_CURR(setup.site_name) 
+netCDF_BGC_dir = ncdir_BGC(setup.site_name) 
+netCDF_CTD_dir = ncdir_CTD(setup.site_name) 
 
 #------------------------------------------------------------
 # Information 
@@ -227,7 +212,7 @@ def mddir(site_name):
 
 #------------------------------------------------------------
 # get Mooring diagram path
-md_dir = mddir(site_name) 
+md_dir = mddir(setup.site_name) 
 
 #------------------------------------------------------------
 # Information 
@@ -251,15 +236,15 @@ md_dir = mddir(site_name)
 #------------------------------------------------------------
 def dppdir(site_name):
     switcher = {
-            'BMP070': main_path + 'Deployment_Photographs/BMP070/Deployment_' + deployment + '/',
-            'BMP120': main_path + 'Deployment_Photographs/BMP120/Deployment_' + deployment + '/',
-            'CH050': main_path + 'Deployment_Photographs/CH050/Deployment_' + deployment + '/',
-            'CH070': main_path + 'Deployment_Photographs/CH070/Deployment_' + deployment + '/',
-            'CH100': main_path + 'Deployment_Photographs/CH100/Deployment_' + deployment + '/',
-            'PH100': main_path + 'Deployment_Photographs/PH100/Deployment_' + deployment + '/',
-            'SYD100': main_path + 'Deployment_Photographs/SYD100/Deployment_' + deployment + '/',
-            'SYD140': main_path + 'Deployment_Photographs/SYD140/Deployment_' + deployment + '/',
-            'ORS065': main_path + 'Deployment_Photographs/ORS065/Deployment_' + deployment + '/',
+            'BMP070': main_path + 'Deployment_Photographs/BMP070/Deployment_' + setup.deployment + '/',
+            'BMP120': main_path + 'Deployment_Photographs/BMP120/Deployment_' + setup.deployment +'/',
+            'CH050': main_path + 'Deployment_Photographs/CH050/Deployment_' + setup.deployment +'/',
+            'CH070': main_path + 'Deployment_Photographs/CH070/Deployment_' + setup.deployment +'/',
+            'CH100': main_path + 'Deployment_Photographs/CH100/Deployment_' + setup.deployment +'/',
+            'PH100': main_path + 'Deployment_Photographs/PH100/Deployment_' + setup.deployment +'/',
+            'SYD100': main_path + 'Deployment_Photographs/SYD100/Deployment_' + setup.deployment +'/',
+            'SYD140': main_path + 'Deployment_Photographs/SYD140/Deployment_' + setup.deployment +'/',
+            'ORS065': main_path + 'Deployment_Photographs/ORS065/Deployment_' + setup.deployment +'/',
             }
 
     dpp_dir = switcher.get(site_name)
@@ -267,7 +252,7 @@ def dppdir(site_name):
 
 #------------------------------------------------------------
 # get Mooring diagram path
-dpp_dir = dppdir(site_name) 
+dpp_dir = dppdir(setup.site_name) 
     
 #------------------------------------------------------------
 # Information 
@@ -307,7 +292,7 @@ def tbdir(site_name):
 
 #------------------------------------------------------------
 # get Mooring diagram path
-tb_dir = tbdir(site_name) 
+tb_dir = tbdir(setup.site_name) 
 
 #------------------------------------------------------------
 # Information 
@@ -329,7 +314,8 @@ tb_dir = tbdir(site_name)
 # __________________________________________________________________________________________________
 
 def savedir():
-    save_dir = main_path + 'Reports/'
+#    save_dir = main_path + 'Reports/'
+    save_dir = '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/'; # for testing
     return save_dir
 
 # __________________________________________________________________________________________________
