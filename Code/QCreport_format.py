@@ -17,6 +17,7 @@ from fpdf import FPDF
 import fpdf
 # QC report modules
 import QCreport_paths as paths
+import QCreport_setup as setup
 
 #------------------------------------------------------------
 # Information 
@@ -35,8 +36,8 @@ import QCreport_paths as paths
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-title = paths.site_name + '  |  ' + paths.deployment + '  |  Quality Control Report'
-title_1 = paths.site_name + ' Deployment ' + paths.deployment
+title = setup.site_name + '  |  ' + setup.deployment + '  |  Quality Control Report'
+title_1 = setup.site_name + ' Deployment ' + setup.deployment
 title_2 = 'Quality Control Report'
 
 # %% -----------------------------------------------------------------------------------------------
