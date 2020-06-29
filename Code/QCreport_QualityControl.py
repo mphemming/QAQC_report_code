@@ -17,7 +17,7 @@
 import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
 import QCreport_netCDF as nc
-import QCreport_FurtherComments as fur_comm
+import QCreport_setup as setup
 
 #------------------------------------------------------------
 # Information 
@@ -141,7 +141,8 @@ def QC_comments(report):
         # get instrument and nominal depth strings 
         inst = DepDet.remove_characters_QC(str(DepDet.atts_instrument[inst_n]))
         nd = DepDet.remove_characters_QC(str(DepDet.atts_instrument_nominal_depth[inst_n]))
-        nd = str(int(float(nd)))   
+        if '.0' in nd:
+            nd = str(int(float(nd)))   
         
         #---------------------------------
         # add instrument sub headings        
@@ -216,16 +217,11 @@ def QC_comments(report):
 # Usage: QCreport.py
      
         
-def further_comments(report):
-    
-    # add new page
-    report.add_page(orientation='p')
+def intro_comments(report):
     
     #---------------------------------
     # add sub heading        
-    form.sub_header('Further_comments')
-    # add horizontal line    
-    form.add_line()
+    form.sub_header('Deployment Assessment')
     # add vertical space
     form.add_space()
     #---------------------------------
@@ -239,7 +235,7 @@ def further_comments(report):
     # add vertical space
     form.add_space()            
     # add comments to PDF 
-    report.multi_cell(180,6,fur_comm.comments,0,0,'L')
+    report.multi_cell(180,6,setup.comments,0,0,'L')
     # go to next line
     report.ln()    
     #---------------------------------
@@ -253,8 +249,8 @@ def further_comments(report):
 # These functions are used to add content to the report in
 # section 'Quality Control'. File history and quality_control_log
 # attributes are loaded from netCDF file and content displayed.
-# Further comments included - section will be blank if comments
-# string is not filled in QCreport module 'QCreport_FurtherComments.py'. 
+# Introductory comments included - section will be blank if comments
+# string is not filled in QCreport module 'QCreport_IntroComments.py'. 
     
     
 #------------------------------------------------------------    
