@@ -20,6 +20,7 @@ from datetime import datetime
 import QCreport_paths as paths
 import QCreport_format as form
 import QCreport_netCDF as nc
+import QCreport_setup as setup
 
 
 #------------------------------------------------------------
@@ -172,6 +173,10 @@ def param_avail(string):
     param_list_FLU = []
     param_list_VCUR = []
     param_list_UCUR = []
+    param_list_WCUR = []
+    param_list_CSPD = []
+    param_list_CDIR = []
+    param_list_ECUR = []
     # produce index indicating whether parameters available or not
     for n_files in range(len(atts_instrument)):
         vn_file = remove_characters(str(atts_var_names[n_files]))
@@ -266,6 +271,36 @@ def param_avail(string):
         else:
             n = 0
             param_list_DEPTH.append(n) 
+        # WCUR available?
+        if vn_file.find('WCUR') > -1 :
+            n = 1
+            param_list_WCUR.append(n)
+        else:
+            n = 0
+            param_list_WCUR.append(n)             
+        # CSPD available?
+        if vn_file.find('CSPD') > -1 :
+            n = 1
+            param_list_CSPD.append(n)
+        else:
+            n = 0
+            param_list_CSPD.append(n)
+        # CDIR available?
+        if vn_file.find('CDIR') > -1 :
+            n = 1
+            param_list_CDIR.append(n)
+        else:
+            n = 0
+            param_list_CDIR.append(n) 
+        # ECUR available?
+        if vn_file.find('ECUR') > -1 :
+            n = 1
+            param_list_ECUR.append(n)
+        else:
+            n = 0
+            param_list_ECUR.append(n)             
+             
+            
     # save parameter indices in class called 'param_list'         
     class param_list:
         TIME = param_list_TIME
@@ -280,7 +315,12 @@ def param_avail(string):
         CNDC = param_list_CNDC
         FLU = param_list_FLU
         VCUR = param_list_VCUR
-        UCUR = param_list_UCUR   
+        UCUR = param_list_UCUR
+        WCUR = param_list_WCUR  
+        CSPD = param_list_CSPD  
+        CDIR = param_list_CDIR
+        ECUR = param_list_ECUR          
+        
     return param_list
 
 #------------------------------------------------------------
@@ -427,7 +467,7 @@ def intro_table(report):
     report.set_font('Helvetica',style='B')
     report.cell(60,8,"Deployment",1,0,'L'); 
     report.set_font('Helvetica',style='')
-    report.cell(80,8,paths.deployment,1,0,'C');
+    report.cell(80,8,setup.deployment,1,0,'C');
     report.ln()    
     #---------------------------------
     # row 3    
@@ -508,11 +548,12 @@ def instrument_table(report):
         inst = remove_characters(str(atts_instrument[row_n]))
         sn = remove_characters(str(atts_instrument_serial_number[row_n]))
         nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
-        nd = str(int(float(nd)))
+        if '.0' in nd:
+            nd = str(int(float(nd)))
         
         report.cell(60,8,inst,1,0,'C');     
         report.cell(35,8,sn,1,0,'C');         
-        report.cell(40,8,nd,1,0,'C'); 
+        report.cell(40,8,nd + ' m',1,0,'C'); 
         report.ln() 
 
 #------------------------------------------------------------
@@ -534,7 +575,7 @@ def instrument_table(report):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________        
         
-def parameter_table(report):
+def parameter_table(report): 
     
     param_list = param_avail(atts_var_names)
     
@@ -546,8 +587,11 @@ def parameter_table(report):
     # Header
     report.set_font('Helvetica',style='B')
     report.cell(30,6,'Parameter',1,0,'C');  
-    for n_inst in range(len(atts_instrument)):
-        report.cell(15,6,'# ' + str(n_inst+1),1,0,'C');     
+    for n_inst in range(len(atts_instrument)): 
+        nd = remove_characters(str(atts_instrument_nominal_depth[n_inst]))
+        if '.0' in nd:
+            nd = str(int(float(nd)))   
+        report.cell(15,6,str(nd) + ' m',1,0,'C');     
     report.ln()     
     #---------------------------------
     # add rows using loop
@@ -569,7 +613,16 @@ def parameter_table(report):
             report.cell(15,6,'X',1,0,'C');   
         else:
             report.cell(15,6,' ',1,0,'C');              
-    report.ln() 
+    report.ln()
+    #---------------------------------
+    # CNDC   
+    report.cell(30,6,'CNDC',1,0,'C');    
+    for n_inst in range(len(atts_instrument)): 
+        if param_list.PSAL[n_inst] == 1:
+            report.cell(15,6,'X',1,0,'C');   
+        else:
+            report.cell(15,6,' ',1,0,'C');              
+    report.ln()     
     #---------------------------------
     # VCUR   
     report.cell(30,6,'VCUR',1,0,'C');    
@@ -587,7 +640,43 @@ def parameter_table(report):
             report.cell(15,6,'X',1,0,'C');   
         else:
             report.cell(15,6,' ',1,0,'C');              
-    report.ln()     
+    report.ln()
+    #---------------------------------
+    # WCUR  
+    report.cell(30,6,'WCUR',1,0,'C');    
+    for n_inst in range(len(atts_instrument)): 
+        if param_list.WCUR[n_inst] == 1:
+            report.cell(15,6,'X',1,0,'C');   
+        else:
+            report.cell(15,6,' ',1,0,'C');              
+    report.ln() 
+    #---------------------------------
+    # CSPD  
+    report.cell(30,6,'CSPD',1,0,'C');    
+    for n_inst in range(len(atts_instrument)): 
+        if param_list.CSPD[n_inst] == 1:
+            report.cell(15,6,'X',1,0,'C');   
+        else:
+            report.cell(15,6,' ',1,0,'C');              
+    report.ln() 
+    #---------------------------------
+    # CDIR  
+    report.cell(30,6,'CDIR',1,0,'C');    
+    for n_inst in range(len(atts_instrument)): 
+        if param_list.CDIR[n_inst] == 1:
+            report.cell(15,6,'X',1,0,'C');   
+        else:
+            report.cell(15,6,' ',1,0,'C');              
+    report.ln()
+    #---------------------------------
+    # ECUR  
+    report.cell(30,6,'ECUR',1,0,'C');    
+    for n_inst in range(len(atts_instrument)): 
+        if param_list.ECUR[n_inst] == 1:
+            report.cell(15,6,'X',1,0,'C');   
+        else:
+            report.cell(15,6,' ',1,0,'C');              
+    report.ln()       
     #---------------------------------
     # CPHL   
     report.cell(30,6,'CPHL',1,0,'C');    
@@ -643,6 +732,14 @@ def parameter_table(report):
             report.cell(15,6,' ',1,0,'C');              
     report.ln()
     #---------------------------------
+    # Add explanation text below table
+    report.set_font_size(10)       
+    form.add_space()  
+    report.multi_cell(120,3,'This table shows some of the most used parameters, but not all available parameters (e.g. pitch or roll from ADCP).',0,0,'L');    
+    report.ln()  
+    report.multi_cell(120,3,'There are also quality control flags corresponding to some of these parameters (e.g. TEMP) that are note includes in this table.',0,0,'L'); 
+    report.ln() 
+    #---------------------------------
     # Add legend below table
     report.set_font_size(10)       
     form.add_space()     
@@ -650,8 +747,9 @@ def parameter_table(report):
         inst = remove_characters(str(atts_instrument[n_inst]))
         sn = remove_characters(str(atts_instrument_serial_number[n_inst]))
         nd = remove_characters(str(atts_instrument_nominal_depth[n_inst]))
-        nd = str(int(float(nd)))
-        report.cell(50,4,'# ' + str(n_inst+1) + '  =  ' + inst + ' ' + sn + ' ' + nd + ' m',0,0,'L');    
+        if '.0' in nd:
+            nd = str(int(float(nd)))  
+        report.cell(50,4,nd + ' m : ' + inst + ' ' + sn,0,0,'L');    
         report.ln()
         
 #------------------------------------------------------------
@@ -695,7 +793,8 @@ def timeinout_table(report):
     
         inst = remove_characters(str(atts_instrument[row_n]))
         nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
-        nd = str(int(float(nd)))
+        if '.0' in nd:
+            nd = str(int(float(nd)))
         ti = remove_characters(str(atts_in_water[row_n]))
         to = remove_characters(str(atts_out_water[row_n]))
         
@@ -742,7 +841,8 @@ def files_table(report):
         # get information for table
         inst = remove_characters(str(atts_instrument[row_n]))
         nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
-        nd = str(int(float(nd)))       
+        if '.0' in nd:
+            nd = str(int(float(nd)))      
         file = remove_characters(str(atts_toolbox_input_file_name[row_n]))
         OPenDAP = nc.OPeNDAP_links[row_n]
         
@@ -751,7 +851,7 @@ def files_table(report):
         report.set_font('Helvetica',style='',size=10)
         report.multi_cell(120,5,'Original:  ' + file + '   ' + 'Processed:' + OPenDAP,1,0,'C');           
         
-def instrument_bullets(report):
+def toolbox_bullet(report):
     
     form.add_space()     
     form.add_space() 
