@@ -262,6 +262,7 @@ def get_netCDF(path):
             depth_comment = select_keys(depth_comment,len_files)
             in_water = select_keys(in_water,len_files)
             out_water = select_keys(out_water,len_files)
+            files_list = nc_files
     
     
     else:
@@ -275,7 +276,40 @@ def get_netCDF(path):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-    
+# %% -----------------------------------------------------------------------------------------------
+# Create Thredds OPeNDAP links for report table
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________   
+files = {}
+# get netCDF filenames from server
+files[0] = get_netCDF(paths.netCDF_TEMP_dir)
+files[1] = get_netCDF(paths.netCDF_SBE37_dir)
+files[2] = get_netCDF(paths.netCDF_CTD_dir)
+files[3] = get_netCDF(paths.netCDF_CURR_dir)
+files[4] = get_netCDF(paths.netCDF_BGC_dir)
+# check whether files exist
+# Select files available
+files_avail = []
+for n_check in range(len(files)):
+    if type(files[n_check]) != str:
+        f = list(files[n_check].files_list)
+        for n_items in range(len(f)):
+            files_avail.append(f[n_items])
+# Create Thredds OPeNDAP links
+first_part = 'http://thredds.aodn.org.au/thredds/dodsC/IMOS/ANMN/NSW/'
+# combine string parts to create thredds links
+OPeNDAP_links = []
+for n_files in range(len(files_avail)):
+    fname = files_avail[n_files]
+    # find point in string where 'PROCESSED_2_5/'
+    find_start = fname.find('2_5/')
+    OPeNDAP_links.append(first_part + fname[find_start+4:])
+            
+
+
+
+
 
 
 
