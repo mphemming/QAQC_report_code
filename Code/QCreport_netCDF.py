@@ -18,8 +18,10 @@
 # Python Packages
 import netCDF4 as nc
 import glob
+import numpy as np
 # QC report modules
 import QCreport_paths as paths
+import QCreport_setup as setup
 
 #------------------------------------------------------------
 # Information 
@@ -92,145 +94,161 @@ out_water = {}
 def get_netCDF(path):   
  
     # add hyphens to deployment file date identifier
-    date_id = '-' + paths.deployment_file_date_identifier + '-'
+    date_id = '-' + setup.deployment_file_date_identifier + '-'
     # Get list of netCDF files in folder
-    nc_files = glob.glob(path + "*" + paths.site_name + "*" + date_id + "*.nc")
+    nc_files = glob.glob(path + "*" + setup.site_name + "*" + date_id + "*.nc")
     len_files = len(nc_files)
+    # sort by nominal depth (shallowest to deepest)
+    if len_files > 1:
+        nd = []
+        for n_file in range(len_files):
+            ncf = nc_files[n_file]
+            find_nd = ncf.find('_END')
+            nd.append(ncf[find_nd-2:find_nd])
+        nd_sorted = np.sort(nd)
+        # shift file order around
+        nc_files_sorted = []
+        for n_sort in range(len_files): 
+            for n_file in range(len_files): 
+                if '-' + nd_sorted[n_sort] + '_' in nc_files[n_file]:
+                    nc_files_sorted.append(nc_files[n_file])
+        nc_files = nc_files_sorted
+        len_files = len(nc_files)
 
     if len_files > 0:
 
         # Get netCDF attributes for each file
-        for file in range(len_files):
-            f_info = nc.Dataset(nc_files[file])
+        for n_file in range(len_files):
+            f_info = nc.Dataset(nc_files[n_file])
     
             if hasattr(f_info,'abstract'):
-                abstract[file] = f_info.abstract
+                abstract[n_file] = f_info.abstract
             else:
-                abstract[file] = 'No data'
+                abstract[n_file] = 'No data'
         
             if hasattr(f_info,'author'):
-                author[file] = f_info.author
+                author[n_file] = f_info.author
             else:
-                author[file] = 'No data'
+                author[n_file] = 'No data'
                 
             if hasattr(f_info,'author_email'):
-                author_email[file] = f_info.author_email
+                author_email[n_file] = f_info.author_email
             else:
-                author_email[file] = 'No data'            
+                author_email[n_file] = 'No data'            
                 
             if hasattr(f_info,'comment'):
-                comment[file] = f_info.comment
+                comment[n_file] = f_info.comment
             else:
-                comment[file] = 'No data'
+                comment[n_file] = 'No data'
                 
             if hasattr(f_info,'history'):
-                history[file] = f_info.history
+                history[n_file] = f_info.history
             else:
-                history[file] = 'No data'            
+                history[n_file] = 'No data'            
                 
             if hasattr(f_info,'instrument'):
-                instrument[file] = f_info.instrument
+                instrument[n_file] = f_info.instrument
             else:
-                instrument[file] = 'No data'           
+                instrument[n_file] = 'No data'           
     
             if hasattr(f_info,'instrument_nominal_depth'):
-                instrument_nominal_depth[file] = f_info.instrument_nominal_depth
+                instrument_nominal_depth[n_file] = f_info.instrument_nominal_depth
             else:
-                instrument_nominal_depth[file] = 'No data'
+                instrument_nominal_depth[n_file] = 'No data'
                 
             if hasattr(f_info,'instrument_sample_interval'):
-                instrument_sample_interval[file] = f_info.instrument_sample_interval
+                instrument_sample_interval[n_file] = f_info.instrument_sample_interval
             else:
-                instrument_sample_interval[file] = 'No data'
+                instrument_sample_interval[n_file] = 'No data'
                 
             if hasattr(f_info,'instrument_serial_number'):
-                instrument_serial_number[file] = f_info.instrument_serial_number
+                instrument_serial_number[n_file] = f_info.instrument_serial_number
             else:
-                instrument_serial_number[file] = 'No data'
+                instrument_serial_number[n_file] = 'No data'
     
             if hasattr(f_info,'local_time_zone'):
-                local_time_zone[file] = f_info.local_time_zone
+                local_time_zone[n_file] = f_info.local_time_zone
             else:
-                local_time_zone[file] = 'No data'
+                local_time_zone[n_file] = 'No data'
     
             if hasattr(f_info,'platform_code'):
-                platform_code[file] = f_info.platform_code
+                platform_code[n_file] = f_info.platform_code
             else:
-                platform_code[file] = 'No data'            
+                platform_code[n_file] = 'No data'            
     
             if hasattr(f_info,'principal_investigator'):
-                principal_investigator[file] = f_info.principal_investigator
+                principal_investigator[n_file] = f_info.principal_investigator
             else:
-                principal_investigator[file] = 'No data'
+                principal_investigator[n_file] = 'No data'
     
             if hasattr(f_info,'quality_control_log'):
-                quality_control_log[file] = f_info.quality_control_log
+                quality_control_log[n_file] = f_info.quality_control_log
             else:
-                quality_control_log[file] = 'No data'
+                quality_control_log[n_file] = 'No data'
                 
             if hasattr(f_info,'time_coverage_start'):
-                time_coverage_start[file] = f_info.time_coverage_start
+                time_coverage_start[n_file] = f_info.time_coverage_start
             else:
-                time_coverage_start[file] = 'No data'
+                time_coverage_start[n_file] = 'No data'
                 
             if hasattr(f_info,'time_coverage_end'):
-                time_coverage_end[file] = f_info.time_coverage_end
+                time_coverage_end[n_file] = f_info.time_coverage_end
             else:
-                time_coverage_end[file] = 'No data'
+                time_coverage_end[n_file] = 'No data'
     
             if hasattr(f_info,'toolbox_input_file'):
-                toolbox_input_file[file] = f_info.toolbox_input_file
+                toolbox_input_file[n_file] = f_info.toolbox_input_file
             else:
-                toolbox_input_file[file] = 'No data'            
+                toolbox_input_file[n_file] = 'No data'            
     
             if hasattr(f_info,'toolbox_version'):
-                toolbox_version[file] = f_info.toolbox_version
+                toolbox_version[n_file] = f_info.toolbox_version
             else:
-                toolbox_version[file] = 'No data'
+                toolbox_version[n_file] = 'No data'
                 
             if hasattr(f_info,'geospatial_lat_min'):
-                geospatial_lat_min[file] = f_info.geospatial_lat_min
+                geospatial_lat_min[n_file] = f_info.geospatial_lat_min
             else:
-                geospatial_lat_min[file] = 'No data'
+                geospatial_lat_min[n_file] = 'No data'
     
             if hasattr(f_info,'geospatial_lat_max'):
-                geospatial_lat_max[file] = f_info.geospatial_lat_max
+                geospatial_lat_max[n_file] = f_info.geospatial_lat_max
             else:
-                geospatial_lat_max[file] = 'No data'
+                geospatial_lat_max[n_file] = 'No data'
     
             if hasattr(f_info,'geospatial_lon_min'):
-                geospatial_lon_min[file] = f_info.geospatial_lon_min
+                geospatial_lon_min[n_file] = f_info.geospatial_lon_min
             else:
-                geospatial_lon_min[file] = 'No data'
+                geospatial_lon_min[n_file] = 'No data'
     
             if hasattr(f_info,'geospatial_lon_max'):
-                geospatial_lon_max[file] = f_info.geospatial_lon_max
+                geospatial_lon_max[n_file] = f_info.geospatial_lon_max
             else:
-                geospatial_lon_max[file] = 'No data'            
+                geospatial_lon_max[n_file] = 'No data'            
     
             if hasattr(f_info,'variables'):
-                variables[file] = f_info.variables
-                var_names[file] = f_info.variables.keys()
+                variables[n_file] = f_info.variables
+                var_names[n_file] = f_info.variables.keys()
             else:
-                variables[file] = 'No data'
-                var_names[file] = 'No data'    
+                variables[n_file] = 'No data'
+                var_names[n_file] = 'No data'    
             
             # get TIME and DEPTH attributes
             if 'TIME' in var_names[0]:
                 tatt = f_info.variables['TIME']
-                time_units[file] = tatt.units
-                time_comment[file] = tatt.comment
+                time_units[n_file] = tatt.units
+                time_comment[n_file] = tatt.comment
             if 'DEPTH' in var_names[0]:
               Datt = f_info.variables['DEPTH']      
-              depth_comment[file] = Datt.comment
+              depth_comment[n_file] = Datt.comment
               
             # get times in/out water
             if hasattr(f_info,'quality_control_log'):
                 if 'imosInOutWaterQC' in f_info.quality_control_log:
                     f_string = str(f_info.quality_control_log)
                     pos = f_string.find('imosInOutWaterQC')
-                    in_water[file] = f_info.quality_control_log[pos+20:pos+37]
-                    out_water[file] = f_info.quality_control_log[pos+43:pos+60]
+                    in_water[n_file] = f_info.quality_control_log[pos+20:pos+37]
+                    out_water[n_file] = f_info.quality_control_log[pos+43:pos+60]
             
            
         # Save information as a class    
