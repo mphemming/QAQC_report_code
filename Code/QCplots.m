@@ -77,11 +77,13 @@ end
 clim.t = 1:366;
 
 % create figure
-figure('units','normalized','position',[.1 .3 .8 .7]);
+figure('units','normalized','position',[.1 .3 1 .7]);
+% climatology plot
+subplot(10,10,[1:6,11:16,21:26,31:36,41:46,51:56,61:66,71:76,81:86,91:96])
 s1 = scatter(YD(check_16),data.TEMP(check_16),10,'filled','MarkerFaceColor',[.8 .8 .8],'MarkerEdgeColor',[.8 .8 .8])
 hold on
 check_deployment = data.TIME > datenum(2019,03,01) & data.TIME < datenum(2019,06,01);
-s2 = scatter(YD(check_deployment & check_16),data.TEMP(check_deployment & check_16),10,'filled')
+s2 = scatter(YD(check_deployment & check_16),data.TEMP(check_deployment & check_16),10,'filled','MarkerFaceColor',[.4 .8 0],'MarkerEdgeColor',[.4 .8 0])
 c = plot(clim.T,'LineWidth',3,'Color','k','LineStyle',':')
 c90 = plot(clim.P90,'LineWidth',3,'Color','r','LineStyle',':')
 c10 = plot(clim.P10,'LineWidth',3,'Color','b','LineStyle',':')
@@ -92,6 +94,36 @@ set(leg,'Box','Off','FontSize',20)
 set(gca,'FontSize',22,'Box','On'); xlim([-2 369])
 datetick('x','KeepLimits'); ylabel('Temperature [^\circC]');
 title('PH100 16 m');
+
+% depth distribution plot
+subplot(10,10,[8:10,18:20,28:30,38:40,48:50,58:60,68:70,78:80,88:90,98:100])
+hold on;
+% mooring data all
+[n,edges] = histcounts(data.DEPTH(check_16),50)
+max_all = nanmax(n);
+n_perc = n./sum(n)*100;
+n_norm = (1/max_all)*n;
+edges = interp1(1:51,edges,1.5:1:50.5,'Linear');
+% patch(n_perc,edges,[.8 .8 .8]);
+% scatter(n_perc(n_perc > 0.5),edges(n_perc > 0.5),'k','filled');
+b1 = barh(edges,n_norm)
+
+% mooring data deployment
+[n,edges] = histcounts(data.DEPTH(check_deployment & check_16),20)
+n_norm = (1/max(n))*n;
+n_perc = n./sum(n)*100;
+edges = interp1(1:21,edges,1.5:1:20.5,'Linear');
+b2 = barh(edges,n_norm)
+
+% set properties
+set(b1,'FaceColor',[.8 .8 .8]);
+set(b2,'FaceColor',[.4 .8 0]);
+set(gca,'YLim',[8 30],'XLim',[0 1.1],'FontSize',22,'Box','On','YDir','Reverse');
+add_l(16,1);
+xlabel('Number of points (normalised)');
+ylabel('Depth [m]');
+leg = legend([b1 b2],'Mooring 16 m 03/03/2011 - 12/06/2019','Mooring 16 m 1903');
+set(leg,'Location','SouthEast','Box','Off','FontSize',14);
 
 print(gcf,'-dpng','-r400',['/Users/Michael/Documents/Work/UNSW/Work/QC_reports/plots/','climatology_example.png']);
 
