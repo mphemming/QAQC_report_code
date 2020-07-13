@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # Created on Thu Jun  4 13:42:02 2020
-# Contributers:  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (code):  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (review): Moninya Roughan (NSW-IMS), Tim Austin (NSW-IMOS), Stuart Milburn (NSW-IMOS) 
 # contact email: m.hemming@unsw.edu.au
 
 # What does this script do?
@@ -30,6 +31,7 @@ import QCreport_QualityControl as QCR
 import QCreport_DeploymentPhotographs as DepPhoto
 import QCreport_ToolboxPlots as tbp
 import QCreport_setup as setup
+import QCreport_cover as cover
 
 #------------------------------------------------------------
 # Information 
@@ -83,6 +85,16 @@ report = form.format_doc(setup.name_of_reportmaker)
 # %% -----------------------------------------------------------------------------------------------
 # Sections
 
+
+# --------------------------------------------
+# Front Cover
+# --------------------------------------------
+
+# Add content
+cover.create_cover(report)
+
+print('Front Cover Created')
+
 # --------------------------------------------
 # Section: Deployment Details
 # --------------------------------------------
@@ -99,10 +111,10 @@ QCR.intro_comments(report)
 DepDet.instrument_table(report)
 DepDet.parameter_table(report)
 DepDet.timeinout_table(report)
-DepDet.files_table(report)
+DepDet.file_tables(report)
 DepDet.toolbox_bullet(report)
 
-print('Section: ''Deployment Details'' added')
+print('Section added: ''Deployment Details''')
 
 # --------------------------------------------
 # Section: Deployment Photographs
@@ -117,7 +129,7 @@ report.set_link(DPP)
 # Add content
 DepPhoto.include_photos(depphoto_dir,report)
 
-print('Section: ''Deployment Photographs'' added')
+print('Section added: ''Deployment Photographs''')
 
 # --------------------------------------------
 # Section: Quality Control
@@ -132,7 +144,7 @@ report.set_link(QC)
 # Add content
 QCR.QC_comments(report)
 
-print('Section: ''Quality Control'' added')
+print('Section added: ''Quality Control''')
 
 # --------------------------------------------
 # Section: Toolbox Plots
@@ -147,7 +159,7 @@ report.set_link(TBP)
 # Add content
 tbp.toolbox_plots(toolbox_dir,report)
 
-print('Section: ''Toolbox Plots'' added')
+print('Section added: ''Toolbox Plots''')
 
 # --------------------------------------------
 # Section: Mooring Diagram
@@ -162,7 +174,7 @@ report.set_link(MD)
 # Add image
 report.image(mooring_dir)
 
-print('Section: ''Mooring Diagrams'' added')
+print('Section added: ''Mooring Diagrams''')
 
 
 #------------------------------------------------------------
