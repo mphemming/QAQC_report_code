@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # Created on Thu Jun  4 13:42:02 2020
-# Contributers:  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (code):  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (review): Moninya Roughan (NSW-IMS), Tim Austin (NSW-IMOS), Stuart Milburn (NSW-IMOS) 
 # contact email: m.hemming@unsw.edu.au
 
 
@@ -56,6 +57,11 @@ def format_doc(name_of_reportmaker):
     report.set_font('Helvetica',size=14)
     report.set_title(title)
     return report
+
+def title_header(title_string):
+    report.set_font('Helvetica', size=24, style ='B')
+    report.multi_cell(200, 10, title_string, 0, 2, 'C') 
+    return report    
 
 def section_header(header_string):
     report.set_font('Helvetica', size=22, style ='B')
@@ -113,5 +119,16 @@ def bullet_point_multi(bullet_text,font_size):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
+
+# %% -----------------------------------------------------------------------------------------------
+# Special characters
+
+degree_symbol = u'\N{DEGREE SIGN}'
+vel_units = 'm s¯¹'
+O2_units = 'µmol kg¯¹'
+chl_units = 'mg m¯³'
+turb_units = 'NTU'
+
+
 
 
