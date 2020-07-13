@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # Created on Fri Jun 12 09:29:41 2020
-# Contributers:  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (code):  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (review): Moninya Roughan (NSW-IMS), Tim Austin (NSW-IMOS), Stuart Milburn (NSW-IMOS) 
 # contact email: m.hemming@unsw.edu.au
 
 # Section: Quality Control
@@ -224,10 +225,74 @@ def intro_comments(report):
     form.sub_header('Deployment Assessment')
     # add vertical space
     form.add_space()
+    #------------------------------------------
+    # Add QC assessment details as table
+    #------------------------------------------
+    report.set_font_size(12)
+    report.set_fill_color(224,224,224)
+    form.add_space()
     #---------------------------------
-    
+    # row 1
+    report.set_font('Helvetica',style='B')
+    report.cell(60,8,"QC undertaken",1,0,'L'); 
+    report.set_font('Helvetica',style='')
+    report.cell(70,8,setup.QCcomment,1,0,'L');
+    report.ln()
     #---------------------------------
-    # add comments
+    # row 2    
+    report.set_font('Helvetica',style='B')
+    report.cell(60,8,"QC type",1,0,'L'); 
+    report.set_font('Helvetica',style='')
+    report.cell(70,8,setup.QCmethod,1,0,'L');
+    report.ln()    
+    #---------------------------------
+    # row 3    
+    report.set_font('Helvetica',style='B')
+    report.cell(60,8,"Fieldwork issues",1,0,'L'); 
+    report.set_font('Helvetica',style='')
+    report.cell(70,8,setup.Fieldwork_issues,1,0,'L');
+    report.ln()        
+    #---------------------------------
+    # row 4    
+    report.set_font('Helvetica',style='B')
+    report.cell(60,8,"Sensor Issues",1,0,'L'); 
+    report.set_font('Helvetica',style='')
+    report.cell(70,8,setup.Sensor_damage,1,0,'L');
+    report.ln()       
+    #---------------------------------
+    # row 5    
+    report.set_font('Helvetica',style='B')
+    report.cell(60,8,"Lost Equipment",1,0,'L'); 
+    report.set_font('Helvetica',style='')
+    report.cell(70,8,setup.Lost_equipment,1,0,'L');
+    report.ln()       
+    #---------------------------------
+    # row 6    
+    report.set_font('Helvetica',style='B')
+    report.cell(60,8,"Biofouling",1,0,'L'); 
+    report.set_font('Helvetica',style='')
+    report.cell(70,8,setup.Biofouling,1,0,'L');
+    report.ln()      
+    #---------------------------------
+    # row 7    
+    report.set_font('Helvetica',style='B')
+    report.cell(60,8,"Other issues",1,0,'L'); 
+    report.set_font('Helvetica',style='')
+    report.cell(70,8,setup.Other_issues,1,0,'L');
+    report.ln()       
+    #---------------------------------
+    # row 8    
+    report.set_font('Helvetica',style='B')
+    report.cell(60,8,"Additional QC",1,0,'L'); 
+    report.set_font('Helvetica',style='')
+    report.cell(70,8,setup.Additional_QC,1,0,'L');
+    report.ln()       
+    #---------------------------------
+    # comments
+    # add sub heading        
+    form.sub_header('Comments')
+    # add vertical space
+    form.add_space()    
     # set font
     report.set_font('Helvetica',style='',size=12) 
     # add vertical space           
@@ -239,6 +304,14 @@ def intro_comments(report):
     # go to next line
     report.ln()    
     #---------------------------------
+    
+    
+    
+    
+    
+    
+    
+    
     
 ###################################################################    
     
