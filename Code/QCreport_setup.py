@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 
 # Created on Mon Jun 29 16:11:18 2020
-# Contributers:  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (code):  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (review): Moninya Roughan (NSW-IMS), Tim Austin (NSW-IMOS), Stuart Milburn (NSW-IMOS) 
 # contact email: m.hemming@unsw.edu.au
+
+
+# %% -----------------------------------------------------------------------------------------------
+# Import packages
+
+# Python Packages
+import datetime
 
 # %% -----------------------------------------------------------------------------------------------
 # Choose site, deployment, add name of report maker 
@@ -36,11 +44,11 @@ Sensor_damage = 'None'
 # default: 'None', if damage add text here
 Lost_equipment = 'None'
 # default: 'None', if lost equipment add text here
-biofouling = 'Some'
+Biofouling = 'Moderate, see attached images'
 # options: 'None', 'Some', 'Moderate', 'Substantial'
 Other_issues = 'None'
 # default: 'None', if other issues add text here
-Additional_QC = 'Yes'
+Additional_QC = 'Yes, see comments'
 # options: 'yes' or 'no'
 comments = 'Some pressure sensor drift. See end of report for details.'
 # default: 'None', if comments add text here   
@@ -60,6 +68,52 @@ comments = 'Some pressure sensor drift. See end of report for details.'
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
+
+# %% -----------------------------------------------------------------------------------------------
+# get date of document creation for cover
+
+now = datetime.date.today().strftime("%B %d, %Y")
+now_year = datetime.date.today().strftime("%Y")
+
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+
+
+# %% -----------------------------------------------------------------------------------------------
+# citation
+
+# split name of reportmaker into first and second name
+findspace = name_of_reportmaker.find(' ')
+firstname = name_of_reportmaker[0:findspace]
+surname = name_of_reportmaker[findspace+1:]
+
+if 'Austin' in surname:
+    citation = 'Austin, T, Roughan, M, and Milburn, S. ' + \
+    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+    ' Integrated Marine Observing System, Australia.'
+if 'Roughan' in surname:
+    citation = 'Roughan, M, Austin, T, and Milburn, S. ' + \
+    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+    ' Integrated Marine Observing System, Australia.'
+if 'Milburn' in surname:
+    citation = 'Milburn, S, Roughan, M, and Austin, T. ' + \
+    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+    ' Integrated Marine Observing System, Australia.'
+if 'Hemming' in surname:
+    citation = 'Hemming, M, Roughan, M, and Austin, T, Milburn, S, Malan, N. ' + \
+    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+    ' Integrated Marine Observing System, Australia.'    
+    
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+
+
 
 
 
