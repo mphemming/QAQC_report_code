@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # Created on Fri Jun 12 14:18:48 2020
-# Contributers:  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (code):  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
+# Contributers (review): Moninya Roughan (NSW-IMS), Tim Austin (NSW-IMOS), Stuart Milburn (NSW-IMOS) 
 # contact email: m.hemming@unsw.edu.au
 
 # Section: Deployment Photographs
