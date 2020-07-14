@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -32,6 +33,7 @@ import QCreport_DeploymentPhotographs as DepPhoto
 import QCreport_ToolboxPlots as tbp
 import QCreport_setup as setup
 import QCreport_cover as cover
+import QCreport_AdditionalPlots as Addp
 
 #------------------------------------------------------------
 # Information 
@@ -115,6 +117,21 @@ DepDet.file_tables(report)
 DepDet.toolbox_bullet(report)
 
 print('Section added: ''Deployment Details''')
+
+# --------------------------------------------
+# Section: Plots
+# --------------------------------------------
+# 
+
+# Plots heading
+form.section_header('Plots')
+# setup table of contents link
+pp = report.add_link()
+report.set_link(pp)
+# Add content
+Addp.addOCplots(report)
+
+print('Section added: ''Plots''')
 
 # --------------------------------------------
 # Section: Deployment Photographs
@@ -214,10 +231,11 @@ report.ln(30)
 form.section_header('Report Contents')
 
 form.TOC('Deployment Details',DD)
-form.TOC('Mooring Diagram',MD)
+form.TOC('Plots',pp)
 form.TOC('Quality Control',QC)
 form.TOC('Deployment Photographs',DPP)
 form.TOC('Toolbox Plots',TBP)
+form.TOC('Mooring Diagram',MD)
 
 print('Table of Contents added')
 
