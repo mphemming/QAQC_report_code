@@ -40,8 +40,6 @@ def create_cover(report):
     report.set_font('Helvetica', size=18, style ='B')
     report.cell(200, 10, setup.site_name + '  |  Deployment ' + setup.deployment, 0, 2, 'l')       
     report.ln(3)    
-    report.cell(200, 10, setup.name_of_reportmaker, 0, 2, 'l') 
-    report.ln(3)    
     report.cell(200, 10, setup.now, 0, 2, 'l') 
     report.ln(3)  
     report.set_text_color(r=0,g=0,b=0)    
