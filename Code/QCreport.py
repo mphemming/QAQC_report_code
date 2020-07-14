@@ -124,6 +124,7 @@ print('Section added: ''Deployment Details''')
 # 
 
 # Plots heading
+report.add_page(orientation='p')
 form.section_header('Plots')
 # setup table of contents link
 pp = report.add_link()
