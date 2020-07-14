@@ -255,7 +255,7 @@ def intro_comments(report):
     #---------------------------------
     # row 4    
     report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Sensor Issues",1,0,'L'); 
+    report.cell(60,8,"Sensor Damage",1,0,'L'); 
     report.set_font('Helvetica',style='')
     report.cell(70,8,setup.Sensor_damage,1,0,'L');
     report.ln()       
@@ -288,6 +288,14 @@ def intro_comments(report):
     report.cell(70,8,setup.Additional_QC,1,0,'L');
     report.ln()       
     #---------------------------------
+    # term explainer after table
+    report.ln() 
+    report.set_font('Helvetica',style='',size=10) 
+    report.cell(70,4,'Options: ''None'', ''Some'', ''Moderate'', ''Substantial''',0,0,'L');    
+    report.ln()      
+    report.cell(70,4,'QC type options: ''Automatic'', ''Manual'', ''Automatic and manual''',0,0,'L');    
+    report.ln()      
+    #---------------------------------
     # comments
     # add sub heading        
     form.sub_header('Comments')
@@ -302,13 +310,7 @@ def intro_comments(report):
     # add comments to PDF 
     report.multi_cell(180,6,setup.comments,0,0,'L')
     # go to next line
-    report.ln()    
-    #---------------------------------
-    
-    
-    
-    
-    
+    report.ln()      
     
     
     
