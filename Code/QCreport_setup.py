@@ -50,6 +50,10 @@ Other_issues = 'None'
 # default: 'None', if other issues add text here
 Additional_QC = 'Yes, see comments'
 # options: 'yes' or 'no'
+
+# Keep information above short (no more than 4 words). If there
+# is a neeed to add more information, add this in the 'comments' string below  
+
 comments = 'Some pressure sensor drift. See end of report for details.'
 # default: 'None', if comments add text here   
 # tips: copy & paste might not work - only use characters in 'latin-q' codec
@@ -108,7 +112,11 @@ if 'Hemming' in surname:
     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
     ' Integrated Marine Observing System, Australia.'    
-    
+if 'Malan' in surname:
+    citation = 'Malan, N, Roughan, M, and Austin, T, Milburn, S, Hemming, M. ' + \
+    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+    ' Integrated Marine Observing System, Australia.'    
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
