@@ -6,11 +6,20 @@ Created on Mon Jun  1 14:47:30 2020
 @author: Michael
 """
 
+# -----------------------------------------------------------------------------------------------
+# Import packages
+
 import pandas as pd
 import matplotlib
 from pylab import title, figure, xlabel, ylabel, xticks, bar, legend, axis, savefig
 from fpdf import FPDF
 from numpy import loadtxt
+
+# useful code:
+# https://pyfpdfbook.wordpress.com/2015/03/22/table-using-only-cell-borders/
+
+
+
 
 # -----------------------------------------------------------------------------------------------
 # Load Deployment text information
@@ -48,7 +57,6 @@ title = 'PH100 Quality Control Report'
 # -----------------------------------------------------------------------------------------------
 # Define Document metadata
 pdf = FPDF()  
-pdf.add_page()
 pdf.set_xy(0, 0)
 pdf.set_author('NSW-IMOS')  
 pdf.set_title(title)  
@@ -56,11 +64,20 @@ pdf.set_title(title)
 # -----------------------------------------------------------------------------------------------
 # Add content to body of document
 
+pdf.add_page('p')
 pdf.set_font('Helvetica', 'B', 28)
 pdf.cell(200, 10, title, 0, 2, 'C')      
 pdf.set_font('Helvetica', 'B', 20)
-pdf.cell(200, 10, deployment_info, 0, 2, 'C')       
+pdf.cell(200, 10, deployment_info, 0, 2, 'C')      
+link = pdf.add_link() 
+pdf.add_page('l')
+pdf.set_link(link, y = 0.0, page = -1)
 
+
+pdf.cell(0,0,'http://fpdf.org/en/doc/link.htm')
+
+
+#pdf.link(0, 0, 0, 0, 'http://fpdf.org/en/doc/link.htm')
 
 # image example
 pdf.image('/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Mooring_diagrams/example.png', x = 30, y = 50, w = 0, h = 100, type = 'PNG')
