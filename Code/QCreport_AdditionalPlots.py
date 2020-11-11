@@ -29,11 +29,11 @@ import QCreport_cover as cover
 def addOCplots(report):
     
    # Add SST plot 
-   report.image('/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/OceanCurrents/' + \
+   report.image(paths.OC_dir + \
             setup.site_name + '_' + setup.deployment + '_' + 'SSTs_OC.png',h=260,w=160,x=20,y=30)    
    # Add Percentile plot 
    report.add_page()
-   report.image('/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Example_data_BMP070_29/OceanCurrents/' + \
+   report.image(paths.OC_dir + \
             setup.site_name + '_' + setup.deployment + '_' + 'percentiles_OC.png',h=260,w=160,x=20,y=30)    
 
 
