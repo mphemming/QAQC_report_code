@@ -4,7 +4,7 @@
 
 # Created on Thu Jun  4 13:42:02 2020
 # Contributers (code):  Michael Hemming (NSW-IMOS), Neil Malan (NSW-IMOS)
-# Contributers (review): Moninya Roughan (NSW-IMS), Tim Austin (NSW-IMOS), Stuart Milburn (NSW-IMOS) 
+# Contributers (review): Moninya Roughan (NSW-IMS), Tim Austin (NSW-IMOS), Stuart Milburn (NSW-IMOS), Neil Malan (NSW-IMOS) 
 # contact email: m.hemming@unsw.edu.au
 
 # What does this script do?
