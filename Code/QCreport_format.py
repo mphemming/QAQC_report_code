@@ -101,8 +101,11 @@ def TOC(TOC_string,TOC_ID):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
     
-fpdf.set_global("SYSTEM_TTFONTS", '/Users/Michael/Documents/Work/UNSW/Work/QC_reports/Code/Fonts/NotoSans-unhinted/')
-report.add_font("NotoSans", style="", fname="NotoSans-Regular.ttf", uni=True)    
+fpdf.set_global("SYSTEM_TTFONTS", "C:\\Users\\mphem\\Documents\\Work\\UNSW\\" + \
+                "QC_reports\\QC_reports\\Code\\Fonts\\")
+report.add_font("NotoSans", style="", fname="C:\\Users\\mphem\\Documents\\Work\\UNSW\\" + \
+                "QC_reports\\QC_reports\\Code\\Fonts\\Noto_Sans_V1.ttf", uni=True)    
+
 
 def bullet_point(bullet_text):
     
