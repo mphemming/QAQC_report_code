@@ -323,7 +323,9 @@ for n_files in range(len(files_avail)):
     fname = files_avail[n_files]
     # find point in string where 'PROCESSED_2_5/'
     find_start = fname.find('2_5/')
-    OPeNDAP_links.append(first_part + fname[find_start+4:])
+    OPeNDAP_string = first_part + fname[find_start+67:]
+    OPeNDAP_string = OPeNDAP_string.replace('\\', '/')
+    OPeNDAP_links.append(OPeNDAP_string)
             
 
 
