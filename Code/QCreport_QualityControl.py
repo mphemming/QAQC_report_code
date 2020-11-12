@@ -120,7 +120,7 @@ def separate_log(QClog):
 
 
 # %% -----------------------------------------------------------------------------------------------
-# Create intro table of details    
+# Add QC logs  
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________    
@@ -158,7 +158,7 @@ def QC_comments(report):
         # add QC log for each instrument         
         form.add_space()
         # add subheading
-        report.set_font('Helvetica',style='B',size=16)
+        report.set_font('Helvetica',style='B',size=14)
         report.cell(80,6,'Quality Control Log',0,0,'L');
         # add vertical space
         form.add_space()
@@ -168,7 +168,7 @@ def QC_comments(report):
         # for each quality control log account, create bullet point
         for log_n in range(len(QClog)):    
             # set font
-            report.set_font('Helvetica',style='B',size=12)
+            report.set_font('Helvetica',style='B',size=10)
             # create bullet point for quality control log account
             form.bullet_point_multi(DepDet.remove_characters_QC(QClog[log_n]),12)     
             # go to next line
@@ -241,10 +241,10 @@ def intro_comments(report):
     #---------------------------------
     # row 2    
     report.set_font('Helvetica',style='B')
-    report.cell(60,8,"QC type",1,0,'L'); 
+    report.cell(60,8,"Expert QC",1,0,'L'); 
     report.set_font('Helvetica',style='')
-    report.cell(70,8,setup.QCmethod,1,0,'L');
-    report.ln()    
+    report.cell(70,8,setup.Expert_QC,1,0,'L');
+    report.ln() 
     #---------------------------------
     # row 3    
     report.set_font('Helvetica',style='B')
@@ -279,22 +279,15 @@ def intro_comments(report):
     report.cell(60,8,"Other issues",1,0,'L'); 
     report.set_font('Helvetica',style='')
     report.cell(70,8,setup.Other_issues,1,0,'L');
-    report.ln()       
-    #---------------------------------
-    # row 8    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Additional QC",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(70,8,setup.Additional_QC,1,0,'L');
-    report.ln()       
+    report.ln()             
     #---------------------------------
     # term explainer after table
-    report.ln() 
-    report.set_font('Helvetica',style='',size=10) 
-    report.cell(70,4,'Options: ''None'', ''Some'', ''Moderate'', ''Substantial''',0,0,'L');    
-    report.ln()      
-    report.cell(70,4,'QC type options: ''Automatic'', ''Manual'', ''Automatic and manual''',0,0,'L');    
-    report.ln()      
+    # report.ln() 
+    # report.set_font('Helvetica',style='',size=10) 
+    # report.cell(70,4,'Options: ''None'', ''Some'', ''Moderate'', ''Substantial''',0,0,'L');    
+    # report.ln()      
+    # report.cell(70,4,'QC type options: ''Automatic'', ''Manual'', ''Automatic and manual''',0,0,'L');    
+    # report.ln()      
     #---------------------------------
     # comments
     # add sub heading        
