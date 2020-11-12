@@ -35,10 +35,10 @@ def create_cover(report):
     # Add Document title and names
     report.ln(30)
     report.set_text_color(r=255,g=255,b=255)
-    form.title_header('Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site:')
+    form.title_header('Report on the Quality Control of the NSW-IMOS Australian National Moorings Network')
     report.ln(3)
     report.set_font('Helvetica', size=18, style ='B')
-    report.cell(200, 10, setup.site_name + '  |  Deployment ' + setup.deployment, 0, 2, 'l')       
+    report.cell(200, 10, 'site: ' + setup.site_name + '  |  Deployment ' + setup.deployment, 0, 2, 'l')       
     report.ln(3)    
     report.cell(200, 10, setup.now, 0, 2, 'l') 
     report.ln(3)  
