@@ -34,27 +34,35 @@ name_of_reportmaker = 'Michael Hemming'
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-QCcomment = 'Some'
-# options: 'None', 'Some', 'Moderate', 'Substantial'
-QCmethod = 'Automatic and manual'
-# options: 'Automatic', 'Manual', 'Automatic and manual'
+QCcomment = 'Automatic, Manual'
+# options: 'None','Automatic', 'Manual' (can be more than one choice e.g. 'Automatic, Manual')
+Expert_QC = 'Yes, see comments'
+# options: 'yes' or 'no'
 Fieldwork_issues = 'None'
 # default: 'None', if issues add text here
 Sensor_damage = 'None'
 # default: 'None', if damage add text here
 Lost_equipment = 'None'
 # default: 'None', if lost equipment add text here
-Biofouling = 'Moderate, see attached images'
-# options: 'None', 'Some', 'Moderate', 'Substantial'
+Biofouling = 'Moderate, see photographs'
+# options: 'None', 'Some', 'Moderate', 'Substantial', 'see photographs' (can be more than one choice e.g. 'Moderate, see photographs')
 Other_issues = 'None'
 # default: 'None', if other issues add text here
-Additional_QC = 'Yes, see comments'
-# options: 'yes' or 'no'
 
 # Keep information above short (no more than 4 words). If there
 # is a neeed to add more information, add this in the 'comments' string below  
 
-comments = 'Some pressure sensor drift. See end of report for details.'
+
+comments =  'Post deployment processing of the data identified significant pressure drift in the top PT logger ' + \
+            '(PT8 - Nominally 12m depth, 62m above the bottom). Closer inspection indicates a 0.24m ' + \
+            'offset between PT8 (0.117m) and PT7 (0.357m - similar with the other PT sensors) ' + \
+            'prior to the instruments being deployed. It also indicates that once deployed, PT7 (21.29m) and PT8 (14.70m) are ' + \
+            'actually only separated by 6.59m not the nominal 8m. Inspection of the mooring line indicates that some shrinkage has ' + \
+            'occurred and that the loggers were separated by 7m (all other logger positions confirmed to be within spec). Deployment ' + \
+            'logs and metadata have been amended accordingly. The pressure data were corrected by ....'
+
+# comments = 'Some pressure sensor drift. See end of report for details.'
+
 # default: 'None', if comments add text here   
 # tips: copy & paste might not work - only use characters in 'latin-q' codec
 # e.g. commas copied over from somewhere else may be different to commas in latin-1
@@ -96,27 +104,27 @@ if 'Austin' in surname:
     citation = 'Austin, T, Roughan, M, and Milburn, S. ' + \
     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' Integrated Marine Observing System, Australia.'
+    ' UNSW - Integrated Marine Observing System, Australia.'
 if 'Roughan' in surname:
     citation = 'Roughan, M, Austin, T, and Milburn, S. ' + \
     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' Integrated Marine Observing System, Australia.'
+    ' UNSW - Integrated Marine Observing System, Australia.'
 if 'Milburn' in surname:
     citation = 'Milburn, S, Roughan, M, and Austin, T. ' + \
     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' Integrated Marine Observing System, Australia.'
+    ' UNSW - Integrated Marine Observing System, Australia.'
 if 'Hemming' in surname:
     citation = 'Hemming, M, Roughan, M, and Austin, T, Milburn, S, Malan, N. ' + \
     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' Integrated Marine Observing System, Australia.'    
+    ' UNSW - Integrated Marine Observing System, Australia.'    
 if 'Malan' in surname:
     citation = 'Malan, N, Roughan, M, and Austin, T, Milburn, S, Hemming, M. ' + \
     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' Integrated Marine Observing System, Australia.'    
+    ' UNSW - Integrated Marine Observing System, Australia.'    
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
