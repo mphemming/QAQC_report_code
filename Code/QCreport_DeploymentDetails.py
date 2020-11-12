@@ -474,33 +474,40 @@ def intro_table(report):
     #---------------------------------
     # row 3    
     report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Dates",1,0,'L'); 
+    report.cell(60,8,"Start Date",1,0,'L'); 
     report.set_font('Helvetica',style='')
-    report.cell(80,8,start_date + '  |  ' + end_date,1,0,'C');
+    report.cell(80,8,start_date,1,0,'C');
     report.ln()        
     #---------------------------------
     # row 4    
+    report.set_font('Helvetica',style='B')
+    report.cell(60,8,"End Date",1,0,'L'); 
+    report.set_font('Helvetica',style='')
+    report.cell(80,8,end_date,1,0,'C');
+    report.ln()            
+    #---------------------------------
+    # row 5    
     report.set_font('Helvetica',style='B')
     report.cell(60,8,"Longitude",1,0,'L'); 
     report.set_font('Helvetica',style='')
     report.cell(80,8,lon + form.degree_symbol + ' E',1,0,'C');
     report.ln()      
     #---------------------------------
-    # row 5    
+    # row 6    
     report.set_font('Helvetica',style='B')
     report.cell(60,8,"Latitude",1,0,'L'); 
     report.set_font('Helvetica',style='')
     report.cell(80,8,lat + form.degree_symbol + ' S',1,0,'C');
     report.ln()      
     #---------------------------------
-    # row 6    
+    # row 7    
     report.set_font('Helvetica',style='B')
     report.cell(60,8,"Principal Investigator",1,0,'L'); 
     report.set_font('Helvetica',style='')
     report.cell(80,8,PO,1,0,'C');
     report.ln()     
     #---------------------------------
-    # row 7    
+    # row 8    
     report.set_font('Helvetica',style='B')
     report.cell(60,8,"Field Team",1,0,'L'); 
     report.set_font('Helvetica',style='')
@@ -530,7 +537,7 @@ def intro_table(report):
     
 def instrument_table(report):
 
-    report.add_page()
+    report.add_page(orientation='P')
     form.sub_header('Instrument Serial Numbers and Nominal Depths')    
     report.set_font_size(12)    
     form.add_space()  
@@ -776,8 +783,8 @@ def timeinout_table(report):
     # Header
     report.set_font('Helvetica',style='B')
     report.cell(80,8,"Instrument & nom. depth",1,0,'C');     
-    report.cell(40,8,"Time in",1,0,'C');  
-    report.cell(40,8,"Time out",1,0,'C');  
+    report.cell(40,8,"Time in (UTC)",1,0,'C');  
+    report.cell(40,8,"Time out (UTC)",1,0,'C');  
     report.ln()    
     #---------------------------------
     # add rows using loop
@@ -794,7 +801,7 @@ def timeinout_table(report):
         report.cell(80,8,inst + '  ' + nd + ' m',1,0,'L');    
         report.cell(40,8,ti,1,0,'C');         
         report.cell(40,8,to,1,0,'C'); 
-        report.ln()     
+        report.ln()            
         
 #------------------------------------------------------------
 # Information 
@@ -814,12 +821,18 @@ def timeinout_table(report):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
     
+def toolbox_bullet(report):
+    
+    form.add_space()     
+    report.set_font_size(6)         
+    form.bullet_point('Toolbox version: ' + tb_vers)
+
 def file_tables(report):
-     
+
     #---------------------------------
     # Raw file names
     #---------------------------------
-    report.add_page()    
+    report.add_page(orientation='P')    
     form.sub_header('Raw Filenames')    
     report.set_font_size(12)      
     form.add_space()  
@@ -842,6 +855,8 @@ def file_tables(report):
         report.cell(60,8,inst + '  ' + nd + ' m',1,0,'L');
         report.set_font('Helvetica',style='',size=10)
         report.multi_cell(70,8,file,1,0)
+    # Add toolbox version number here
+    toolbox_bullet(report)
     #---------------------------------
     # Thredds file names
     #---------------------------------       
@@ -867,14 +882,6 @@ def file_tables(report):
         report.cell(60,12,inst + '  ' + nd + ' m',1,0,'L');
         report.set_font('Helvetica',style='',size=8)
         report.multi_cell(120,4,OPenDAP,1,0)    
-    
-
-
-def toolbox_bullet(report):
-    
-    form.add_space()     
-    report.set_font_size(10)         
-    form.bullet_point('Toolbox version: ' + tb_vers)
     
     
 #------------------------------------------------------------
