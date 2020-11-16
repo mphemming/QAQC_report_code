@@ -35,5 +35,8 @@ def addOCplots(report):
    report.add_page()
    report.image(paths.OC_dir + \
             setup.site_name + '_' + setup.deployment + '_' + 'percentiles_OC.png',h=260,w=160,x=20,y=30)    
-
+   # Add ocean color plot 
+   report.add_page()
+   report.image(paths.OC_dir + \
+            setup.site_name + '_' + setup.deployment + '_' + 'Chl_OC.png',h=260,w=160,x=20,y=30) 
 
