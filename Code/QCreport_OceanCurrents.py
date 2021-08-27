@@ -63,13 +63,13 @@ def get_OCimages(url):
     # get current path
     current_path = os.getcwd()
     
-    if 'pctiles' in url:
+    if '/pctiles/' in url:
         dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
                                                 'Example_data_BMP070_29\\OceanCurrents\\Percentiles'
-    if 'SST' in url:
+    if '/SST/' in url:
         dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
                                                 'Example_data_BMP070_29\\OceanCurrents\\SST'   
-    if 'chl' in url:
+    if '/chl/' in url:
         dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\QC_reports\\' + \
                                                 'Example_data_BMP070_29\\OceanCurrents\\Chl'                                                    
         
@@ -162,10 +162,13 @@ if len(OC_plots_in_dir) == 0:
         plt.subplots_adjust(top = 1.2, bottom = 0, right = 1, left = 0, 
                 hspace = 0, wspace = 0)
         plt.margins(0,0)
+        plt.tight_layout()
     #--------------    
     # save figure
-    fig.savefig('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\Example_data_BMP070_29\\OceanCurrents\\' + \
-                setup.site_name + '_' + setup.deployment + '_' + 'percentiles_OC.png', dpi=400)    
+    fig.savefig('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports' +
+                '\\Example_data_BMP070_29\\OceanCurrents\\' + 
+                setup.site_name + '_' + setup.deployment + 
+                '_' + 'percentiles_OC.png', dpi=400, bbox_inches="tight")    
     #-------------------------------------------------------------     
 
 # %% -----------------------------------------------------------------------------------------------
@@ -204,10 +207,13 @@ if len(OC_plots_in_dir) == 0:
         plt.subplots_adjust(top = 1.2, bottom = 0, right = 1, left = 0, 
                 hspace = 0, wspace = 0)
         plt.margins(0,0)    
+        plt.tight_layout()
     #--------------    
     # save figure
-    fig.savefig('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\Example_data_BMP070_29\\OceanCurrents\\' + \
-                setup.site_name + '_' + setup.deployment + '_' + 'SSTs_OC.png', dpi=400)    
+    fig.savefig('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports' +
+                '\\Example_data_BMP070_29\\OceanCurrents\\' + 
+                setup.site_name + '_' + setup.deployment + 
+                '_' + 'SSTs_OC.png', dpi=400, bbox_inches="tight")    
     #-------------------------------------------------------------       
 
    # %% ----------------------------------------------------------------------------------------------- 
@@ -219,8 +225,7 @@ OC_plots_in_dir = glob.glob('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports
                             'Example_data_BMP070_29\\OceanCurrents\\*Chl*.png')        
 if len(OC_plots_in_dir) == 0:
     # Create figure
-    fig = plt.figure(figsize=[5,10],dpi = 400) 
-    fig.tight_layout()   
+    fig = plt.figure(figsize=[5,10],dpi = 400)   
     # add Ocean Current images
     for n_images in range(numb_images):
         # get image
@@ -246,13 +251,17 @@ if len(OC_plots_in_dir) == 0:
         except:
             pass
         # remove whitespace in figure
-        plt.subplots_adjust(top = 1.2, bottom = 0, right = 1, left = 0, 
-                hspace = 0, wspace = 0)
-        plt.margins(0,0)    
+        # plt.subplots_adjust(top = 1.2, bottom = 1, right = 1, left = 0, 
+        #         hspace = 0, wspace = 0)
+        # plt.margins(0,0)    
+    fig.tight_layout()
+    # fig.tight_layout(rect=[0, 1, 1, 0.95])
     #--------------    
     # save figure
-    fig.savefig('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\Example_data_BMP070_29\\OceanCurrents\\' + \
-                setup.site_name + '_' + setup.deployment + '_' + 'Chl_OC.png', dpi=400)    
+    fig.savefig(('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports' + 
+                 '\\Example_data_BMP070_29\\OceanCurrents\\' + 
+                setup.site_name + '_' + setup.deployment + 
+                '_' + 'Chl_OC.png'), dpi=400, bbox_inches="tight")    
     #-------------------------------------------------------------           
     
     
