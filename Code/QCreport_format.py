@@ -132,6 +132,28 @@ O2_units = 'µmol kg¯¹'
 chl_units = 'mg m¯³'
 turb_units = 'NTU'
 
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+
+# %% -----------------------------------------------------------------------------------------------
+# Add page numbers
+
+class MyFPDFClass(FPDF):
+	def __init__(this, orientation='P',unit='mm',format='A4'):
+		self.isCover = False
+        # Override add_page methode
+	def add_page(this,  same= True, orientation='', isCover= False):
+		FPDF.add_page(self, same= same, orientation=orientation)
+
+    # Override footer method
+	def footer(self):
+         # Page number with condition isCover
+         self.set_y(-15)
+         if self.isCover == False:
+            self.cell(0,10, 'Page  ' + str(self.page_no) + '  |  {nb}', 0, 0, 'C')
+        
+    
 
 
 
