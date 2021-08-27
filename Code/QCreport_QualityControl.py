@@ -218,94 +218,43 @@ def QC_comments(report):
 # Usage: QCreport.py
      
         
-def intro_comments(report):
+def intro_comments(doc):
     
     #---------------------------------
     # add sub heading        
-    form.sub_header('Deployment Assessment')
-    # add vertical space
-    form.add_space()
+    with doc.create(form.Subsection('Deloyment Assessment')):
+        doc.append('') 
     #------------------------------------------
     # Add QC assessment details as table
     #------------------------------------------
-    report.set_font_size(12)
-    report.set_fill_color(224,224,224)
-    form.add_space()
+    with doc.create(form.Tabular('|l|l|')) as table:
+        table.add_hline()
+        table.add_row(('QC undertaken',setup.QCcomment))
+        table.add_hline()    
+        table.add_row(('Expert QC',setup.Expert_QC))
+        table.add_hline()       
+        table.add_row(('Fieldwork issues',setup.Fieldwork_issues))
+        table.add_hline()   
+        table.add_row(('Sensor Damage',setup.Sensor_damage))
+        table.add_hline()          
+        table.add_row(('Lost Equipment',setup.Lost_equipment))
+        table.add_hline()   
+        table.add_row(('Biofouling',setup.Biofouling))
+        table.add_hline()      
+        table.add_row(('Other issues',setup.Other_issues))
+        table.add_hline()          
     #---------------------------------
-    # row 1
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"QC undertaken",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(70,8,setup.QCcomment,1,0,'L');
-    report.ln()
+    # term explainer after table 
+    doc.append(form.Command('newline'))
+    doc.append(form.Command('newline'))
+    doc.append('Options: ''None'', ''Some'', ''Moderate'', ''Substantial''')
+    doc.append(form.Command('newline'))
+    doc.append('QC type options: ''Automatic'', ''Manual'', ''Automatic and manual''')
     #---------------------------------
-    # row 2    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Expert QC",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(70,8,setup.Expert_QC,1,0,'L');
-    report.ln() 
-    #---------------------------------
-    # row 3    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Fieldwork issues",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(70,8,setup.Fieldwork_issues,1,0,'L');
-    report.ln()        
-    #---------------------------------
-    # row 4    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Sensor Damage",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(70,8,setup.Sensor_damage,1,0,'L');
-    report.ln()       
-    #---------------------------------
-    # row 5    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Lost Equipment",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(70,8,setup.Lost_equipment,1,0,'L');
-    report.ln()       
-    #---------------------------------
-    # row 6    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Biofouling",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(70,8,setup.Biofouling,1,0,'L');
-    report.ln()      
-    #---------------------------------
-    # row 7    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Other issues",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(70,8,setup.Other_issues,1,0,'L');
-    report.ln()             
-    #---------------------------------
-    # term explainer after table
-    # report.ln() 
-    # report.set_font('Helvetica',style='',size=10) 
-    # report.cell(70,4,'Options: ''None'', ''Some'', ''Moderate'', ''Substantial''',0,0,'L');    
-    # report.ln()      
-    # report.cell(70,4,'QC type options: ''Automatic'', ''Manual'', ''Automatic and manual''',0,0,'L');    
-    # report.ln()      
-    #---------------------------------
-    # comments
     # add sub heading        
-    form.sub_header('Comments')
-    # add vertical space
-    form.add_space()    
-    # set font
-    report.set_font('Helvetica',style='',size=12) 
-    # add vertical space           
-    report.ln(2)
-    # add vertical space
-    form.add_space()            
-    # add comments to PDF 
-    report.multi_cell(180,6,setup.comments,0,0,'L')
-    # go to next line
-    report.ln()      
-    
-    
+    with doc.create(form.Subsection('Comments')):
+        doc.append(setup.comments)       
+
     
     
 ###################################################################    

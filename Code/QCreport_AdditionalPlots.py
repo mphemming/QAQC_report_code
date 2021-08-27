@@ -26,17 +26,28 @@ import QCreport_cover as cover
 # %% -----------------------------------------------------------------------------------------------
 # Add Ocean currents plots
 
-def addOCplots(report):
+def addOCplots(doc):
+    # Add SST plot     
+    with doc.create(form.Figure(position='h!')) as SST_pic:
+        SST_pic.add_image((paths.OC_dir + \
+                              setup.site_name + '_' + setup.deployment
+                              + '_' + 'SSTs_OC.png'), 
+                          width=form.NoEscape(r'0.7\linewidth'))
+        SST_pic.add_caption('SST snapshots from Ocean Currents')          
+    # Add Percentile plot     
+    with doc.create(form.Figure(position='h!')) as perc_pic:
+        perc_pic.add_image((paths.OC_dir + \
+                              setup.site_name + '_' + setup.deployment
+                              + '_' + 'percentiles_OC.png'),
+                          width=form.NoEscape(r'0.7\linewidth'))
+        perc_pic.add_caption('Percentile snapshots from Ocean Currents')          
+    # Add Ocean Color plot     
+    with doc.create(form.Figure(position='h!')) as oc_pic:
+        oc_pic.add_image((paths.OC_dir + \
+                              setup.site_name + '_' + setup.deployment
+                              + '_' + 'Chl_OC.png'), 
+                         width=form.NoEscape(r'0.7\linewidth'))
+        oc_pic.add_caption('Ocean color snapshots from Ocean Currents')      
     
-   # Add SST plot 
-   report.image(paths.OC_dir + \
-            setup.site_name + '_' + setup.deployment + '_' + 'SSTs_OC.png',h=260,w=160,x=20,y=30)    
-   # Add Percentile plot 
-   report.add_page()
-   report.image(paths.OC_dir + \
-            setup.site_name + '_' + setup.deployment + '_' + 'percentiles_OC.png',h=260,w=160,x=20,y=30)    
-   # Add ocean color plot 
-   report.add_page()
-   report.image(paths.OC_dir + \
-            setup.site_name + '_' + setup.deployment + '_' + 'Chl_OC.png',h=260,w=160,x=20,y=30) 
-
+    
+  

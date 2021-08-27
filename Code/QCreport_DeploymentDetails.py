@@ -452,75 +452,34 @@ vn = remove_characters(str(get_unique(atts_var_names)))
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________    
 
-def intro_table(report):
-    
-    report.set_font_size(12)
-    report.set_fill_color(224,224,224)
-    form.add_space()
-    #---------------------------------
-    # row 1
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Site",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(80,8,"BMP070",1,0,'C');
-    report.ln()
-    #---------------------------------
-    # row 2    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Deployment",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(80,8,setup.deployment,1,0,'C');
-    report.ln()    
-    #---------------------------------
-    # row 3    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Start Date",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(80,8,start_date,1,0,'C');
-    report.ln()        
-    #---------------------------------
-    # row 4    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"End Date",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(80,8,end_date,1,0,'C');
-    report.ln()            
-    #---------------------------------
-    # row 5    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Longitude",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(80,8,lon + form.degree_symbol + ' E',1,0,'C');
-    report.ln()      
-    #---------------------------------
-    # row 6    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Latitude",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(80,8,lat + form.degree_symbol + ' S',1,0,'C');
-    report.ln()      
-    #---------------------------------
-    # row 7    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Principal Investigator",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(80,8,PO,1,0,'C');
-    report.ln()     
-    #---------------------------------
-    # row 8    
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Field Team",1,0,'L'); 
-    report.set_font('Helvetica',style='')
-    report.cell(80,8,FT,1,0,'C');
-    report.ln()
-    
+
+def intro_table(doc):
+
+    with doc.create(form.Tabular('|l|l|')) as table:
+        table.add_hline()
+        table.add_row(('Site', setup.site_name))
+        table.add_hline()
+        table.add_row(('Deployment',setup.deployment))
+        table.add_hline()
+        table.add_row(('Start Date',start_date))
+        table.add_hline()
+        table.add_row(('End Date',end_date))
+        table.add_hline()
+        table.add_row(('Longitude',lon + form.degree_symbol + ' E'))
+        table.add_hline()
+        table.add_row(('Latitude',lat + form.degree_symbol + ' S'))
+        table.add_hline()
+        table.add_row(('Principle Investigator', PO))
+        table.add_hline()
+        table.add_row(('Field Team', FT))
+        table.add_hline()
     
 #------------------------------------------------------------
 # Information 
 #-------------
         
 # This function creates the introduction table on the first
-# page showing things like Site ID, Principle Investigator, 
+# page showing things like Site name, Principle Investigator, 
 # date range etc..
 
 #------------------------------------------------------------      
@@ -535,42 +494,32 @@ def intro_table(report):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
     
-def instrument_table(report):
-
-    report.add_page(orientation='P')
-    form.sub_header('Instrument Serial Numbers and Nominal Depths')    
-    report.set_font_size(12)    
-    form.add_space()  
-    form.add_space()
-    form.add_space()
-    #---------------------------------
-    # Header
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Instrument",1,0,'C');     
-    report.cell(35,8,"Serial Number",1,0,'C');         
-    report.cell(40,8,"Nominal Depth",1,0,'C'); 
-    report.ln() 
-    #---------------------------------
-    # add rows using loop
-    report.set_font('Helvetica',style='')
-    for row_n in range(len(atts_instrument)):
+def instrument_table(doc):
     
-        inst = remove_characters(str(atts_instrument[row_n]))
-        sn = remove_characters(str(atts_instrument_serial_number[row_n]))
-        nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
-        if '.0' in nd:
-            nd = str(int(float(nd)))
+    with doc.create(form.Subsection('Instrument Serial Numbers and Nominal Depths')):
+        doc.append('') 
+    
+    with doc.create(form.Tabular('|l|l|l|')) as table:
+        table.add_hline()
+        table.add_row(('Instrument','Serial Number','Nominal Depth'))
+        table.add_hline()
+        # add rows using loop
+        for row_n in range(len(atts_instrument)):
         
-        report.cell(60,8,inst,1,0,'C');     
-        report.cell(35,8,sn,1,0,'C');         
-        report.cell(40,8,nd + ' m',1,0,'C'); 
-        report.ln() 
+            inst = remove_characters(str(atts_instrument[row_n]))
+            sn = remove_characters(str(atts_instrument_serial_number[row_n]))
+            nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
+            if '.0' in nd:
+                nd = str(int(float(nd)))
+            
+            table.add_row((inst,sn,nd + ' m'))
+            table.add_hline()
 
 #------------------------------------------------------------
 # Information 
 #-------------
         
-# This function creates the inctrument table including serial
+# This function creates the instrument table including serial
 # numbers and nominal depths.
 
 #------------------------------------------------------------ 
@@ -585,173 +534,160 @@ def instrument_table(report):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________        
         
-def parameter_table(report): 
+def parameter_table(doc): 
     
     param_list = param_avail(atts_var_names)
     
-    form.sub_header('Derived Parameters')
-    report.set_font_size(12)    
-    form.add_space()  
+    with doc.create(form.Subsection('Derived Parameters')):
+        doc.append('') 
+    # determine number of rows required
+    n_depths = len(atts_instrument)    
+    tab_str = 'l|'
+    input_str = '|' + tab_str*(n_depths+1)
     #---------------------------------    
     #---------------------------------
-    # Header
-    report.set_font('Helvetica',style='B')
-    report.cell(50,6,'Parameter',1,0,'C');  
-    for n_inst in range(len(atts_instrument)): 
-        nd = remove_characters(str(atts_instrument_nominal_depth[n_inst]))
-        if '.0' in nd:
-            nd = str(int(float(nd)))   
-        report.cell(15,6,str(nd) + ' m',1,0,'C');     
-    report.ln()     
-    #---------------------------------
-    # add rows using loop
-    report.set_font('Helvetica',style='')
-    #---------------------------------
-    # TEMP   
-    report.cell(50,6,'TEMP' + ' [' + form.degree_symbol + 'C]',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.TEMP[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C'); 
-    report.ln()            
-    #---------------------------------
-    # PSAL   
-    report.cell(50,6,'PSAL',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.PSAL[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln() 
-    #---------------------------------
-    # VCUR   
-    report.cell(50,6,'VCUR' + ' [' + form.vel_units + ']',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.VCUR[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln() 
-    #---------------------------------
-    # UCUR  
-    report.cell(50,6,'UCUR' + ' [' + form.vel_units + ']',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.UCUR[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln()
-    #---------------------------------
-    # WCUR  
-    report.cell(50,6,'WCUR' + ' [' + form.vel_units + ']',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.WCUR[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln() 
-    #---------------------------------
-    # CSPD  
-    report.cell(50,6,'CSPD' + ' [' + form.vel_units + ']',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.CSPD[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln() 
-    #---------------------------------
-    # CDIR  
-    report.cell(50,6,'CDIR' + ' [' + form.degree_symbol + ']',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.CDIR[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln()
-    #---------------------------------
-    # ECUR  
-    report.cell(50,6,'ECUR' + ' [' + form.vel_units + ']',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.ECUR[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln()       
-    #---------------------------------
-    # CPHL   
-    report.cell(50,6,'CPHL' + ' [' + form.chl_units + ']',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.CPHL[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln()  
-    #---------------------------------
-    # DOX  
-    report.cell(50,6,'DOX' + ' [' + form.O2_units + ']',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.DOX[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln()     
-    #---------------------------------
-    # TURB 
-    report.cell(50,6,'TURB' + ' [' + form.turb_units + ']',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.TURB[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln()   
-    #---------------------------------
-    # PRES 
-    report.cell(50,6,'PRES' + ' [dbar]',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.PRES[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln()   
-    #---------------------------------
-    # DEPTH  
-    report.cell(50,6,'DEPTH [m]',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.DEPTH[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln()   
-    #---------------------------------
-    # TIME  
-    report.cell(50,6,'TIME',1,0,'C');    
-    for n_inst in range(len(atts_instrument)): 
-        if param_list.TIME[n_inst] == 1:
-            report.cell(15,6,'X',1,0,'C');   
-        else:
-            report.cell(15,6,' ',1,0,'C');              
-    report.ln()
-    #---------------------------------
-    # Add explanation text below table
-    report.set_font_size(10)       
-    form.add_space()  
-    report.multi_cell(170,5,'This table shows some popular parameters, but not all (e.g. pitch or roll from ADCP).',0,0,'L');    
-    report.ln()  
-    report.multi_cell(170,5,'Quality control flags corresponding to some of these parameters (e.g. TEMP) also exist but are not included in this table.',0,0,'L'); 
-    report.ln() 
-    #---------------------------------
-    # Add legend below table
-    report.set_font_size(10)       
-    form.add_space()     
-    for n_inst in range(len(atts_instrument)): 
-        inst = remove_characters(str(atts_instrument[n_inst]))
-        sn = remove_characters(str(atts_instrument_serial_number[n_inst]))
-        nd = remove_characters(str(atts_instrument_nominal_depth[n_inst]))
-        if '.0' in nd:
-            nd = str(int(float(nd)))  
-        report.cell(50,4,nd + ' m : ' + inst + ' ' + sn,0,0,'L');    
-        report.ln()
+    # Table   
+    with doc.create(form.Tabular(input_str)) as table:
+        table.add_hline() 
+        #---------------------------------
+        # Header
+        header = ['Parameter']
+        for n_inst in range(len(atts_instrument)): 
+            nd = remove_characters(str(atts_instrument_nominal_depth[n_inst]))
+            if '.0' in nd:
+                nd = str(int(float(nd))) 
+            header.append(nd + ' m')
+        table.add_row((header))
+        table.add_hline()             
+        # #---------------------------------
+        # # add rows using loop                
+        # #---------------------------------
+        # # TEMP 
+        row_xs = ['TEMP [' + form.degree_symbol + 'C]']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.TEMP[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # PSAL 
+        row_xs = ['PSAL']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.PSAL[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline()         
+        # # VCUR 
+        row_xs = ['VCUR [' + form.vel_units + ']']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.VCUR[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # UCUR 
+        row_xs = ['UCUR [' + form.vel_units + ']']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.UCUR[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # WCUR 
+        row_xs = ['WCUR [' + form.vel_units + ']']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.WCUR[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # CSPD 
+        row_xs = ['CSPD [' + form.vel_units + ']']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.CSPD[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # CDIR
+        row_xs = ['CDIR[' + form.degree_symbol + ']']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.CDIR[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline()         
+        # # ECUR 
+        row_xs = ['ECUR [' + form.vel_units + ']']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.ECUR[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # CPHL 
+        row_xs = ['CPHL [' + form.chl_units + ']']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.CPHL[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # DOX 
+        row_xs = ['DOX [' + form.O2_units + ']']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.DOX[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # TURB 
+        row_xs = ['TURB [NTU]']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.TURB[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # PRES 
+        row_xs = ['PRES [dbar]']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.PRES[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # DEPTH 
+        row_xs = ['DEPTH [m]']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.DEPTH[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline() 
+        # # TIME 
+        row_xs = ['TIME']
+        for n_inst in range(len(atts_instrument)): 
+            if param_list.TIME[n_inst] == 1:
+                row_xs.append('x')
+            else:
+                row_xs.append(' ')                   
+        table.add_row((row_xs))
+        table.add_hline()      
         
 #------------------------------------------------------------
 # Information 
@@ -772,36 +708,27 @@ def parameter_table(report):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
         
-def timeinout_table(report): 
+def timeinout_table(doc): 
     
-    form.sub_header('Instrument times in / out')
-    report.set_font_size(12)    
-    form.add_space()  
-    form.add_space()
-    form.add_space()
+    with doc.create(form.Subsection('Instrument times in / out')):
+        doc.append('')     
     #---------------------------------
-    # Header
-    report.set_font('Helvetica',style='B')
-    report.cell(80,8,"Instrument & nom. depth",1,0,'C');     
-    report.cell(40,8,"Time in (UTC)",1,0,'C');  
-    report.cell(40,8,"Time out (UTC)",1,0,'C');  
-    report.ln()    
+    # add table        
+    with doc.create(form.Tabular('|l|l|l|')) as table:
+        table.add_hline()     
+        table.add_row('Instrument & nom. depth','Time in (UTC)','Time out (UTC)')
+        table.add_hline()    
     #---------------------------------
     # add rows using loop
-    report.set_font('Helvetica',style='')
-    for row_n in range(len(atts_instrument)):
-    
+    for row_n in range(len(atts_instrument)): 
         inst = remove_characters(str(atts_instrument[row_n]))
         nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
         if '.0' in nd:
             nd = str(int(float(nd)))
         ti = remove_characters(str(atts_in_water[row_n]))
-        to = remove_characters(str(atts_out_water[row_n]))
-        
-        report.cell(80,8,inst + '  ' + nd + ' m',1,0,'L');    
-        report.cell(40,8,ti,1,0,'C');         
-        report.cell(40,8,to,1,0,'C'); 
-        report.ln()            
+        to = remove_characters(str(atts_out_water[row_n]))  
+        table.add_row(inst,ti,to)
+        table.add_hline()         
         
 #------------------------------------------------------------
 # Information 
@@ -821,55 +748,50 @@ def timeinout_table(report):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
     
-def toolbox_bullet(report):
+def toolbox_bullet(doc):
     
-    form.add_space()     
-    report.set_font_size(6)         
-    form.bullet_point('Toolbox version: ' + tb_vers)
+    with doc.create(form.Subsection('Toolbox Version')):
+        doc.append('Toolbox version: ' + tb_vers) 
 
-def file_tables(report):
+
+def file_tables(doc):
 
     #---------------------------------
     # Raw file names
     #---------------------------------
-    report.add_page(orientation='P')    
-    form.sub_header('Raw Filenames')    
-    report.set_font_size(12)      
-    form.add_space()  
+    with doc.create(form.Subsection('Raw File Names')):
+        doc.append('') 
     #---------------------------------
-    # Header
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Instrument & nom. depth",1,0,'C');     
-    report.cell(70,8,"Filename",1,0,'C');  
-    report.ln()        
+    # add table        
+    with doc.create(form.Tabular('|l|l|')) as table:
+        table.add_hline()     
+        table.add_row('Instrument & nom. depth','Filename')
+        table.add_hline()            
    #---------------------------------
-    # add rows using loop      
+   # add rows using loop      
     for row_n in range(len(atts_instrument)):     
         # get information for table
         inst = remove_characters(str(atts_instrument[row_n]))
         nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
         if '.0' in nd:
             nd = str(int(float(nd)))      
-        file = remove_characters(str(atts_toolbox_input_file_name[row_n]))
-        report.set_font('Helvetica',style='B',size=10)
-        report.cell(60,8,inst + '  ' + nd + ' m',1,0,'L');
-        report.set_font('Helvetica',style='',size=10)
-        report.multi_cell(70,8,file,1,0)
-    # Add toolbox version number here
-    toolbox_bullet(report)
+        file = remove_characters(str(atts_toolbox_input_file_name[row_n]))        
+        table.add_row(inst + '  ' + nd + ' m',file)
+        table.add_hline()          
     #---------------------------------
     # Thredds file names
     #---------------------------------       
-    form.sub_header('Processed Filenames')    
-    report.set_font_size(12)      
-    form.add_space()  
+    with doc.create(form.Subsection('Processed File Names')):
+        doc.append('') 
+    doc.append(form.Command('fontsize', arguments = ['8', '12']))
+    doc.append(form.Command('selectfont'))
     #---------------------------------
-    # Header
-    report.set_font('Helvetica',style='B')
-    report.cell(60,8,"Instrument & nom. depth",1,0,'C');     
-    report.cell(120,8,"Filename",1,0,'C');  
-    report.ln()     
-   #---------------------------------
+    # add table        
+    with doc.create(form.Tabular('|l|p{13cm}|')) as table:
+        table.add_hline()     
+        table.add_row('Instrument & nom. depth','Filename')
+        table.add_hline() 
+    #---------------------------------
     # add rows using loop      
     for row_n in range(len(atts_instrument)):     
         # get information for table
@@ -878,16 +800,17 @@ def file_tables(report):
         if '.0' in nd:
             nd = str(int(float(nd)))          
         OPenDAP = nc.OPeNDAP_links[row_n]
-        report.set_font('Helvetica',style='B',size=10)
-        report.cell(60,12,inst + '  ' + nd + ' m',1,0,'L');
-        report.set_font('Helvetica',style='',size=8)
-        report.multi_cell(120,4,OPenDAP,1,0)    
-    
+        # Need to split up string so that it fits into column
+        OPenDAP = (OPenDAP[0:73] + ' ' + OPenDAP[41:107] + ' ' + OPenDAP[107::])
+        table.add_row(inst + '  ' + nd + ' m',OPenDAP)
+        table.add_hline()
+    doc.append(form.Command('fontsize', arguments = ['15', '12']))
+    doc.append(form.Command('selectfont'))     
     
 #------------------------------------------------------------
 # Information 
 #-------------
-        
+  
 # This function creates the File location table.
 
 #------------------------------------------------------------ 

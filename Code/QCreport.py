@@ -29,8 +29,8 @@ import QCreport_paths as paths
 import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
 import QCreport_QualityControl as QCR
-import QCreport_DeploymentPhotographs as DepPhoto
-import QCreport_ToolboxPlots as tbp
+# import QCreport_DeploymentPhotographs as DepPhoto
+# import QCreport_ToolboxPlots as tbp
 import QCreport_setup as setup
 import QCreport_cover as cover
 import QCreport_AdditionalPlots as Addp
@@ -79,7 +79,10 @@ print('Paths loaded')
 # Create document and set Format
 
 # call function to format PDF document
-report = form.format_doc(setup.name_of_reportmaker)
+geometry_options = {"tmargin": "2cm", "lmargin": "2cm"}
+doc = form.Document(geometry_options=geometry_options,
+                    font_size='Large')
+
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -94,29 +97,38 @@ report = form.format_doc(setup.name_of_reportmaker)
 # --------------------------------------------
 
 # Add content
-cover.create_cover(report)
+cover.create_cover(doc)
 
 print('Front Cover Created')
+
+# %% -----------------------------------------------------------------------------------------------
+# Create Table of Contents
+
+doc.append(form.Command('newpage'))
+doc.append(form.Command('tableofcontents'))
+
+
+print('Table of Contents added')
+
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # %% -----------------------------------------------------------------------------------------------
 # --------------------------------------------
 # Section: Deployment Details
 # --------------------------------------------
 
-# Deployment Details heading
-report.add_page(orientation='p')
-form.section_header('Deployment Details')
-# setup table of contents link
-DD = report.add_link()
-report.set_link(DD)
-# Add content
-DepDet.intro_table(report)
-QCR.intro_comments(report)
-DepDet.instrument_table(report)
-DepDet.parameter_table(report)
-DepDet.timeinout_table(report)
-DepDet.file_tables(report)
-# DepDet.toolbox_bullet(report)
+doc.append(form.Command('newpage'))
+
+with doc.create(form.Section('Deployment Details')):
+
+    DepDet.intro_table(doc)
+    QCR.intro_comments(doc)
+    DepDet.instrument_table(doc)
+    DepDet.parameter_table(doc)
+    DepDet.timeinout_table(doc)
+    DepDet.file_tables(doc)
+    DepDet.toolbox_bullet(doc)
 
 print('Section added: ''Deployment Details''')
 
@@ -126,14 +138,21 @@ print('Section added: ''Deployment Details''')
 # --------------------------------------------
 # 
 
-# Plots heading
-report.add_page(orientation='p')
-form.section_header('Plots')
-# setup table of contents link
-pp = report.add_link()
-report.set_link(pp)
-# Add content
-Addp.addOCplots(report)
+doc.append(form.Command('newpage'))
+
+with doc.create(form.Section('Plots')):
+    
+    Addp.addOCplots(doc)
+
+
+# # Plots heading
+# report.add_page(orientation='p')
+# form.section_header('Plots')
+# # setup table of contents link
+# pp = report.add_link()
+# report.set_link(pp)
+# # Add content
+# Addp.addOCplots(report)
 
 print('Section added: ''Plots''')
 
@@ -142,14 +161,14 @@ print('Section added: ''Plots''')
 # Section: Deployment Photographs
 # --------------------------------------------
 
-# Deployment Photos heading
-report.add_page(orientation='p')
-form.section_header('Deployment Photographs')
-# setup table of contents link
-DPP = report.add_link()
-report.set_link(DPP)
-# Add content
-DepPhoto.include_photos(depphoto_dir,report)
+# # Deployment Photos heading
+# report.add_page(orientation='p')
+# form.section_header('Deployment Photographs')
+# # setup table of contents link
+# DPP = report.add_link()
+# report.set_link(DPP)
+# # Add content
+# DepPhoto.include_photos(depphoto_dir,report)
 
 print('Section added: ''Deployment Photographs''')
 
@@ -158,14 +177,14 @@ print('Section added: ''Deployment Photographs''')
 # Section: Quality Control
 # --------------------------------------------
 
-# Quality Control heading
-report.add_page(orientation='p')
-form.section_header('Quality Control')
-# setup table of contents link
-QC = report.add_link()
-report.set_link(QC)
-# Add content
-QCR.QC_comments(report)
+# # Quality Control heading
+# report.add_page(orientation='p')
+# form.section_header('Quality Control')
+# # setup table of contents link
+# QC = report.add_link()
+# report.set_link(QC)
+# # Add content
+# QCR.QC_comments(report)
 
 print('Section added: ''Quality Control''')
 
@@ -174,14 +193,14 @@ print('Section added: ''Quality Control''')
 # Section: Toolbox Plots
 # --------------------------------------------
 
-# Toolbox Plots heading
-report.add_page(orientation='l')
-form.section_header('Toolbox Plots')
-# setup table of contents link
-TBP = report.add_link()
-report.set_link(TBP)
-# Add content
-tbp.toolbox_plots(toolbox_dir,report)
+# # Toolbox Plots heading
+# report.add_page(orientation='l')
+# form.section_header('Toolbox Plots')
+# # setup table of contents link
+# TBP = report.add_link()
+# report.set_link(TBP)
+# # Add content
+# tbp.toolbox_plots(toolbox_dir,report)
 
 print('Section added: ''Toolbox Plots''')
 
@@ -190,14 +209,14 @@ print('Section added: ''Toolbox Plots''')
 # Section: Mooring Diagram
 # --------------------------------------------
 
-# Mooring diagram heading
-report.add_page(orientation='p')
-form.section_header('Mooring Diagram')
-# setup table of contents link
-MD = report.add_link()
-report.set_link(MD)
-# Add image
-report.image(mooring_dir)
+# # Mooring diagram heading
+# report.add_page(orientation='p')
+# form.section_header('Mooring Diagram')
+# # setup table of contents link
+# MD = report.add_link()
+# report.set_link(MD)
+# # Add image
+# report.image(mooring_dir)
 
 print('Section added: ''Mooring Diagrams''')
 
@@ -222,30 +241,28 @@ print('Section added: ''Mooring Diagrams''')
 # %% -----------------------------------------------------------------------------------------------
 # Header and Table of Contents
 
-report.add_page(orientation='p')
+# report.add_page(orientation='p')
 
-# Main Header
-report.set_font_size(28)
-report.cell(200, 10, form.title_1, 0, 2, 'C') 
-report.set_font_size(22)
-report.cell(200, 10, form.title_2, 0, 2, 'C') 
+# # Main Header
+# report.set_font_size(28)
+# report.cell(200, 10, form.title_1, 0, 2, 'C') 
+# report.set_font_size(22)
+# report.cell(200, 10, form.title_2, 0, 2, 'C') 
 
-# line break
-report.ln(30)
+# # line break
+# report.ln(30)
 
-# interactive table of contents
+# # interactive table of contents
 
-# Add section header
-form.section_header('Report Contents')
+# # Add section header
+# form.section_header('Report Contents')
 
-form.TOC('Deployment Details',DD)
-form.TOC('Plots',pp)
-form.TOC('Quality Control',QC)
-form.TOC('Deployment Photographs',DPP)
-form.TOC('Toolbox Plots',TBP)
-form.TOC('Mooring Diagram',MD)
-
-print('Table of Contents added')
+# form.TOC('Deployment Details',DD)
+# form.TOC('Plots',pp)
+# form.TOC('Quality Control',QC)
+# form.TOC('Deployment Photographs',DPP)
+# form.TOC('Toolbox Plots',TBP)
+# form.TOC('Mooring Diagram',MD)
 
 #------------------------------------------------------------
 # Information 
@@ -266,7 +283,11 @@ print('Table of Contents added')
 # Save report
 
 print('Saving report in: ' + saving_dir)
-report.output(saving_dir + setup.site_name + '_' + setup.deployment + '_QC_report.pdf', 'F')
+
+filename = (saving_dir + setup.site_name + '_' + setup.deployment + 
+            '_QC_report')
+doc.generate_pdf(filename,compiler='pdflatex')
+doc.generate_tex(filename)
 print('Report saved.')
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

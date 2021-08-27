@@ -19,6 +19,8 @@ import fpdf
 # QC report modules
 import QCreport_paths as paths
 import QCreport_setup as setup
+from pylatex import Document, Section, Subsection, Subsubsection, Tabular, Math, TikZ, Axis, \
+    Plot, Figure, Matrix, Alignat, Enumerate, Itemize, Command, Package, NoEscape
 
 #------------------------------------------------------------
 # Information 
@@ -47,49 +49,35 @@ title_2 = 'Quality Control Report'
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-report = FPDF()  
 
-def format_doc(name_of_reportmaker):
-    report.set_xy(0, 0)
-    report.set_author('NSW-IMOS | ' + name_of_reportmaker)
-    report.set_margins(10,10)
-    report.set_keywords('QC, report')
-    report.set_font('Helvetica',size=14)
-    report.set_title(title)
-    return report
-
-def title_header(title_string):
-    report.set_font('Helvetica', size=24, style ='B')
-    report.multi_cell(200, 10, title_string, 0, 2, 'C') 
-    return report    
+def title_header(doc,title_string):
+    doc.create(Section(title_string))
+    return doc  
 
 def section_header(header_string):
-    report.set_font('Helvetica', size=22, style ='B')
-    report.cell(200, 10, header_string, 0, 2, 'l') 
-    report.ln(3)
-    add_line()
-    return report
+    doc.create(Subsection(header_string))
+    return doc
 
 def sub_header(header_string):
-    report.ln(12)
-    report.set_font('Helvetica', size=18, style ='B')
-    report.cell(200, 10, header_string, 0, 2, 'l') 
-    return report
+    doc.create(Subsubsection(header_string))
+    return doc
 
-def add_line():
-    report.cell(100, 10, border='T') 
-    report.ln(5)
-    return report
+# def add_line():
+#     report.cell(100, 10, border='T') 
+#     report.ln(5)
+#     return report
 
-def add_space():
-    report.ln(5)
-    return report
+# def add_space():
+#     report.ln(5)
+#     return report
 
-def TOC(TOC_string,TOC_ID):
-    report.set_font_size(14)
-    report.write(5, TOC_string,TOC_ID) 
-    report.ln(10)    
-    return report
+def TOC():
+    doc.create('\tableofcontents')
+    return doc
+
+def noindent():
+    doc.create('\tableofcontents')
+    return doc
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -101,23 +89,16 @@ def TOC(TOC_string,TOC_ID):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
     
-fpdf.set_global("SYSTEM_TTFONTS", "C:\\Users\\mphem\\Documents\\Work\\UNSW\\" + \
-                "QC_reports\\QC_reports\\Code\\Fonts\\")
-report.add_font("NotoSans", style="", fname="C:\\Users\\mphem\\Documents\\Work\\UNSW\\" + \
-                "QC_reports\\QC_reports\\Code\\Fonts\\Noto_Sans_V1.ttf", uni=True)    
+def bullet_point(doc,bullet_text):
+    doc.create(Enumerate(enumeration_symbol='*'))
+    doc.create(Enumerate.add_item(bullet_text))
+    return doc
 
-
-def bullet_point(bullet_text):
+# def bullet_point_multi(bullet_text,font_size):
     
-    s = str('\u2022')
-    report.set_font("NotoSans", size=16)
-    report.cell(180,8,s + '   ' + bullet_text,0,0,'L');   
-
-def bullet_point_multi(bullet_text,font_size):
-    
-    s = str('\u2022')
-    report.set_font("NotoSans", size=font_size)
-    report.multi_cell(180,5,s + '   ' + bullet_text,0,0,'L');   
+#     s = str('\u2022')
+#     report.set_font("NotoSans", size=font_size)
+#     report.multi_cell(180,5,s + '   ' + bullet_text,0,0,'L');   
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -139,19 +120,19 @@ turb_units = 'NTU'
 # %% -----------------------------------------------------------------------------------------------
 # Add page numbers
 
-class MyFPDFClass(FPDF):
-	def __init__(this, orientation='P',unit='mm',format='A4'):
-		self.isCover = False
-        # Override add_page methode
-	def add_page(this,  same= True, orientation='', isCover= False):
-		FPDF.add_page(self, same= same, orientation=orientation)
+# class MyFPDFClass(FPDF):
+# 	def __init__(this, orientation='P',unit='mm',format='A4'):
+# 		self.isCover = False
+#         # Override add_page methode
+# 	def add_page(this,  same= True, orientation='', isCover= False):
+# 		FPDF.add_page(self, same= same, orientation=orientation)
 
-    # Override footer method
-	def footer(self):
-         # Page number with condition isCover
-         self.set_y(-15)
-         if self.isCover == False:
-            self.cell(0,10, 'Page  ' + str(self.page_no) + '  |  {nb}', 0, 0, 'C')
+#     # Override footer method
+# 	def footer(self):
+#          # Page number with condition isCover
+#          self.set_y(-15)
+#          if self.isCover == False:
+#             self.cell(0,10, 'Page  ' + str(self.page_no) + '  |  {nb}', 0, 0, 'C')
         
     
 
