@@ -29,8 +29,8 @@ import QCreport_paths as paths
 import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
 import QCreport_QualityControl as QCR
-# import QCreport_DeploymentPhotographs as DepPhoto
-# import QCreport_ToolboxPlots as tbp
+import QCreport_DeploymentPhotographs as DepPhoto
+import QCreport_ToolboxPlots as tbp
 import QCreport_setup as setup
 import QCreport_cover as cover
 import QCreport_AdditionalPlots as Addp
@@ -81,8 +81,16 @@ print('Paths loaded')
 # call function to format PDF document
 geometry_options = {"tmargin": "2cm", "lmargin": "2cm"}
 doc = form.Document(geometry_options=geometry_options,
-                    font_size='Large')
+                    font_size='large')
+doc.append(form.Command('fontsize', arguments = ['18', '16']))
 
+# Latex packages
+doc.packages.append(form.Package('rotating')) # for rotating toolbox plots
+doc.packages.append(form.Package('lmodern')) # change font to 'palatino'
+doc.packages.append(form.Package('sectsty'))
+doc.packages.append(form.Package('titlesec','compact, big'))
+doc.packages.append(form.Package('placeins','section')) # ensures plots stay in correct section, and don't float around
+doc.packages.append(form.Package('graphicx')) # for front cover images
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -138,21 +146,9 @@ print('Section added: ''Deployment Details''')
 # --------------------------------------------
 # 
 
-doc.append(form.Command('newpage'))
-
 with doc.create(form.Section('Plots')):
     
     Addp.addOCplots(doc)
-
-
-# # Plots heading
-# report.add_page(orientation='p')
-# form.section_header('Plots')
-# # setup table of contents link
-# pp = report.add_link()
-# report.set_link(pp)
-# # Add content
-# Addp.addOCplots(report)
 
 print('Section added: ''Plots''')
 
@@ -161,14 +157,9 @@ print('Section added: ''Plots''')
 # Section: Deployment Photographs
 # --------------------------------------------
 
-# # Deployment Photos heading
-# report.add_page(orientation='p')
-# form.section_header('Deployment Photographs')
-# # setup table of contents link
-# DPP = report.add_link()
-# report.set_link(DPP)
-# # Add content
-# DepPhoto.include_photos(depphoto_dir,report)
+with doc.create(form.Section('Deployment Photographs')):
+    
+    DepPhoto.include_photos(depphoto_dir,doc)
 
 print('Section added: ''Deployment Photographs''')
 
@@ -177,15 +168,11 @@ print('Section added: ''Deployment Photographs''')
 # Section: Quality Control
 # --------------------------------------------
 
-# # Quality Control heading
-# report.add_page(orientation='p')
-# form.section_header('Quality Control')
-# # setup table of contents link
-# QC = report.add_link()
-# report.set_link(QC)
-# # Add content
-# QCR.QC_comments(report)
+doc.append(form.Command('newpage'))
+with doc.create(form.Section('Quality Control')):
 
+    QCR.QC_comments(doc)   
+    
 print('Section added: ''Quality Control''')
 
 # %% -----------------------------------------------------------------------------------------------
@@ -193,14 +180,8 @@ print('Section added: ''Quality Control''')
 # Section: Toolbox Plots
 # --------------------------------------------
 
-# # Toolbox Plots heading
-# report.add_page(orientation='l')
-# form.section_header('Toolbox Plots')
-# # setup table of contents link
-# TBP = report.add_link()
-# report.set_link(TBP)
-# # Add content
-# tbp.toolbox_plots(toolbox_dir,report)
+with doc.create(form.Section('Toolbox Plots')):
+    tbp.toolbox_plots(toolbox_dir,doc)
 
 print('Section added: ''Toolbox Plots''')
 
@@ -209,15 +190,13 @@ print('Section added: ''Toolbox Plots''')
 # Section: Mooring Diagram
 # --------------------------------------------
 
-# # Mooring diagram heading
-# report.add_page(orientation='p')
-# form.section_header('Mooring Diagram')
-# # setup table of contents link
-# MD = report.add_link()
-# report.set_link(MD)
-# # Add image
-# report.image(mooring_dir)
-
+with doc.create(form.Section('Mooring Diagram')):
+    
+    with doc.create(form.Figure(position='h!')) as pic:
+        pic.add_image((mooring_dir), 
+                          width=form.NoEscape(r'0.8\linewidth'))
+        pic.add_caption('Mooring Diagram')   
+        
 print('Section added: ''Mooring Diagrams''')
 
 
@@ -232,47 +211,6 @@ print('Section added: ''Mooring Diagrams''')
 # If there is an error related to the PDF content, it likely
 # originates from one of the above functions - see 
 # corresponding python scripts/modules.  
-
-#------------------------------------------------------------
-
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-# %% -----------------------------------------------------------------------------------------------
-# Header and Table of Contents
-
-# report.add_page(orientation='p')
-
-# # Main Header
-# report.set_font_size(28)
-# report.cell(200, 10, form.title_1, 0, 2, 'C') 
-# report.set_font_size(22)
-# report.cell(200, 10, form.title_2, 0, 2, 'C') 
-
-# # line break
-# report.ln(30)
-
-# # interactive table of contents
-
-# # Add section header
-# form.section_header('Report Contents')
-
-# form.TOC('Deployment Details',DD)
-# form.TOC('Plots',pp)
-# form.TOC('Quality Control',QC)
-# form.TOC('Deployment Photographs',DPP)
-# form.TOC('Toolbox Plots',TBP)
-# form.TOC('Mooring Diagram',MD)
-
-#------------------------------------------------------------
-# Information 
-#-------------
-
-# This part creates an interactive table of contents. This
-# is not fully working as hoped yet as the table of contents
-# needs to be at the start of the document, rather than at
-# the end. I haven't yet figured out how to include it at 
-# the start without the links ceasing to work. 
 
 #------------------------------------------------------------
 
