@@ -17,7 +17,7 @@
 # Python Packages
 import glob
 import QCreport_setup as setup
-
+import QCreport_format as form
 #------------------------------------------------------------
 # Information 
 #-------------
@@ -39,15 +39,25 @@ import QCreport_setup as setup
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-def toolbox_plots(path, report):   
+def toolbox_plots(path, doc):   
  
     # Get list of toolbox plots
     images = glob.glob(path + '*-' +setup.deployment_file_date_identifier + '*.png')
     # include toolbox plots
     for plots in range(len(images)):
         if plots > 0:
-            report.add_page(orientation='l')
-        report.image(images[plots],h=150,w=300,x=-10,y=30)
+            doc.append(form.Command('newpage'))
+        file = images[plots]
+        file = file.replace('\\','/')
+        f = max([i for i, letter in enumerate(file) if letter == '/'])
+        caption_txt = file[f+1::]
+        doc.append(form.Command('begin','sidewaystable'))
+        doc.append(form.StandAloneGraphic(file,'scale=0.4'))
+        doc.append(form.Command('caption',caption_txt))
+        # doc.append(form.Command('end','turn'))
+        doc.append(form.Command('end','sidewaystable'))
+
+
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
