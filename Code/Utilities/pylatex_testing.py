@@ -45,6 +45,9 @@ def generate_cover(doc):
 geometry_options = {"tmargin": "2cm", "lmargin": "2cm"}
 doc = form.Document(geometry_options=geometry_options)
 
+# Latex packages
+doc.packages.append(form.Package('rotating'))
+
 # front page
 generate_cover(doc)
 
@@ -79,6 +82,21 @@ with doc.create(form.Section('another section')):
     doc.append('Some regular text and some')
 with doc.create(form.Subsection('another section')):
     doc.append('Some regular text and some') 
+
+
+doc.append(form.Command('begin','sidewaystable'))
+# doc.append(form.Command('begin','turn'))
+# doc.append(form.Command('includegraphics',None,'scale=0.7',('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\Toolbox_Plots' +
+#                '\\IMOS_ANMN-NSW_BMP070_FV01_BMP070-1911_CHECK_DEPTH_vs_NOMINAL' +
+#                '_DEPTH_C-20200430T063316Z.png')))
+file = ('C:/Users/mphem/Documents/Work/UNSW/QC_reports/Toolbox_Plots' +
+                '/IMOS_ANMN-NSW_BMP070_FV01_BMP070-1911_CHECK_DEPTH_vs_NOMINAL' +
+                '_DEPTH_C-20200430T063316Z.png')
+doc.append(form.StandAloneGraphic(file,'scale=0.4'))
+doc.append(form.Command('caption',file))
+# doc.append(form.Command('end','turn'))
+doc.append(form.Command('end','sidewaystable'))
+
 
 doc.generate_pdf(paths.savedir() + 'test',compiler='pdflatex')
 
