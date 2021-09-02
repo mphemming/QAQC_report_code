@@ -16,7 +16,7 @@
 
 # Python Packages
 import glob
-
+import QCreport_format as form
 #------------------------------------------------------------
 # Information 
 #-------------
@@ -37,14 +37,16 @@ import glob
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-def include_photos(path, report):   
+def include_photos(path, doc):   
  
     # Get list of toolbox plots
     images = glob.glob(path + '*')
     # include toolbox plots
     for plots in range(len(images)):
-            report.image(images[plots],h=100,w=100)
-            report.ln()
+        with doc.create(form.Figure()) as pic:        
+            pic.add_image(images[plots],width=form.NoEscape(r'0.7\linewidth'))
+            # pic.add_caption('SST snapshots from Ocean Currents')                  
+        
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
