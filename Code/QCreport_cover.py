@@ -23,17 +23,35 @@ import QCreport_format as form
 
 def create_cover(doc):
 
-    #-----------------------------------------------
-    # Front Cover
-    #-----------------------------------------------
-  	doc.preamble.append(form.Command('title', ('Report on the Quality' +
-        ' Control of the NSW-IMOS Australian National Moorings Network.' + 
-        ' site: ' + setup.site_name + '  |  Deployment ' + setup.deployment)))
-  	doc.preamble.append(form.Command('author',setup.firstname + ' ' + setup.surname))
-  	doc.preamble.append(form.Command('date', setup.now))
-  	doc.append(form.NoEscape(r'\maketitle'))    
-    
-    
+      #-----------------------------------------------
+      # Front Cover
+      #-----------------------------------------------
+      doc.append(form.Command('begin','titlepage'))
+      doc.append(form.Command('begin','center'))      
+      doc.append(form.Command('LARGE'))
+      doc.append(form.Command('textbf',('Report on the Quality' +
+             ' Control of the NSW-IMOS Australian National Moorings Network.')))
+      doc.append(form.Command('\\'))
+      doc.append(form.Command('newline'))
+      doc.append(form.Command('vfill'))
+      doc.append(form.Command('textbf',(setup.site_name + ' deployment ' + setup.deployment)))
+      doc.append(form.Command('\\'))      
+      doc.append(form.Command('newline'))      
+      doc.append(form.Command('textbf',(setup.firstname + ' ' + setup.surname)))
+      doc.append(form.Command('\\'))      
+      doc.append(form.Command('newline'))
+      doc.append(form.Command('textbf',(setup.now)))
+      doc.append(form.Command('vfill'))    
+      file = paths.main_path + 'Cover_images\\4logos.png'
+      file = file.replace('\\','/')
+      doc.append(form.StandAloneGraphic(file,'scale=0.55'))
+      doc.append(form.Command('vfill'))
+      doc.append(form.Command('vfill'))
+      file = paths.main_path + 'Cover_images\\NCRIS.png'
+      file = file.replace('\\','/')
+      doc.append(form.StandAloneGraphic(file,'scale=0.4'))   
+      doc.append(form.Command('end','center'))          
+      doc.append(form.Command('end','titlepage'))  
     
     
 # #-----------------------------------------------
