@@ -33,3 +33,7 @@ QC_reports/
 *.tex
 *._*
 *.toc
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
