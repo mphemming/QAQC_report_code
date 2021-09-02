@@ -131,11 +131,8 @@ def separate_log(QClog):
 # Usage: QCreport.py
 
 
-def QC_comments(report):
-    # set font size
-    report.set_font_size(14)
-    # add vertical space
-    form.add_space()
+def QC_comments(doc):
+    
     # For each deployment file, add quality control log and history information  
     for inst_n in range(len(DepDet.atts_instrument)):
         
@@ -143,72 +140,33 @@ def QC_comments(report):
         inst = DepDet.remove_characters_QC(str(DepDet.atts_instrument[inst_n]))
         nd = DepDet.remove_characters_QC(str(DepDet.atts_instrument_nominal_depth[inst_n]))
         if '.0' in nd:
-            nd = str(int(float(nd)))   
+            nd = str(int(float(nd)))
+        #---------------------------------       
+        with doc.create(form.Subsection(inst + ' ' + nd + ' m')):    
+            #---------------------------------
+            # add QC log for each instrument               
+            with doc.create(form.Subsubsection('Quality Control Log')):    
+                # obtain string information from attribute 'quality_control_log'
+                    QClog = separate_log(DepDet.atts_quality_control_log[inst_n])
+                    # for each quality control log account, create bullet point
+                    for log_n in range(len(QClog)):    
+                        with doc.create(form.Itemize()) as itemize:
+                            itemize.add_item(DepDet.remove_characters_QC(QClog[log_n]))
         
-        #---------------------------------
-        # add instrument sub headings        
-        form.sub_header(inst + ' ' + nd + ' m')
-        # draw horizontal line
-        form.add_line()
-        # add vertical space
-        form.add_space()
-        #---------------------------------
-        
-        #---------------------------------
-        # add QC log for each instrument         
-        form.add_space()
-        # add subheading
-        report.set_font('Helvetica',style='B',size=14)
-        report.cell(80,6,'Quality Control Log',0,0,'L');
-        # add vertical space
-        form.add_space()
-        form.add_space()  
-        # obtain string information from attribute 'quality_control_log'
-        QClog = separate_log(DepDet.atts_quality_control_log[inst_n])
-        # for each quality control log account, create bullet point
-        for log_n in range(len(QClog)):    
-            # set font
-            report.set_font('Helvetica',style='B',size=10)
-            # create bullet point for quality control log account
-            form.bullet_point_multi(DepDet.remove_characters_QC(QClog[log_n]),12)     
-            # go to next line
-            report.ln() 
-        #---------------------------------    
-   
-        #---------------------------------
-        # add QC history for each instrument
-        # add vertical space        
-        form.add_space()
-        # set font
-        report.set_font('Helvetica',style='B',size=16)
-        # add subheading
-        report.cell(80,6,'History',0,0,'L');
-        # add vertical space
-        form.add_space()
-        form.add_space()
-        # add vertical space
-        report.ln(2)   
-        # obtain string information from attribute 'history'
-        history = separate_hist(DepDet.atts_history[inst_n])
-        # display information for each QC test
-        for hist_n in range(len(history.date)):
-            # set font
-            report.set_font('Helvetica',style='B',size=12)
-            # add bullet point subheading
-            report.multi_cell(180,6,history.date[hist_n] + '  --->  ' + history.test[hist_n],0,0,'L');
-            # add vertical space
-            report.ln(2)
-            # set font
-            report.set_font('Helvetica',style='',size=12)
-            # add vertical space            
-            report.ln(2)
-            # add vertical space 
-            form.add_space()   
-            # add bullet point
-            form.bullet_point_multi(history.comment[hist_n],12)
-            # go to next line
-            report.ln()    
-        #---------------------------------    
+            #---------------------------------
+            # add QC history for each instrument
+            history = separate_hist(DepDet.atts_history[inst_n])
+            with doc.create(form.Subsubsection('History')):  
+                # display information for each QC test
+                for hist_n in range(len(history.date)):
+                    # add bullet point subheading
+                    subheading_txt = history.date[hist_n] + '  --->  ' + history.test[hist_n]
+                    doc.append(form.Command('normalsize'))
+                    doc.append(form.Command('textbf',subheading_txt))
+                    doc.append(form.Command('large'))
+                    with doc.create(form.Itemize()) as itemize:
+                        itemize.add_item(history.comment[hist_n]) 
+            #---------------------------------    
             
 ###################################################################            
    
