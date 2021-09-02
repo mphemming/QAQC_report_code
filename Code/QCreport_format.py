@@ -20,8 +20,8 @@ import fpdf
 import QCreport_paths as paths
 import QCreport_setup as setup
 from pylatex import Document, Section, Subsection, Subsubsection, Tabular, Math, TikZ, Axis, \
-    Plot, Figure, Matrix, Alignat, Enumerate, Itemize, Command, Package, NoEscape
-
+    Plot, Figure, Matrix, Alignat, Enumerate, Itemize, Command, Package, NoEscape, \
+        StandAloneGraphic
 #------------------------------------------------------------
 # Information 
 #-------------
