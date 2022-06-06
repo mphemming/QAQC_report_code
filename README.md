@@ -25,10 +25,10 @@ Before running, you will need:
 
 Steps:
 
-1) Open 'QC_report_paths.py' either using a text editor (e.g. emacs of vi) or python (e.g. Spyder). Check that the paths are correct, and edit if necessary. 
+1) Open 'QC_report_paths.py' either using a text editor (e.g. emacs or vi) or python (e.g. Spyder). Check that the paths are correct, and edit if necessary. 
 2) Open 'QCreport_setup.py' similarly to step (1). Here, choose the site, deployment, deployment ID, and add your name as report maker. Below add any comments relating to the deployment. 
-3) Ensure that toolbox plots are in 'path here'. 
-4) Ensure that seployment photographs are in 'path here'.
+3) Ensure that toolbox plots are in 'sci-maths-ocean\IMOS\Moorings_Report\Automatic_reporting\Toolbox_Plots\<Site_name>\<dep_number>\'. 
+4) Ensure that deployment photographs are in 'sci-maths-ocean\IMOS\Moorings_Report\Automatic_reporting\Deployment_Photographs\<Site_name>\<dep_number>\'.
 5) In the terminal write 'blah blah blah'. The code should now produce a QAQC report, deployment figures, and output data files. 
 
 ### How the code works
