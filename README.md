@@ -21,7 +21,7 @@
 Before running, you will need:
 * Python and packages installed (see above)
 * The repository files stored locally
-* Access to sci-maths-ocean 
+* Access to sci-maths-ocean (You may need to run 'network' to mount sci-maths-ocean')
 
 Steps:
 
