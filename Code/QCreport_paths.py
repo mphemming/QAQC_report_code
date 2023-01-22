@@ -65,6 +65,18 @@ if ('\\' in ending_path[-1]) == 0:
 main_path = starting_path + ending_path
 main_path_data = starting_path + ending_path_data
 
+
+# working directory
+
+# account = 'z3526971'
+account = 'mphem'
+
+working_dir = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\')
+
+# temporary directory
+
+TEMPORARY_dir = 'C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\TEMPORARY\\'
+
 #------------------------------------------------------------
 # Information 
 #-------------
@@ -320,12 +332,16 @@ cover_dir = main_path + 'Cover_images\\'
 # __________________________________________________________________________________________________
 
 # %% -----------------------------------------------------------------------------------------------
-# Ocean currents path
+# plots paths
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-OC_dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\QC_reports\\Example_data_BMP070_29\\OceanCurrents\\'
+# <<<<<<< Updated upstream
+# OC_dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\QC_reports\\Example_data_BMP070_29\\OceanCurrents\\'
+# =======
+plots_dir = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\plots\\')
+# >>>>>>> Stashed changes
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -340,7 +356,7 @@ OC_dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\QC_reports\\Example_data_BMP07
 
 def savedir():
 #    save_dir = main_path + 'Reports\\'
-    save_dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\QC_reports\\'; # for testing
+    save_dir = 'C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Reports\\'; # for testing
     return save_dir
 
 # __________________________________________________________________________________________________

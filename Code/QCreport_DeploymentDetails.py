@@ -431,7 +431,10 @@ lat = remove_characters(lat[0:6])
 # Toolbox version
 tb_vers = remove_characters(str(get_unique(atts_toolbox_version)))
 # local time zone
-ltz = remove_characters(str(round(int(get_unique(rm_nodata(atts_local_time_zone))))))
+try:
+    ltz = remove_characters(str(round(int(get_unique(rm_nodata(atts_local_time_zone))))))
+except:
+    ltz = 'not specified'
 # time units
 tu = remove_characters(str(get_unique(atts_time_units)))
 # variable names

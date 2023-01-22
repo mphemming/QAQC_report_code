@@ -24,14 +24,25 @@
 # %% -----------------------------------------------------------------------------------------------
 # Import modules
 
+# set path of QC code
+import os
+import glob
+import warnings
+import importlib
+# account = 'z3526971'`
+account = 'mphem'
+os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code')
+import runpy
+
 # QCreport modules
-import QCreport_paths as paths
+import QCreport_setup as setup
+importlib.reload(setup) # needed for creating multiple reports in a loop
 import QCreport_format as form
+import QCreport_paths as paths
 import QCreport_DeploymentDetails as DepDet
 import QCreport_QualityControl as QCR
 import QCreport_DeploymentPhotographs as DepPhoto
 import QCreport_ToolboxPlots as tbp
-import QCreport_setup as setup
 import QCreport_cover as cover
 import QCreport_AdditionalPlots as Addp
 
@@ -96,6 +107,11 @@ doc.packages.append(form.Package('graphicx')) # for front cover images
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # %% -----------------------------------------------------------------------------------------------
+# Run code to transfer LTSPs to temporary folder, and update if necessary
+
+# runpy.run_path('QCreport_checkLTSPs.py')
+
+# %% -----------------------------------------------------------------------------------------------
 # Sections
 
 
@@ -149,6 +165,10 @@ print('Section added: ''Deployment Details''')
 with doc.create(form.Section('Plots')):
     
     Addp.addOCplots(doc)
+    Addp.addTimeSeriesplots(doc)
+    Addp.addClimplots(doc)
+    Addp.addCTDMooringplot(doc)
+    Addp.addTDplot(doc)
 
 print('Section added: ''Plots''')
 
@@ -222,9 +242,20 @@ print('Section added: ''Mooring Diagrams''')
 
 print('Saving report in: ' + saving_dir)
 
-filename = (saving_dir + setup.site_name + '_' + setup.deployment + 
+filename = (saving_dir + setup.site_name + '_' + setup.deployment_file_date_identifier + 
             '_QC_report')
-doc.generate_pdf(filename,compiler='pdflatex')
+# First time to create the TOC file
+try:
+    # try/except bypasses the non-terminal CalledProcessError
+    doc.generate_pdf(filename,compiler='pdflatex')
+except:
+    pass
+# second time to include the TOCs
+try:
+    # try/except bypasses the non-terminal CalledProcessError
+    doc.generate_pdf(filename,compiler='pdflatex')
+except:
+    pass
 doc.generate_tex(filename)
 print('Report saved.')
 
@@ -275,13 +306,28 @@ print('Report saved.')
 # https://www.blog.pythonlibrary.org/2018/06/07/an-intro-to-pypdf2/
 # http://fpdf.org/en/doc/
 
+
+# %% -----------------------------------------------------------------------------------------------
+# tidy-up (remove unnecessary files in directory)
+
+os.chdir(saving_dir)
+aux_files = glob.glob(saving_dir + '*.aux')
+toc_files = glob.glob(saving_dir + '*.toc')
+out_files = glob.glob(saving_dir + '*.out')
+log_files = glob.glob(saving_dir + '*.log')
+tex_files = glob.glob(saving_dir + '*.tex')
+
+# remove all but PDFs
+for n in range(len(aux_files)):
+    os.remove(aux_files[n])
+for n in range(len(toc_files)):
+    os.remove(toc_files[n])    
+for n in range(len(out_files)):
+    os.remove(out_files[n])      
+for n in range(len(log_files)):
+    os.remove(log_files[n])      
+for n in range(len(tex_files)):
+    os.remove(tex_files[n])      
+
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
-
-
-
-
-
