@@ -240,9 +240,11 @@ def get_netCDF(path):
                 time_units[n_file] = tatt.units
                 time_comment[n_file] = tatt.comment
             if 'DEPTH' in var_names[0]:
-              Datt = f_info.variables['DEPTH']      
-              depth_comment[n_file] = Datt.comment
-              
+              Datt = f_info.variables['DEPTH']    
+              try:
+                  depth_comment[n_file] = Datt.comment
+              except:
+                  pass
             # get times in/out water
             if hasattr(f_info,'quality_control_log'):
                 if 'imosInOutWaterQC' in f_info.quality_control_log:
