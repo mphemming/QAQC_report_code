@@ -11,6 +11,8 @@
 # Import modules
 
 from urllib import request
+import requests
+import re
 import os.path
 import numpy as np
 import datetime as dt
@@ -50,7 +52,7 @@ def get_dates(min_time,max_time):
     return OCdates_str
 
 # Function to download images from ocean currents website
-def get_OCimages(url):
+def get_OCimages(url,path,data_type):
     
     # get image name
     find_gif = url.find('gif')
@@ -63,23 +65,20 @@ def get_OCimages(url):
     # get current path
     current_path = os.getcwd()
     
-    if '/pctiles/' in url:
-        dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
-                                                'Example_data_BMP070_29\\OceanCurrents\\Percentiles'
-    if '/SST/' in url:
-        dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
-                                                'Example_data_BMP070_29\\OceanCurrents\\SST'   
-    if '/chl/' in url:
-        dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\QC_reports\\' + \
-                                                'Example_data_BMP070_29\\OceanCurrents\\Chl'                                                    
+    if 'percentiles' in data_type:
+        dirr = path + 'percentiles\\'
+    if 'SST' in data_type:
+        dirr = path + 'SST\\' 
+    if 'chl' in data_type:
+        dirr = path + 'CPHL\\'                                                    
         
     # Go to ocean currents plot directory for saving
-    if dir in os.getcwd():
-        dir = dir
-        dir = dir + '/'
+    if dirr in os.getcwd():
+        dirr = dirr
+        dirr = dirr + '/'
     else:
-        dir = dir + '/'
-        os.chdir(dir) 
+        dirr = dirr + '/'
+        os.chdir(dirr) 
     # download image and save
     f = open(image_name, 'wb')
     f.write(request.urlopen(url).read())
@@ -87,159 +86,259 @@ def get_OCimages(url):
     os.chdir(current_path)
 
 
+def getFiles(link,data_type):
+    res = requests.get(link)
+    txt = res.text
+    files = []
+    file_dates = []
+    
+    if 'SST' in data_type or 'chl' in data_type:
+        for m in re.finditer('href=', txt):
+            ftxt = txt[m.start()+5:m.start()+16] + 'gif'
+            if '20' in ftxt and '/>' not in ftxt and 'SNSW' not in ftxt:
+                files.append(link + ftxt)
+                try:
+                    file_dates.append(np.datetime64(ftxt[0:4] + '-' + ftxt[4:6] + '-' + ftxt[6:8]))
+                except:
+                    pass  
+    if 'percentiles' in data_type:
+        for m in re.finditer('.gif</a>', txt):
+            ftxt = txt[m.start()-8:m.start()+4]
+            files.append(link + ftxt)
+            try:
+                file_dates.append(np.datetime64(ftxt[0:4] + '-' + ftxt[4:6] + '-' + ftxt[6:8]))
+            except:
+                pass  
+            
+    return files, file_dates
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 # %% -----------------------------------------------------------------------------------------------
-# get images
+# get images (updated version)
 
-min_time = DepDet.start_date   
-max_time = DepDet.end_date   
-OCdates_str = get_dates(min_time,max_time)
- 
-numb_images = len(OCdates_str) 
 
-for n_images in range(numb_images):
+def getFilesInRange(site, start_date, end_date, data_type):
     
-    # SST images
-    try:    
-        url = 'http://oceancurrent.imos.org.au/DR_SST_daily/SST/SNSW/' + OCdates_str[n_images] + '.gif'  
-        get_OCimages(url)
-    except:
-        pass        
-    # percentiles images
-    try:    
-        url = 'http://oceancurrent.imos.org.au/DR_SST_daily/pctiles/SNSW/' + OCdates_str[n_images] + '.gif'   
-        get_OCimages(url)    
-    except:
-        pass        
-    # Ocean color images
-    try:
-        url = 'http://oceancurrent.imos.org.au/SNSW_chl/' + OCdates_str[n_images] + '04.gif'
-        get_OCimages(url)  
-    except:
-        pass
+    if 'SST' in data_type:
+        # if start and end date years are the same
+        if start_date.astype(datetime.datetime).year == end_date.astype(datetime.datetime).year:
+            if 'CH' not in site:
+                link = ('http://oceancurrent.imos.org.au/SNSW/' + 
+                        str(start_date.astype(datetime.datetime).year) + '/')
+            else:
+               link = ('http://oceancurrent.imos.org.au/Coffs/' + 
+                       str(start_date.astype(datetime.datetime).year) + '/') 
+            files, file_dates = getFiles(link,data_type)
+        else:
+            # if start and end date years are not the same
+            # get first list of files
+            if 'CH' not in site:
+                link = ('http://oceancurrent.imos.org.au/SNSW/' + 
+                        str(start_date.astype(datetime.datetime).year) + '/')
+            else:
+                link = ('http://oceancurrent.imos.org.au/Coffs/' + 
+                        str(start_date.astype(datetime.datetime).year) + '/')
+            files_1, file_dates_1 = getFiles(link,data_type)
+            # get second list of files
+            if 'CH' not in site:
+                link = ('http://oceancurrent.imos.org.au/SNSW/' + 
+                        str(end_date.astype(datetime.datetime).year) + '/')
+            else:
+                link = ('http://oceancurrent.imos.org.au/Coffs/' + 
+                        str(end_date.astype(datetime.datetime).year) + '/')
+            files_2, file_dates_2 = getFiles(link,data_type)
+            # combine
+            files = np.concatenate([files_1,files_2])
+            file_dates = np.concatenate([file_dates_1,file_dates_2])
+            
+    if 'percentiles' in data_type:
+        if 'CH' not in site:
+            link = ('http://oceancurrent.imos.org.au/DR_SST_daily/pctiles/SNSW/')
+        else:
+            link = ('http://oceancurrent.imos.org.au/DR_SST_daily/pctiles/Coffs/')
+        files, file_dates = getFiles(link,data_type)
+  
+    if 'chl' in data_type:
+        # if start and end date years are the same
+        if start_date.astype(datetime.datetime).year == end_date.astype(datetime.datetime).year:
+            if 'CH' not in site:
+                link = ('http://oceancurrent.imos.org.au/SNSW_chl/' + 
+                        str(start_date.astype(datetime.datetime).year) + '/')
+            else:
+               link = ('http://oceancurrent.imos.org.au/Coffs_chl/' + 
+                       str(start_date.astype(datetime.datetime).year) + '/') 
+            files, file_dates = getFiles(link,data_type)
+        else:
+            # if start and end date years are not the same
+            # get first list of files
+            if 'CH' not in site:
+                link = ('http://oceancurrent.imos.org.au/SNSW_chl/' + 
+                        str(start_date.astype(datetime.datetime).year) + '/')
+            else:
+                link = ('http://oceancurrent.imos.org.au/Coffs_chl/' + 
+                        str(start_date.astype(datetime.datetime).year) + '/')
+            files_1, file_dates_1 = getFiles(link,data_type)
+            # get second list of files
+            if 'CH' not in site:
+                link = ('http://oceancurrent.imos.org.au/SNSW_chl/' + 
+                        str(end_date.astype(datetime.datetime).year) + '/')
+            else:
+                link = ('http://oceancurrent.imos.org.au/Coffs_chl/' + 
+                        str(end_date.astype(datetime.datetime).year) + '/')
+            files_2, file_dates_2 = getFiles(link,data_type)
+            # combine
+            files = np.concatenate([files_1,files_2])
+            file_dates = np.concatenate([file_dates_1,file_dates_2])
+    
+    # select files in range 
+    f = np.logical_and(np.array(file_dates) >= start_date,
+                       np.array(file_dates) <= end_date)
+    files = np.array(files)[f]
+    # select a smaller sample for figure, equaly spread out over time period
+    splitter = np.round(len(files)/20)
+    selector = np.int32(np.arange(0,len(files),splitter))
+    files = np.array(files)[selector]
+            
+    # http://oceancurrent.imos.org.au/SNSW/2008/
+    # http://oceancurrent.imos.org.au/SNSW_chl/2004/
+    # percentiles one above is correct - use that!            
+            
+    return files
+    
+
+start_date = np.datetime64(DepDet.start_date)
+end_date = np.datetime64(DepDet.end_date)        
+
+# get images file names
+chl_files = getFilesInRange(setup.site_name, start_date, end_date, 'chl')
+SST_files = getFilesInRange(setup.site_name, start_date, end_date, 'SST')
+percentiles_files = getFilesInRange(setup.site_name, start_date, end_date, 'percentiles')
+# download images
+for chl_f in chl_files:
+    get_OCimages(chl_f,paths.plots_dir + 'OceanCurrent_Plots\\','chl')
+for SST_f in SST_files:
+    get_OCimages(SST_f,paths.plots_dir + 'OceanCurrent_Plots\\','SST')
+for perc_f in percentiles_files:
+    get_OCimages(perc_f,paths.plots_dir + 'OceanCurrent_Plots\\','percentiles')
     
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+  
 # %% -----------------------------------------------------------------------------------------------
 # Produce plots for report
 
 #-------------------------------------------------------------   
 # Percentiles plot 
-#--------------
-# Check if plots already exist before running below code
-OC_plots_in_dir = glob.glob('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
-                            'Example_data_BMP070_29\\OceanCurrents\\*percentiles*.png')    
+#-------------- 
 
-if len(OC_plots_in_dir) == 0:
+OC_plots_in_dir = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\Percentiles\\*.gif')
+sizes_percentiles = [os.path.getsize(f) for f in OC_plots_in_dir]
+
+if len(OC_plots_in_dir) != 0 and sum(sizes_percentiles) !=0:
  
     # Create figure
     fig = plt.figure(figsize=[5,10],dpi = 400) 
     fig.tight_layout()   
     # add Ocean Current images
-    for n_images in range(numb_images):
+    for n_images in range(len(OC_plots_in_dir)):
         # get image
-        date_n = OCdates_str[n_images]
-        img=mpimg.imread('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
-                          'Example_data_BMP070_29\\OceanCurrents\\Percentiles\\' + date_n + '.gif')
-        # used for subplots
-        n = n_images+1
-        # setup subplots depending on number of images available
-        if numb_images < 24:
-            subplot(6,4,n)
-        else:
-            subplot(8,4,n)        
-        # plot image                
-        plt.imshow(img)  
-        # add title
-        title(date_n[-2:] + '/' + date_n[-4:-2] + '/' + date_n[0:4],fontsize=8)
-        # remove axis ticks
-        ax = plt.gca()
-        ax.axes.xaxis.set_visible(False)
-        ax.axes.yaxis.set_visible(False)
-        # remove whitespace in figure
-        plt.subplots_adjust(top = 1.2, bottom = 0, right = 1, left = 0, 
-                hspace = 0, wspace = 0)
-        plt.margins(0,0)
-        plt.tight_layout()
+        date_n = OC_plots_in_dir[n_images][-12:-4]
+        try:
+            img=mpimg.imread(OC_plots_in_dir[n_images])
+            # used for subplots
+            n = n_images+1
+            # setup subplots depending on number of images available
+            subplot(6,5,n)      
+            # plot image                
+            plt.imshow(img)  
+            # add title
+            title(date_n[-2:] + '/' + date_n[-4:-2] + '/' + date_n[0:4],fontsize=8)
+            # remove axis ticks
+            ax = plt.gca()
+            ax.axes.xaxis.set_visible(False)
+            ax.axes.yaxis.set_visible(False)
+        except:
+            pass
+            # remove whitespace in figure
+            # plt.subplots_adjust(top = 1.2, bottom = 1, right = 1, left = 0, 
+            #         hspace = 0, wspace = 0)
+            # plt.margins(0,0)    
+            plt.tight_layout()
     #--------------    
     # save figure
-    fig.savefig('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports' +
-                '\\Example_data_BMP070_29\\OceanCurrents\\' + 
-                setup.site_name + '_' + setup.deployment + 
-                '_' + 'percentiles_OC.png', dpi=400, bbox_inches="tight")    
+    fig.savefig((paths.plots_dir + 'OceanCurrent_Plots\\percentiles\\' + 
+                setup.site_name + '_' + setup.deployment_file_date_identifier + 
+                '_' + 'percentiles_OC.png'), dpi=800, bbox_inches="tight")    
+    plt.close()
     #-------------------------------------------------------------     
 
 # %% -----------------------------------------------------------------------------------------------
 #-------------------------------------------------------------   
 # SST plot 
 #--------------
-# Check if plots already exist before running below code    
-OC_plots_in_dir = glob.glob('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
-                            'Example_data_BMP070_29\\OceanCurrents\\*SST*.png')        
-if len(OC_plots_in_dir) == 0:
+   
+OC_plots_in_dir = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\SST\\*.gif')
+sizes_SST = [os.path.getsize(f) for f in OC_plots_in_dir]
+
+if len(OC_plots_in_dir) != 0 and sum(sizes_SST) !=0:
     # Create figure
     fig = plt.figure(figsize=[5,10],dpi = 400) 
     fig.tight_layout()   
     # add Ocean Current images
-    for n_images in range(numb_images):
+    for n_images in range(len(OC_plots_in_dir)):
         # get image
-        date_n = OCdates_str[n_images]
-        img=mpimg.imread('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
-                          'Example_data_BMP070_29\\OceanCurrents\\SST\\' + date_n + '.gif')
-        # used for subplots
-        n = n_images+1
-        # setup subplots depending on number of images available
-        if numb_images < 24:
-            subplot(6,4,n)
-        else:
-            subplot(8,4,n)        
-        # plot image                
-        plt.imshow(img)  
-        # add title
-        title(date_n[-2:] + '/' + date_n[-4:-2] + '/' + date_n[0:4],fontsize=8)
-        # remove axis ticks
-        ax = plt.gca()
-        ax.axes.xaxis.set_visible(False)
-        ax.axes.yaxis.set_visible(False)
-        # remove whitespace in figure
-        plt.subplots_adjust(top = 1.2, bottom = 0, right = 1, left = 0, 
-                hspace = 0, wspace = 0)
-        plt.margins(0,0)    
-        plt.tight_layout()
+        date_n = OC_plots_in_dir[n_images][-14:-4]
+        try:
+            img=mpimg.imread(OC_plots_in_dir[n_images])
+            # used for subplots
+            n = n_images+1
+            # setup subplots depending on number of images available
+            subplot(6,5,n)
+            # plot image                
+            plt.imshow(img)  
+            # add title
+            title(date_n[-4:-2] + '/' + date_n[-6:-4] + '/' + date_n[0:4],fontsize=8)
+            # remove axis ticks
+            ax = plt.gca()
+            ax.axes.xaxis.set_visible(False)
+            ax.axes.yaxis.set_visible(False)
+        except:
+            pass
+            # remove whitespace in figure
+            # plt.subplots_adjust(top = 1.2, bottom = 1, right = 1, left = 0, 
+            #         hspace = 0, wspace = 0)
+            # plt.margins(0,0)    
+            plt.tight_layout()
     #--------------    
     # save figure
-    fig.savefig('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports' +
-                '\\Example_data_BMP070_29\\OceanCurrents\\' + 
-                setup.site_name + '_' + setup.deployment + 
-                '_' + 'SSTs_OC.png', dpi=400, bbox_inches="tight")    
+    fig.savefig((paths.plots_dir + 'OceanCurrent_Plots\\SST\\' + setup.site_name + '_' + setup.deployment_file_date_identifier + 
+                '_' + 'SSTs_OC.png'), dpi=800, bbox_inches="tight")    
+    plt.close()
     #-------------------------------------------------------------       
 
-   # %% ----------------------------------------------------------------------------------------------- 
+# %% ----------------------------------------------------------------------------------------------- 
 #-------------------------------------------------------------   
 # Ocean color plot 
 #--------------
 # Check if plots already exist before running below code    
-OC_plots_in_dir = glob.glob('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
-                            'Example_data_BMP070_29\\OceanCurrents\\*Chl*.png')        
-if len(OC_plots_in_dir) == 0:
+OC_plots_in_dir = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\*.gif')
+sizes_OColor = [os.path.getsize(f) for f in OC_plots_in_dir]
+    
+if len(OC_plots_in_dir) != 0 and sum(sizes_OColor) !=0:
     # Create figure
     fig = plt.figure(figsize=[5,10],dpi = 400)   
     # add Ocean Current images
-    for n_images in range(numb_images):
+    for n_images in range(len(OC_plots_in_dir)):
         # get image
-        date_n = OCdates_str[n_images]
+        date_n = OC_plots_in_dir[n_images][-14:-6]
         try:
-            img=mpimg.imread('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports\\' + \
-                              'Example_data_BMP070_29\\OceanCurrents\\Chl\\' + date_n + '04.gif')
+            img=mpimg.imread(OC_plots_in_dir[n_images])
             # used for subplots
             n = n_images+1
             # setup subplots depending on number of images available
-            if numb_images < 24:
-                subplot(6,4,n)
-            else:
-                subplot(8,4,n)        
+            subplot(6,5,n)     
             # plot image                
             plt.imshow(img)  
             # add title
@@ -258,17 +357,31 @@ if len(OC_plots_in_dir) == 0:
     # fig.tight_layout(rect=[0, 1, 1, 0.95])
     #--------------    
     # save figure
-    fig.savefig(('C:\\Users\\mphem\\Documents\\Work\\UNSW\\QC_reports' + 
-                 '\\Example_data_BMP070_29\\OceanCurrents\\' + 
-                setup.site_name + '_' + setup.deployment + 
-                '_' + 'Chl_OC.png'), dpi=400, bbox_inches="tight")    
+    fig.savefig((paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\' + 
+                setup.site_name + '_' + setup.deployment_file_date_identifier + 
+                '_' + 'Chl_OC.png'), dpi=800, bbox_inches="tight")    
+    plt.close()
     #-------------------------------------------------------------           
     
+# %% ----------------------------------------------------------------------------------------------- 
+# Delete all gif files from folder as no longer required
+ 
+# SST
+files2remove = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\SST\\*.gif')
+for f in files2remove:
+    os.remove(f)  
+# percentiles
+files2remove = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\percentiles\\*.gif')
+for f in files2remove:
+    os.remove(f)  
+# CPHL
+files2remove = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\*.gif')
+for f in files2remove:
+    os.remove(f)  
     
-    
-    
-    
-    
+# %% ----------------------------------------------------------------------------------------------- 
+# Delete all gif files from folder as no longer required    
+plt.close('all')   
     
     
     
