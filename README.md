@@ -33,9 +33,35 @@ Steps:
 
 ### How the code works
 
+#### QCreport.py
+
+This is the main script to run. It imports all functions required to create a mooring deployment report. Functions are imported from scripts that work similarly to imported python packages. However, unlike python packages, the current path needs to be the same as the script that is being imported. That is why the python package OS is used to change directory to that storing the code. 
+
+QCreport.py imports the following 'packages':
+
+* **QCreport_setup.py** - Contains setup information (e.g. site name, deployment). This package is always reloaded to aid creating multiple QC reports in a loop. 
+* **QCreport_format.py** - Contains formatting functions (e.g. subheader, hyperlinks). 
+* **QCreport_paths.py** - Contains the paths for data, code, plots, and where to save the reports.
+* **QCreport_DeploymentDetails.py** - Contains functions that grab file attributes and presents information as LaTeX tables and text. 
+* **QCreport_QualityControl.py** - Contains functions to transfer quality control information from the files to the report. 
+* **QCreport_DeploymentPhotographs.py** - Contains functions to add deployment photographs to the report, if available. 
+* **QCreport_ToolboxPlots.py** - Contains functions to add plots produced during the toolbox QC process to the report. 
+* **QCreport_cover.py** - Contains functions that create the report cover. 
+* **QCreport_AdditionalPlots** - Contains functions to add additionally created plots (e.g. climatology, OceanCurrents) to the report, if available.
+
+These 'packages' are described in more detail below:
+
+
+
+
+
+
 The code first creates LTSP files using all available mooring files. The hourly LTSP is then used for creating the plot_period and plot_deployment figures, and other useful figures used for the report. Other useful files and statistics are then output, and a QAQC report PDF is created. 
 
 The code relies on the aodntools package to create the LTSPs, xarray, numpy, and matplotlib to create figures, and pylatex and fpdf packages to create the report.
+
+
+
 
 #### Directories of output:
 
