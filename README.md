@@ -51,21 +51,44 @@ QCreport.py imports the following 'packages':
 
 These 'packages' are described in more detail below:
 
-#### QCreport_setup.py
+#### QCreport_setup.py (imported as 'setup')
 
 This script contains setup information used to create the report. Please ensure that 'site_name' and 'deployment_file_date_identifier' is correctly defined, and add any comments (e.g. QC comments) here to be included in the report. 
 
-#### QCreport_format.py
+#### QCreport_format.py (imported as 'form')
 
+Pylatex is imported in this 'package' and is vital for creating the report. Functions to create document items (e.g. table of contents, bullet points, sections) are contained here. Special characters, such as the degree symbol, are edited in this script.
 
+#### QCreport_paths.py (imported as 'paths')
 
+Paths are imported from this 'package'. These are retrieved in the main 'QCreport.py' script as follows: 
 
+* toolbox_dir = paths.tb_dir 
+* saving_dir = paths.savedir()
+* mooring_dir = paths.md_dir
+* depphoto_dir = paths.dpp_dir
+
+The report maker needs to double-check that these paths are correct before proceeding to make a report. 
+
+#### QCreport_DeploymentDetails.py (imported as 'DepDet')
+
+#### QCreport_QualityControl.py (imported as 'QCR')
+
+#### QCreport_DeploymentPhotographs.py (imported as 'DepPhoto')
+
+#### QCreport_ToolboxPlots.py (imported as 'tbp')
+
+#### QCreport_cover.py (imported as 'cover')
+
+#### QCreport_AdditionalPlots.py (imported as 'Addp')
 
 The code first creates LTSP files using all available mooring files. The hourly LTSP is then used for creating the plot_period and plot_deployment figures, and other useful figures used for the report. Other useful files and statistics are then output, and a QAQC report PDF is created. 
 
 The code relies on the aodntools package to create the LTSPs, xarray, numpy, and matplotlib to create figures, and pylatex and fpdf packages to create the report.
 
+### Github
 
+The working directory for my personal Github repository is: 'C:\Users\mphem\OneDrive - UNSW\Work\QC_reports\Code'. There is also a UNSW Maths Github repository that will not be updated, stored in 'C:\Users\mphem\OneDrive - UNSW\Work\QC_reports\QC_reports_Github_UNSW'. I will work on branches for the different report versions (e.g. 'version1','version2'). 
 
 
 #### Directories of output:
