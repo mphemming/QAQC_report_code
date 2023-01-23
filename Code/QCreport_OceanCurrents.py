@@ -112,6 +112,67 @@ def getFiles(link,data_type):
             
     return files, file_dates
 
+
+def plotOC(OC_plots_in_dir,site_name,deployment_file_date_identifier,data_type):
+        
+        # Create figure
+        fig = plt.figure(figsize=[2,2],dpi = 400) 
+        # add Ocean Current images
+        for n_images in range(len(OC_plots_in_dir)):
+            print(n_images)
+            # get image
+            date_n = OC_plots_in_dir[n_images][-12:-4]
+            try:
+                img=mpimg.imread(OC_plots_in_dir[n_images])
+                # used for subplots
+                if n_images < 4:
+                    n = n_images+1
+                else:
+                    n = n + 1
+                print(n)
+                # setup subplots depending on number of images available
+                subplot(2,2,n)      
+                # plot image                
+                plt.imshow(img) 
+                plt.tight_layout()
+                # add title
+                # title(date_n[-2:] + '/' + date_n[-4:-2] + '/' + date_n[0:4],fontsize=2,bbox=dict(boxstyle="square", ec=(1., 0.5, 0.5), fc=(1., 0.8, 0.8), alpha=0.5))
+                # # remove axis ticks
+                ax = plt.gca()
+                ax.axes.xaxis.set_visible(False)
+                ax.axes.yaxis.set_visible(False)
+                # ax.xaxis.set_tick_params(labelsize=2)
+            except:
+                pass
+                # remove whitespace in figure
+                # plt.subplots_adjust(top = 1.2, bottom = 1, right = 1, left = 0, 
+                #         hspace = 0, wspace = 0)
+                # plt.margins(0,0)    
+                plt.tight_layout()
+                # fig.tight_layout()   
+            plt.subplots_adjust(wspace=0, hspace=0)
+            # fig.tight_layout()   
+            #--------------    
+            if n % 4 == 0:
+                # save figure
+                if 'percentiles' in data_type:
+                    fig.savefig((paths.plots_dir + 'OceanCurrent_Plots\\percentiles\\' + 
+                                site_name + '_' + deployment_file_date_identifier + 
+                                '_' + 'percentiles_OC_' + str(int(n_images / 4)) + '.png'), dpi=800, bbox_inches="tight")    
+                if 'SST' in data_type:
+                    fig.savefig((paths.plots_dir + 'OceanCurrent_Plots\\SST\\' + 
+                                site_name + '_' + deployment_file_date_identifier + 
+                                '_' + 'SST_OC_' + str(int(n_images / 4)) + '.png'), dpi=800, bbox_inches="tight")    
+                if 'chl' in data_type:
+                    fig.savefig((paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\' + 
+                                site_name + '_' + deployment_file_date_identifier + 
+                                '_' + 'Chl_OC_' + str(int(n_images / 4)) + '.png'), dpi=800, bbox_inches="tight")    
+                plt.close()
+                fig = plt.figure(figsize=[2,2],dpi = 400) 
+                n = n-4
+        #-------------------------------------------------------------     
+
+
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -237,135 +298,35 @@ OC_plots_in_dir = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\Percentiles\\
 sizes_percentiles = [os.path.getsize(f) for f in OC_plots_in_dir]
 
 if len(OC_plots_in_dir) != 0 and sum(sizes_percentiles) !=0:
+    plotOC(OC_plots_in_dir, setup.site_name, 
+           setup.deployment_file_date_identifier,'percentiles')
  
-    # Create figure
-    fig = plt.figure(figsize=[5,10],dpi = 400) 
-    fig.tight_layout()   
-    # add Ocean Current images
-    for n_images in range(len(OC_plots_in_dir)):
-        # get image
-        date_n = OC_plots_in_dir[n_images][-12:-4]
-        try:
-            img=mpimg.imread(OC_plots_in_dir[n_images])
-            # used for subplots
-            n = n_images+1
-            # setup subplots depending on number of images available
-            subplot(6,5,n)      
-            # plot image                
-            plt.imshow(img)  
-            # add title
-            title(date_n[-2:] + '/' + date_n[-4:-2] + '/' + date_n[0:4],fontsize=8)
-            # remove axis ticks
-            ax = plt.gca()
-            ax.axes.xaxis.set_visible(False)
-            ax.axes.yaxis.set_visible(False)
-        except:
-            pass
-            # remove whitespace in figure
-            # plt.subplots_adjust(top = 1.2, bottom = 1, right = 1, left = 0, 
-            #         hspace = 0, wspace = 0)
-            # plt.margins(0,0)    
-            plt.tight_layout()
-    #--------------    
-    # save figure
-    fig.savefig((paths.plots_dir + 'OceanCurrent_Plots\\percentiles\\' + 
-                setup.site_name + '_' + setup.deployment_file_date_identifier + 
-                '_' + 'percentiles_OC.png'), dpi=800, bbox_inches="tight")    
-    plt.close()
-    #-------------------------------------------------------------     
-
-# %% -----------------------------------------------------------------------------------------------
 #-------------------------------------------------------------   
 # SST plot 
-#--------------
-   
+#-------------- 
+
 OC_plots_in_dir = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\SST\\*.gif')
-sizes_SST = [os.path.getsize(f) for f in OC_plots_in_dir]
+sizes_percentiles = [os.path.getsize(f) for f in OC_plots_in_dir]
 
-if len(OC_plots_in_dir) != 0 and sum(sizes_SST) !=0:
-    # Create figure
-    fig = plt.figure(figsize=[5,10],dpi = 400) 
-    fig.tight_layout()   
-    # add Ocean Current images
-    for n_images in range(len(OC_plots_in_dir)):
-        # get image
-        date_n = OC_plots_in_dir[n_images][-14:-4]
-        try:
-            img=mpimg.imread(OC_plots_in_dir[n_images])
-            # used for subplots
-            n = n_images+1
-            # setup subplots depending on number of images available
-            subplot(6,5,n)
-            # plot image                
-            plt.imshow(img)  
-            # add title
-            title(date_n[-4:-2] + '/' + date_n[-6:-4] + '/' + date_n[0:4],fontsize=8)
-            # remove axis ticks
-            ax = plt.gca()
-            ax.axes.xaxis.set_visible(False)
-            ax.axes.yaxis.set_visible(False)
-        except:
-            pass
-            # remove whitespace in figure
-            # plt.subplots_adjust(top = 1.2, bottom = 1, right = 1, left = 0, 
-            #         hspace = 0, wspace = 0)
-            # plt.margins(0,0)    
-            plt.tight_layout()
-    #--------------    
-    # save figure
-    fig.savefig((paths.plots_dir + 'OceanCurrent_Plots\\SST\\' + setup.site_name + '_' + setup.deployment_file_date_identifier + 
-                '_' + 'SSTs_OC.png'), dpi=800, bbox_inches="tight")    
-    plt.close()
-    #-------------------------------------------------------------       
-
-# %% ----------------------------------------------------------------------------------------------- 
-#-------------------------------------------------------------   
-# Ocean color plot 
-#--------------
-# Check if plots already exist before running below code    
-OC_plots_in_dir = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\*.gif')
-sizes_OColor = [os.path.getsize(f) for f in OC_plots_in_dir]
+if len(OC_plots_in_dir) != 0 and sum(sizes_percentiles) !=0:
+    plotOC(OC_plots_in_dir, setup.site_name, 
+           setup.deployment_file_date_identifier,'SST')    
     
-if len(OC_plots_in_dir) != 0 and sum(sizes_OColor) !=0:
-    # Create figure
-    fig = plt.figure(figsize=[5,10],dpi = 400)   
-    # add Ocean Current images
-    for n_images in range(len(OC_plots_in_dir)):
-        # get image
-        date_n = OC_plots_in_dir[n_images][-14:-6]
-        try:
-            img=mpimg.imread(OC_plots_in_dir[n_images])
-            # used for subplots
-            n = n_images+1
-            # setup subplots depending on number of images available
-            subplot(6,5,n)     
-            # plot image                
-            plt.imshow(img)  
-            # add title
-            title(date_n[-2:] + '/' + date_n[-4:-2] + '/' + date_n[0:4],fontsize=8)
-            # remove axis ticks
-            ax = plt.gca()
-            ax.axes.xaxis.set_visible(False)
-            ax.axes.yaxis.set_visible(False)
-        except:
-            pass
-        # remove whitespace in figure
-        # plt.subplots_adjust(top = 1.2, bottom = 1, right = 1, left = 0, 
-        #         hspace = 0, wspace = 0)
-        # plt.margins(0,0)    
-    fig.tight_layout()
-    # fig.tight_layout(rect=[0, 1, 1, 0.95])
-    #--------------    
-    # save figure
-    fig.savefig((paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\' + 
-                setup.site_name + '_' + setup.deployment_file_date_identifier + 
-                '_' + 'Chl_OC.png'), dpi=800, bbox_inches="tight")    
-    plt.close()
-    #-------------------------------------------------------------           
+#-------------------------------------------------------------   
+# Chl plot 
+#-------------- 
+
+OC_plots_in_dir = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\*.gif')
+sizes_percentiles = [os.path.getsize(f) for f in OC_plots_in_dir]
+
+if len(OC_plots_in_dir) != 0 and sum(sizes_percentiles) !=0:
+    plotOC(OC_plots_in_dir, setup.site_name, 
+           setup.deployment_file_date_identifier,'chl')       
+    
     
 # %% ----------------------------------------------------------------------------------------------- 
 # Delete all gif files from folder as no longer required
- 
+
 # SST
 files2remove = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\SST\\*.gif')
 for f in files2remove:
