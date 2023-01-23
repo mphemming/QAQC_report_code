@@ -21,7 +21,7 @@ import QCreport_paths as paths
 import QCreport_setup as setup
 from pylatex import Document, Section, Hyperref, Subsection, Subsubsection, Tabular, Math, TikZ, Axis, \
     Plot, Figure, Matrix, Alignat, Enumerate, Itemize, Command, Package, NoEscape, \
-        StandAloneGraphic, MultiColumn
+        StandAloneGraphic, MultiColumn, NewPage
 from pylatex.utils import escape_latex, NoEscape        
 #------------------------------------------------------------
 # Information 
