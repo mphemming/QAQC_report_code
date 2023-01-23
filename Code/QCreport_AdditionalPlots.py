@@ -22,6 +22,7 @@ import QCreport_cover as cover
 # This package runs python scripts within a script
 import runpy
 import os
+import glob
 import numpy as np
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -41,30 +42,55 @@ os.chdir(paths.working_dir + '\\Code')
 runpy.run_path('QCreport_climatology.py')
 
 # %% -----------------------------------------------------------------------------------------------
+# Add Map figure
+
+def addMap(doc,site_name):
+    file = (paths.plots_dir + 'Maps\\Moorings_map.png')
+    with doc.create(form.Figure(position='h!')) as map_pic:
+        map_pic.add_image(file, 
+                          width=form.NoEscape(r'0.85\linewidth'))
+        if 'BMP' in site_name:
+            map_pic.add_caption('Mooring locations along New South Wales. Site ' +
+                                site_name + ' is close to Narooma shown in panel (d).')  
+        if 'SYD' in site_name or 'PH' in site_name or 'ORS' in site_name:
+            map_pic.add_caption('Mooring locations along New South Wales. Site ' +
+                                site_name + ' is close to Sydney shown in panel (c).')     
+        if 'CH' in site_name:
+            map_pic.add_caption('Mooring locations along New South Wales. Site ' +
+                                site_name + ' is close to Coffs Harbour shown in panel (b).') 
+
+# %% -----------------------------------------------------------------------------------------------
 # Add Ocean currents plots
 
 def addOCplots(doc):
+    # get list of plots to include
+    SST_plots = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\SST\\' + setup.site_name + '_' + 
+                       setup.deployment_file_date_identifier
+                          + '_' + 'SST_OC*.png')
+    perc_plots = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\percentiles\\' + setup.site_name + '_' + 
+                       setup.deployment_file_date_identifier
+                          + '_' + 'percentiles_OC*.png')
+    chl_plots = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\' + setup.site_name + '_' + 
+                       setup.deployment_file_date_identifier
+                          + '_' + 'Chl_OC*.png')
     # Add SST plot     
-    with doc.create(form.Figure(position='h!')) as SST_pic:
-        SST_pic.add_image((paths.plots_dir + 'OceanCurrent_Plots\\SST\\' + setup.site_name + '_' + 
-                           setup.deployment_file_date_identifier
-                              + '_' + 'SSTs_OC.png'), 
-                          width=form.NoEscape(r'0.85\linewidth'))
-        SST_pic.add_caption('SST snapshots from Ocean Currents')          
-    # Add Percentile plot     
-    with doc.create(form.Figure(position='h!')) as perc_pic:
-        perc_pic.add_image((paths.plots_dir + 'OceanCurrent_Plots\\percentiles\\' + setup.site_name + '_' + 
-                           setup.deployment_file_date_identifier
-                              + '_' + 'percentiles_OC.png'),
-                          width=form.NoEscape(r'0.85\linewidth'))
-        perc_pic.add_caption('Percentile snapshots from Ocean Currents')          
+    for p in SST_plots:
+        doc.append(form.Command('newpage'))
+        with doc.create(form.Figure(position='h!')) as SST_pic:
+                SST_pic.add_image(p, width=form.NoEscape(r'0.85\linewidth'))
+                SST_pic.add_caption('SST snapshots from Ocean Currents')  
+    # Add Percentile plot   
+    for p in perc_plots:    
+        doc.append(form.Command('newpage'))
+        with doc.create(form.Figure(position='h!')) as perc_pic:
+                perc_pic.add_image(p, width=form.NoEscape(r'0.85\linewidth'))
+                perc_pic.add_caption('Percentile snapshots from Ocean Currents')   
     # Add Ocean Color plot     
-    with doc.create(form.Figure(position='h!')) as oc_pic:
-        oc_pic.add_image((paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\' + setup.site_name + '_' + 
-                           setup.deployment_file_date_identifier
-                              + '_' + 'Chl_OC.png'), 
-                         width=form.NoEscape(r'0.85\linewidth'))
-        oc_pic.add_caption('Ocean color snapshots from Ocean Currents')      
+    for p in chl_plots:
+        doc.append(form.Command('newpage'))
+        with doc.create(form.Figure(position='h!')) as oc_pic:
+            oc_pic.add_image(p, width=form.NoEscape(r'0.85\linewidth'))
+            oc_pic.add_caption('Ocean color snapshots from Ocean Currents')  
     
 # %% -----------------------------------------------------------------------------------------------
 # Add time series plots
@@ -116,11 +142,9 @@ def addClimplots(doc):
 # %% -----------------------------------------------------------------------------------------------
 # Add CTD-mooring comparison
 
-file = (paths.plots_dir + 'CTDcomparison\\TEMP_' + setup.site_name + '_' + 
-            setup.deployment_file_date_identifier + '.png')
-
-
-def addCTDMooringplot(doc):
+def addCTDMooringplot(doc,site_name,deployment_file_date_identifier):
+    file = (paths.plots_dir + 'CTDcomparison\\TEMP_' + setup.site_name + '_' + 
+                setup.deployment_file_date_identifier + '.png')
     if os.path.exists(file):
         with doc.create(form.Figure(position='h!')) as clim_pics:
             clim_pics.add_image(file, 
@@ -131,10 +155,9 @@ def addCTDMooringplot(doc):
 # %% -----------------------------------------------------------------------------------------------
 # Add Time-Depth plot
 
-file = (paths.plots_dir + 'TimeSeries\\TEMP_DEPTH_' + setup.site_name + '_' + 
-            setup.deployment_file_date_identifier + '.png')
-
-def addTDplot(doc):
+def addTDplot(doc,site_name,deployment_file_date_identifier):
+    file = (paths.plots_dir + 'TimeSeries\\TEMP_DEPTH_' + site_name + '_' + 
+            deployment_file_date_identifier + '.png')
     if os.path.exists(file):
         with doc.create(form.Figure(position='h!')) as TD_pics:
             TD_pics.add_image(file, 
