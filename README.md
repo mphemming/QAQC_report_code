@@ -51,6 +51,11 @@ QCreport.py imports the following 'packages':
 
 These 'packages' are described in more detail below:
 
+#### QCreport_setup.py
+
+This script contains setup information used to create the report. Please ensure that 'site_name' and 'deployment_file_date_identifier' is correctly defined, and add any comments (e.g. QC comments) here to be included in the report. 
+
+#### QCreport_format.py
 
 
 
