@@ -1,0 +1,74 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "definitions": {
+        "fileDimensions": {
+            "type": "object",
+            "patternProperties": {
+                "^[A-Za-z][A-Za-z0-9_]*$": {
+                    "type": ["integer", "null"],
+                    "minimum": 0
+                }
+            },
+            "additionalProperties": false
+        },
+        "fileVariables": {
+            "type": "object",
+            "patternProperties": {
+                "^[A-Za-z][A-Za-z0-9_]*$": {"$ref": "#/definitions/variableDefinition"}
+            },
+            "additionalProperties": false
+        },
+        "variableDefinition": {
+            "type": "object",
+            "properties": {
+                "_dimensions": {"$ref": "#/definitions/variableDimensionsList"},
+                "_datatype": {"$ref": "#/definitions/dataTypeDefinition"},
+                "_FillValue": {"type": ["number", "string"]},
+                "_fill_value": {"type": ["number", "string"]},
+                "_zlib": {"type":  "boolean"},
+                "_complevel": {"enum": [1, 2, 3, 4, 5, 6, 7, 8, 9]},
+                "_shuffle": {"type":  "boolean"},
+                "_fletcher32": {"type":  "boolean"},
+                "_contiguous": {"type":  "boolean"},
+                "_chunksizes": {},
+                "_endian": {"enum": ["little", "big", "native"]},
+                "_least_significant_digit": {"type": "integer"},
+                "_data": {"type": ["null", "number", "array"]}
+            },
+            "patternProperties": {
+                "^[A-Za-z][A-Za-z0-9_]*$": {"$ref": "#/definitions/attributeDefinition"}
+            },
+            "additionalProperties": false
+        },
+        "variableDimensionsList": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$"}
+        },
+        "attributeDefinition": {
+            "type": ["string", "number", "array"]
+        },
+        "dataTypeDefinition": {
+            "anyOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        "int", "int8", "int16", "int32", "int64",
+                        "float", "float32", "float64", "double",
+                        "S1", "c", "i1", "b", "B", "u1", "i2", "h", "s", "u2", "i4", "i", "l", "u4",
+                        "i8", "u8", "f4", "f", "f8", "d"
+                    ]
+                },
+                {"format": "datatype"}
+            ]
+        }
+    },
+    "properties": {
+        "_dimensions": {"$ref": "#/definitions/fileDimensions"},
+        "_variables": {"$ref": "#/definitions/fileVariables"}
+    },
+    "patternProperties": {
+        "^[A-Za-z][A-Za-z0-9_]*$": {"$ref": "#/definitions/attributeDefinition"}
+    },
+    "additionalProperties": false
+}
