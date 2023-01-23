@@ -97,3 +97,15 @@ for s in sites:
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+
+
+[autoreload of QCreport_setup failed: Traceback (most recent call last):
+  File "C:\Users\mphem\Anaconda3\lib\site-packages\IPython\extensions\autoreload.py", line 261, in check
+    superreload(m, reload, self.old_objects)
+  File "C:\Users\mphem\Anaconda3\lib\site-packages\IPython\extensions\autoreload.py", line 459, in superreload
+    module = reload(module)
+  File "C:\Users\mphem\Anaconda3\lib\importlib\__init__.py", line 168, in reload
+    raise ModuleNotFoundError(f"spec not found for the module {name!r}", name=name)
+ModuleNotFoundError: spec not found for the module 'QCreport_setup'
+]
+

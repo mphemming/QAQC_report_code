@@ -23,7 +23,6 @@ deployment = ''
 deployment_file_date_identifier = '2209'
 name_of_reportmaker = 'NSW-IMOS'
 
-
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -54,15 +53,15 @@ Other_issues = 'None'
 # is a neeed to add more information, add this in the 'comments' string below  
 
 
-comments =  'Post deployment processing of the data identified significant pressure drift in the top PT logger ' + \
-            '(PT8 - Nominally 12m depth, 62m above the bottom). Closer inspection indicates a 0.24m ' + \
-            'offset between PT8 (0.117m) and PT7 (0.357m - similar with the other PT sensors) ' + \
-            'prior to the instruments being deployed. It also indicates that once deployed, PT7 (21.29m) and PT8 (14.70m) are ' + \
-            'actually only separated by 6.59m not the nominal 8m. Inspection of the mooring line indicates that some shrinkage has ' + \
-            'occurred and that the loggers were separated by 7m (all other logger positions confirmed to be within spec). Deployment ' + \
-            'logs and metadata have been amended accordingly. The pressure data were corrected by ....'
+# comments =  'Post deployment processing of the data identified significant pressure drift in the top PT logger ' + \
+#             '(PT8 - Nominally 12m depth, 62m above the bottom). Closer inspection indicates a 0.24m ' + \
+#             'offset between PT8 (0.117m) and PT7 (0.357m - similar with the other PT sensors) ' + \
+#             'prior to the instruments being deployed. It also indicates that once deployed, PT7 (21.29m) and PT8 (14.70m) are ' + \
+#             'actually only separated by 6.59m not the nominal 8m. Inspection of the mooring line indicates that some shrinkage has ' + \
+#             'occurred and that the loggers were separated by 7m (all other logger positions confirmed to be within spec). Deployment ' + \
+#             'logs and metadata have been amended accordingly. The pressure data were corrected by ....'
 
-# comments = 'Some pressure sensor drift. See end of report for details.'
+comments = 'no comments.'
 
 # default: 'None', if comments add text here   
 # tips: copy & paste might not work - only use characters in 'latin-q' codec
@@ -101,31 +100,31 @@ findspace = name_of_reportmaker.find(' ')
 firstname = name_of_reportmaker[0:findspace]
 surname = name_of_reportmaker[findspace+1:]
 
-if 'Austin' in surname:
-    citation = 'Austin, T, Roughan, M, and Milburn, S. ' + \
-    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
-    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' UNSW - Integrated Marine Observing System, Australia.'
-if 'Roughan' in surname:
-    citation = 'Roughan, M, Austin, T, and Milburn, S. ' + \
-    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
-    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' UNSW - Integrated Marine Observing System, Australia.'
-if 'Milburn' in surname:
-    citation = 'Milburn, S, Roughan, M, and Austin, T. ' + \
-    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
-    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' UNSW - Integrated Marine Observing System, Australia.'
-if 'Hemming' in surname:
-    citation = 'Hemming, M, Roughan, M, and Austin, T, Milburn, S, Malan, N. ' + \
-    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
-    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' UNSW - Integrated Marine Observing System, Australia.'    
-if 'Malan' in surname:
-    citation = 'Malan, N, Roughan, M, and Austin, T, Milburn, S, Hemming, M. ' + \
-    'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
-    site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
-    ' UNSW - Integrated Marine Observing System, Australia.'    
+# if 'Austin' in surname:
+#     citation = 'Austin, T, Roughan, M, and Milburn, S. ' + \
+#     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+#     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+#     ' UNSW - Integrated Marine Observing System, Australia.'
+# if 'Roughan' in surname:
+#     citation = 'Roughan, M, Austin, T, and Milburn, S. ' + \
+#     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+#     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+#     ' UNSW - Integrated Marine Observing System, Australia.'
+# if 'Milburn' in surname:
+#     citation = 'Milburn, S, Roughan, M, and Austin, T. ' + \
+#     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+#     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+#     ' UNSW - Integrated Marine Observing System, Australia.'
+# if 'Hemming' in surname:
+#     citation = 'Hemming, M, Roughan, M, and Austin, T, Milburn, S, Malan, N. ' + \
+#     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+#     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+#     ' UNSW - Integrated Marine Observing System, Australia.'    
+# if 'Malan' in surname:
+#     citation = 'Malan, N, Roughan, M, and Austin, T, Milburn, S, Hemming, M. ' + \
+#     'Report on the Quality Control of the NSW-IMOS Australian National Moorings Network site: ' + \
+#     site_name + ' - Deployment ' + deployment + ', (' + now_year + ').' + \
+#     ' UNSW - Integrated Marine Observing System, Australia.'    
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________

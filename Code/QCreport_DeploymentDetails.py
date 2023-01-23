@@ -63,23 +63,37 @@ for n_atts in range(len(class_fields)):
     # combine all attributes from each sensor file
     if isinstance(attributes_TEMP,str) == 0:
         for n_keys in range(len(attributes_TEMP.abstract)):
-            exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_TEMP.' + str(class_fields[n_atts]) + '[n_keys]]')  
+            try:
+                exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_TEMP.' + str(class_fields[n_atts]) + '[n_keys]]')  
+            except:
+                pass
     if isinstance(attributes_SBE37,str) == 0:
         for n_keys in range(len(attributes_SBE37.abstract)):
-            exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_SBE37.' + str(class_fields[n_atts]) + '[n_keys]]')     
+            try:
+                exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_SBE37.' + str(class_fields[n_atts]) + '[n_keys]]')     
+            except:
+                pass
     if isinstance(attributes_CURR,str) == 0:    
         for n_keys in range(len(attributes_CURR.abstract)):
-            n_keys_n = n_keys+len(attributes_TEMP.abstract)
-            exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CURR.' + str(class_fields[n_atts]) + '[n_keys]]')          
+            try:
+                n_keys_n = n_keys+len(attributes_TEMP.abstract)
+                exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CURR.' + str(class_fields[n_atts]) + '[n_keys]]')          
+            except:
+                pass
     if isinstance(attributes_BGC,str) == 0:    
         for n_keys in range(len(attributes_BGC.abstract)):
-            n_keys_n = n_keys+len(attributes_TEMP.abstract)+len(attributes_CURR.abstract)
-            exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_BGC.' + str(class_fields[n_atts]) + '[n_keys]]')  
+            try:
+                n_keys_n = n_keys+len(attributes_TEMP.abstract)+len(attributes_CURR.abstract)
+                exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_BGC.' + str(class_fields[n_atts]) + '[n_keys]]')  
+            except:
+                pass
     if isinstance(attributes_CTD,str) == 0:    
         for n_keys in range(len(attributes_CTD.abstract)):
-            n_keys_n = n_keys+len(attributes_CTD.abstract)+len(attributes_CTD.abstract)
-            exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CTD.' + str(class_fields[n_atts]) + '[n_keys]]')  
-
+            try:
+                n_keys_n = n_keys+len(attributes_CTD.abstract)+len(attributes_CTD.abstract)
+                exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CTD.' + str(class_fields[n_atts]) + '[n_keys]]')  
+            except:
+                pass
 # remove full file directory from 'atts_toolbox_input_file'
 atts_toolbox_input_file_name = [] 
 for n_atts in range(len(atts_toolbox_input_file)):
@@ -204,14 +218,15 @@ def param_avail(string):
             n = 0
             param_list_PSAL.append(n)        
         # DOX available?
-        if vn_file.find('DOX') > -1 :
+        if vn_file.find('DOX') > -1 or vn_file.find('DOX1') > -1 or vn_file.find('DOX2') > -1 :
             n = 1
             param_list_DOX.append(n)
         else:
             n = 0
             param_list_DOX.append(n)  
         # CPHL available?
-        if vn_file.find('CPHL') > -1 :
+        if vn_file.find('CPHL') > -1 or vn_file.find('CHLF') > -1 \
+        or vn_file.find('FLU2') > -1 or vn_file.find('CHLU') > -1:
             n = 1
             param_list_CPHL.append(n)
         else:
@@ -304,24 +319,44 @@ def param_avail(string):
              
             
     # save parameter indices in class called 'param_list'         
-    class param_list:
-        TIME = param_list_TIME
-        TEMP = param_list_TEMP
-        PRES = param_list_PRES
-        DEPTH = param_list_DEPTH
-        PSAL = param_list_PSAL
-        DOX = param_list_DOX
-        TURB = param_list_TURB
-        CPHL = param_list_CPHL
-        DENS = param_list_DENS
-        CNDC = param_list_CNDC
-        FLU = param_list_FLU
-        VCUR = param_list_VCUR
-        UCUR = param_list_UCUR
-        WCUR = param_list_WCUR  
-        CSPD = param_list_CSPD  
-        CDIR = param_list_CDIR
-        ECUR = param_list_ECUR          
+    # class param_list:
+    #     TIME = param_list_TIME
+    #     TEMP = param_list_TEMP
+    #     PRES = param_list_PRES
+    #     DEPTH = param_list_DEPTH
+    #     PSAL = param_list_PSAL
+    #     DOX = param_list_DOX
+    #     TURB = param_list_TURB
+    #     CPHL = param_list_CPHL
+    #     DENS = param_list_DENS
+    #     CNDC = param_list_CNDC
+    #     FLU = param_list_FLU
+    #     VCUR = param_list_VCUR
+    #     UCUR = param_list_UCUR
+    #     WCUR = param_list_WCUR  
+    #     CSPD = param_list_CSPD  
+    #     CDIR = param_list_CDIR
+    #     ECUR = param_list_ECUR    
+        
+    param_list = {'TIME': param_list_TIME,
+                  'TEMP': param_list_TEMP,
+                  'PRES': param_list_PRES,
+                  'DEPTH': param_list_DEPTH,
+                  'PSAL': param_list_PSAL,
+                  'DOX': param_list_DOX,
+                  'TURB': param_list_TURB,
+                  'CPHL': param_list_CPHL,
+                  'DENS': param_list_DENS,
+                  'CNDC': param_list_CNDC,
+                  'FLU': param_list_FLU,
+                  'VCUR': param_list_VCUR,
+                  'UCUR': param_list_UCUR,
+                  'WCUR': param_list_WCUR,
+                  'CSPD': param_list_CSPD,
+                  'CDIR': param_list_CDIR,
+                  'ECUR': param_list_ECUR}
+    
+    
         
     return param_list
 
@@ -462,8 +497,9 @@ def intro_table(doc):
         table.add_hline()
         table.add_row(('Site', setup.site_name))
         table.add_hline()
-        table.add_row(('Deployment',setup.deployment))
-        table.add_hline()
+        if '' not in setup.deployment:
+            table.add_row(('Deployment',setup.deployment))
+            table.add_hline()
         table.add_row(('Start Date',start_date))
         table.add_hline()
         table.add_row(('End Date',end_date))
@@ -496,7 +532,15 @@ def intro_table(doc):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
-    
+
+# if instrument name attribute is too long, shorten
+    for row_n in range(len(atts_instrument)):
+        inst = remove_characters(str(atts_instrument[row_n]))
+        # if instrument name attribute is too long, shorten
+        if len(inst) > 30:
+            atts_instrument[row_n] = inst[0:30] + '  .....'
+
+
 def instrument_table(doc):
     
     with doc.create(form.Subsection('Instrument Serial Numbers and Nominal Depths')):
@@ -508,7 +552,6 @@ def instrument_table(doc):
         table.add_hline()
         # add rows using loop
         for row_n in range(len(atts_instrument)):
-        
             inst = remove_characters(str(atts_instrument[row_n]))
             sn = remove_characters(str(atts_instrument_serial_number[row_n]))
             nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
@@ -537,6 +580,172 @@ def instrument_table(doc):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________        
         
+def create_parameter_table(doc,tab_str,n_depths,param_list,split,atts_instrument):
+    input_str = '|' + tab_str*(n_depths+1)
+    with doc.create(form.Tabular(input_str)) as table:
+        table.add_hline() 
+        #---------------------------------
+        # Header
+        header = ['Parameter']
+        if '' in split and n_depths == len(atts_instrument):
+            r = range(len(atts_instrument))
+        if 'split' in split and n_depths < 8:
+            r = range(8,len(atts_instrument))
+        if 'split' in split and n_depths == 8:
+            r = range(8)    
+        for n_inst in r: 
+            nd = remove_characters(str(atts_instrument_nominal_depth[n_inst]))
+            if '.0' in nd:
+                nd = str(int(float(nd))) 
+            header.append(nd + ' m')
+        table.add_row((header))
+        table.add_hline()             
+        # #---------------------------------
+        # # add rows using loop                
+        # #---------------------------------
+        vs = list(param_list.keys());
+        # # TEMP 
+        if 'TEMP' in vs:
+            row_xs = ['TEMP [' + form.degree_symbol + 'C]']
+            for n_inst in r: 
+                if param_list['TEMP'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # PSAL 
+        if 'PSAL' in vs:
+            row_xs = ['PSAL']
+            for n_inst in r: 
+                if param_list['PSAL'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline()         
+        # # VCUR 
+        if 'VCUR' in vs:
+            row_xs = ['VCUR [' + form.vel_units + ']']
+            for n_inst in r: 
+                if param_list['VCUR'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # UCUR 
+        if 'UCUR' in vs:
+            row_xs = ['UCUR [' + form.vel_units + ']']
+            for n_inst in r: 
+                if param_list['UCUR'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # WCUR 
+        if 'WCUR' in vs:
+            row_xs = ['WCUR [' + form.vel_units + ']']
+            for n_inst in r: 
+                if param_list['WCUR'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # CSPD 
+        if 'CSPD' in vs:
+            row_xs = ['CSPD [' + form.vel_units + ']']
+            for n_inst in r: 
+                if param_list['CSPD'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # CDIR
+        if 'CDIR' in vs:
+            row_xs = ['CDIR[' + form.degree_symbol + ']']
+            for n_inst in r: 
+                if param_list['CDIR'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline()         
+        # # ECUR 
+        if 'ECUR' in vs:
+            row_xs = ['ECUR [' + form.vel_units + ']']
+            for n_inst in r: 
+                if param_list['ECUR'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # CPHL 
+        if 'CPHL' in vs:
+            row_xs = ['CPHL [' + form.chl_units + ']']
+            for n_inst in r: 
+                if param_list['CPHL'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # DOX 
+        if 'DOX' in vs:
+            row_xs = ['DOX [' + form.O2_units + ']']
+            for n_inst in r: 
+                if param_list['DOX'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # TURB 
+        if 'TURB' in vs:
+            row_xs = ['TURB [NTU]']
+            for n_inst in r: 
+                if param_list['TURB'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # PRES 
+        if 'PRES' in vs:
+            row_xs = ['PRES [dbar]']
+            for n_inst in r: 
+                if param_list['PRES'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # DEPTH 
+        if 'DEPTH' in vs:
+            row_xs = ['DEPTH [m]']
+            for n_inst in r: 
+                if param_list['DEPTH'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline() 
+        # # TIME 
+        if 'TIME' in vs:
+            row_xs = ['TIME']
+            for n_inst in r: 
+                if param_list['TIME'][n_inst] == 1:
+                    row_xs.append('x')
+                else:
+                    row_xs.append(' ')                   
+            table.add_row((row_xs))
+            table.add_hline()    
+
+
 def parameter_table(doc): 
     
     param_list = param_avail(atts_var_names)
@@ -550,148 +759,15 @@ def parameter_table(doc):
     #---------------------------------    
     #---------------------------------
     # Table   
-    with doc.create(form.Tabular(input_str)) as table:
-        table.add_hline() 
-        #---------------------------------
-        # Header
-        header = ['Parameter']
-        for n_inst in range(len(atts_instrument)): 
-            nd = remove_characters(str(atts_instrument_nominal_depth[n_inst]))
-            if '.0' in nd:
-                nd = str(int(float(nd))) 
-            header.append(nd + ' m')
-        table.add_row((header))
-        table.add_hline()             
-        # #---------------------------------
-        # # add rows using loop                
-        # #---------------------------------
-        # # TEMP 
-        row_xs = ['TEMP [' + form.degree_symbol + 'C]']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.TEMP[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # PSAL 
-        row_xs = ['PSAL']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.PSAL[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline()         
-        # # VCUR 
-        row_xs = ['VCUR [' + form.vel_units + ']']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.VCUR[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # UCUR 
-        row_xs = ['UCUR [' + form.vel_units + ']']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.UCUR[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # WCUR 
-        row_xs = ['WCUR [' + form.vel_units + ']']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.WCUR[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # CSPD 
-        row_xs = ['CSPD [' + form.vel_units + ']']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.CSPD[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # CDIR
-        row_xs = ['CDIR[' + form.degree_symbol + ']']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.CDIR[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline()         
-        # # ECUR 
-        row_xs = ['ECUR [' + form.vel_units + ']']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.ECUR[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # CPHL 
-        row_xs = ['CPHL [' + form.chl_units + ']']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.CPHL[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # DOX 
-        row_xs = ['DOX [' + form.O2_units + ']']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.DOX[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # TURB 
-        row_xs = ['TURB [NTU]']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.TURB[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # PRES 
-        row_xs = ['PRES [dbar]']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.PRES[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # DEPTH 
-        row_xs = ['DEPTH [m]']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.DEPTH[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline() 
-        # # TIME 
-        row_xs = ['TIME']
-        for n_inst in range(len(atts_instrument)): 
-            if param_list.TIME[n_inst] == 1:
-                row_xs.append('x')
-            else:
-                row_xs.append(' ')                   
-        table.add_row((row_xs))
-        table.add_hline()      
-        
+    if n_depths < 9:
+        create_parameter_table(doc,tab_str,n_depths,param_list,'',atts_instrument)
+    else:
+        create_parameter_table(doc,tab_str,8,param_list,'split',atts_instrument)
+        doc.append('\n') 
+        doc.append('')
+        doc.append('\n') 
+        create_parameter_table(doc,tab_str,n_depths-8,param_list,'split',atts_instrument)
+
 #------------------------------------------------------------
 # Information 
 #-------------
@@ -790,7 +866,7 @@ def file_tables(doc):
     doc.append(form.Command('selectfont'))
     #---------------------------------
     # add table        
-    with doc.create(form.Tabular('|l|p{13cm}|')) as table:
+    with doc.create(form.Tabular('|l|p{10cm}|')) as table:
         table.add_hline()     
         table.add_row('Instrument & nom. depth','Filename')
         table.add_hline() 
@@ -803,9 +879,10 @@ def file_tables(doc):
         if '.0' in nd:
             nd = str(int(float(nd)))          
         OPenDAP = nc.OPeNDAP_links[row_n]
+        link = form.hyperlink(OPenDAP,'OPenDAP_link')
         # Need to split up string so that it fits into column
-        OPenDAP = (OPenDAP[0:73] + ' ' + OPenDAP[41:107] + ' ' + OPenDAP[107::])
-        table.add_row(inst + '  ' + nd + ' m',OPenDAP)
+        # OPenDAP = (OPenDAP[0:73] + ' ' + OPenDAP[41:107] + ' ' + OPenDAP[107::])
+        table.add_row(inst + '  ' + nd + ' m',link)
         table.add_hline()
     doc.append(form.Command('fontsize', arguments = ['15', '12']))
     doc.append(form.Command('selectfont'))     

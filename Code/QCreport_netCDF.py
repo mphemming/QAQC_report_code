@@ -18,6 +18,7 @@
 
 # Python Packages
 import netCDF4 as nc
+import xarray as xr
 import glob
 import numpy as np
 # QC report modules
@@ -105,8 +106,16 @@ def get_netCDF(path):
         for n_file in range(len_files):
             ncf = nc_files[n_file]
             find_nd = ncf.find('_END')
-            nd.append(ncf[find_nd-2:find_nd])
-        nd_sorted = np.sort(nd)
+            nomD_str = ncf[find_nd-5:find_nd]
+            find_hyphen = nomD_str.find('-')
+            # if containing non-useful strings
+            nomD_str = nomD_str[find_hyphen+1::]
+            nd.append(nomD_str)
+        nd_sorted = list(np.sort(np.array(nd).astype(float)).astype(str))
+        # convert to 'integral' str by removing decimal point and zero, if applicable
+        for n in range(len_files):
+            if '.5' not in nd_sorted[n]:
+                nd_sorted[n] = str(int(float(nd_sorted[n])))
         # shift file order around
         nc_files_sorted = []
         for n_sort in range(len_files): 
@@ -120,7 +129,7 @@ def get_netCDF(path):
 
         # Get netCDF attributes for each file
         for n_file in range(len_files):
-            f_info = nc.Dataset(nc_files[n_file])
+            f_info = xr.open_dataset(nc_files[n_file]).load()
     
             if hasattr(f_info,'abstract'):
                 abstract[n_file] = f_info.abstract
@@ -237,14 +246,20 @@ def get_netCDF(path):
             # get TIME and DEPTH attributes
             if 'TIME' in var_names[0]:
                 tatt = f_info.variables['TIME']
-                time_units[n_file] = tatt.units
-                time_comment[n_file] = tatt.comment
+                try:
+                    time_units[n_file] = tatt.units
+                except: 
+                    time_units[n_file] = 'no units defined'
+                try:
+                    time_comment[n_file] = tatt.comment
+                except:
+                    pass
             if 'DEPTH' in var_names[0]:
-              Datt = f_info.variables['DEPTH']    
-              try:
-                  depth_comment[n_file] = Datt.comment
-              except:
-                  pass
+                Datt = f_info.variables['DEPTH']      
+                try:
+                    depth_comment[n_file] = Datt.comment
+                except:
+                    pass
             # get times in/out water
             if hasattr(f_info,'quality_control_log'):
                 if 'imosInOutWaterQC' in f_info.quality_control_log:
@@ -252,6 +267,8 @@ def get_netCDF(path):
                     pos = f_string.find('imosInOutWaterQC')
                     in_water[n_file] = f_info.quality_control_log[pos+20:pos+37]
                     out_water[n_file] = f_info.quality_control_log[pos+43:pos+60]
+                    
+            f_info.close()
             
            
         # Save information as a class    
@@ -327,12 +344,11 @@ for n_files in range(len(files_avail)):
     find_start = fname.find('2_5/')
     OPeNDAP_string = first_part + fname[find_start+67:]
     OPeNDAP_string = OPeNDAP_string.replace('\\', '/')
+    OPeNDAP_string = OPeNDAP_string.replace('TEMPERATURE','Temperature') 
+    OPeNDAP_string = OPeNDAP_string.replace('SBE37','CTD_timeseries') 
+    OPeNDAP_string = OPeNDAP_string + '.html' 
     OPeNDAP_links.append(OPeNDAP_string)
             
-
-
-
-
 
 
 

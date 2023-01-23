@@ -21,6 +21,7 @@
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+
 # %% -----------------------------------------------------------------------------------------------
 # Import modules
 
@@ -102,7 +103,9 @@ doc.packages.append(form.Package('sectsty'))
 doc.packages.append(form.Package('titlesec','compact, big'))
 doc.packages.append(form.Package('placeins','section')) # ensures plots stay in correct section, and don't float around
 doc.packages.append(form.Package('graphicx')) # for front cover images
-
+doc.packages.append(form.Package('hyperref','[colorlinks=false]')) # for opendap links
+# doc.packages.append(form.NoEscape(r'\usepackage[bgcolor=transparent]{minted}'))# to remove colored boxes
+doc.packages.append(form.NoEscape(r'\usepackage[colorlinks=false]{hyperref}'))
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -249,6 +252,10 @@ try:
     # try/except bypasses the non-terminal CalledProcessError
     doc.generate_pdf(filename,compiler='pdflatex')
 except:
+    # check file was created, if not create warning
+    check = os.path.exists(filename + '.pdf')
+    if check == False:
+        warnings.warn('Warning!! file: ' + filename + '.pdf was not created. Investigation required.')
     pass
 # second time to include the TOCs
 try:
@@ -256,55 +263,11 @@ try:
     doc.generate_pdf(filename,compiler='pdflatex')
 except:
     pass
-doc.generate_tex(filename)
+# doc.generate_tex(filename + '.tex')
 print('Report saved.')
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-# %% -----------------------------------------------------------------------------------------------
-# Reorganise PDF report so that title and table of contents is at the beginning of the document
-
-# THIS METHOD DOES NOT WORK. THE TOC LINKS NO LONGER WORK... LOOK FOR ANOTHER METHOD
-
-#PDF_report = PdfFileReader(saving_dir + setup.site_name + '_' + setup.deployment + '_QC_report.pdf')
-#pdf_bulk_writer = PdfFileWriter()
-#output_filename_bulk = "bulk.pdf"
-#pdf_TOC_writer = PdfFileWriter()
-#output_filename_TOC = "TOC.pdf"
-#
-#for page in range(PDF_report.getNumPages()):
-#    current_page = PDF_report.getPage(page)
-#    if page == PDF_report.getNumPages()-1:
-#        pdf_TOC_writer.addPage(current_page)
-#    if page <= PDF_report.getNumPages()-2:
-#        pdf_bulk_writer.addPage(current_page)
-#        
-## Write the data to disk
-#with open(output_filename_TOC, "wb") as out:
-#     pdf_TOC_writer.write(out)
-#     print("created", output_filename_TOC)       
-#
-## Write the data to disk
-#with open(output_filename_bulk, "wb") as out:
-#     pdf_bulk_writer.write(out)
-#     print("created", output_filename_bulk)   
-#
-#pdfs = ['TOC.pdf', 'bulk.pdf']
-#
-#merger = PdfFileMerger()
-#
-#for pdf in pdfs:
-#    merger.append(pdf)
-#    
-#merger.write("result.pdf")
-#merger.close()
-
-# NOTES: USE PyPDF to REORGANISE THE DOCUMENT AFTERWARDS
-# https://pythonhosted.org/PyPDF2/PageObject.html
-# https://pythonhosted.org/PyPDF2/PdfFileReader.html
-# https://www.blog.pythonlibrary.org/2018/06/07/an-intro-to-pypdf2/
-# http://fpdf.org/en/doc/
 
 
 # %% -----------------------------------------------------------------------------------------------

@@ -19,9 +19,10 @@ import fpdf
 # QC report modules
 import QCreport_paths as paths
 import QCreport_setup as setup
-from pylatex import Document, Section, Subsection, Subsubsection, Tabular, Math, TikZ, Axis, \
+from pylatex import Document, Section, Hyperref, Subsection, Subsubsection, Tabular, Math, TikZ, Axis, \
     Plot, Figure, Matrix, Alignat, Enumerate, Itemize, Command, Package, NoEscape, \
-        StandAloneGraphic
+        StandAloneGraphic, MultiColumn
+from pylatex.utils import escape_latex, NoEscape        
 #------------------------------------------------------------
 # Information 
 #-------------
@@ -61,6 +62,10 @@ def section_header(header_string):
 def sub_header(header_string):
     doc.create(Subsubsection(header_string))
     return doc
+
+def hyperlink(url,text):
+        text = escape_latex(text)
+        return NoEscape(r'\href{' + url + '}{' + text + '}')
 
 # def add_line():
 #     report.cell(100, 10, border='T') 

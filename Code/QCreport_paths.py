@@ -73,6 +73,8 @@ account = 'mphem'
 
 working_dir = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\')
 
+
+
 # temporary directory
 
 TEMPORARY_dir = 'C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\TEMPORARY\\'
@@ -211,13 +213,13 @@ def mddir(site_name):
     switcher = {
             'BMP070': main_path + 'Mooring_Diagrams\\BMP070\\BMP070_120_mooring_diagram.png',
             'BMP120': main_path + 'Mooring_Diagrams\\BMP120\\BMP070_120_mooring_diagram.png',
-            'CH050': main_path + 'Mooring_Diagrams\\CH050\\',
-            'CH070': main_path + 'Mooring_Diagrams\\CH070\\',
-            'CH100': main_path + 'Mooring_Diagrams\\CH100\\',
-            'PH100': main_path + 'Mooring_Diagrams\\PH100\\',
-            'SYD100': main_path + 'Mooring_Diagrams\\SYD100\\',
-            'SYD140': main_path + 'Mooring_Diagrams\\SYD140\\',
-            'ORS065': main_path + 'Mooring_Diagrams\\ORS065\\',
+            'CH050': main_path + 'Mooring_Diagrams\\CH050\\CH_Mooring_Generic.png',
+            'CH070': main_path + 'Mooring_Diagrams\\CH070\\CH_Mooring_Generic.png',
+            'CH100': main_path + 'Mooring_Diagrams\\CH100\\CH_Mooring_Generic.png',
+            'PH100': main_path + 'Mooring_Diagrams\\PH100\\No_mooring_diagram.png',
+            'SYD100': main_path + 'Mooring_Diagrams\\SYD100\\No_mooring_diagram.png',
+            'SYD140': main_path + 'Mooring_Diagrams\\SYD140\\No_mooring_diagram.png',
+            'ORS065': main_path + 'Mooring_Diagrams\\ORS065\\ORS_2010_onwards.png',
             }
 
     md_dir = switcher.get(site_name)
@@ -326,7 +328,6 @@ tb_dir = tbdir(setup.site_name)
 
 cover_dir = main_path + 'Cover_images\\'
 
-
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -337,11 +338,7 @@ cover_dir = main_path + 'Cover_images\\'
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-# <<<<<<< Updated upstream
-# OC_dir = 'C:\\Users\\mphem\\Documents\\Work\\UNSW\QC_reports\\Example_data_BMP070_29\\OceanCurrents\\'
-# =======
 plots_dir = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\plots\\')
-# >>>>>>> Stashed changes
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -356,7 +353,7 @@ plots_dir = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\plo
 
 def savedir():
 #    save_dir = main_path + 'Reports\\'
-    save_dir = 'C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Reports\\'; # for testing
+    save_dir = 'C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Reports\\'; # for testing
     return save_dir
 
 # __________________________________________________________________________________________________
