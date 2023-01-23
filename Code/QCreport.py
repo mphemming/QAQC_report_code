@@ -167,11 +167,12 @@ print('Section added: ''Deployment Details''')
 
 with doc.create(form.Section('Plots')):
     
+    Addp.addMap(doc,setup.site_name)
     Addp.addOCplots(doc)
     Addp.addTimeSeriesplots(doc)
     Addp.addClimplots(doc)
-    Addp.addCTDMooringplot(doc)
-    Addp.addTDplot(doc)
+    Addp.addCTDMooringplot(doc,setup.site_name,setup.deployment_file_date_identifier)
+    Addp.addTDplot(doc,setup.site_name,setup.deployment_file_date_identifier)
 
 print('Section added: ''Plots''')
 
