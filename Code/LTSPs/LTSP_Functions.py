@@ -8,7 +8,7 @@
 # Import Packages
 
 import os
-os.chdir('C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
+os.chdir('C:\\Users\\z3526971\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
          'LTSPs\\python-aodntools-master\\')
 # Velocity LTSPs
 import aodntools.timeseries_products.velocity_aggregated_timeseries as vat
@@ -49,9 +49,9 @@ def get_thredds_folders(node,site,variable):
             if ('Biogeochem_timeseries' in folder) or ('CTD_timeseries' in folder) or ('Temperature' in folder):
                 folder_names.append(folder)
         if 'PSAL' in variable:
-            if ('Biogeochem_timeseries' in folder):
+            if ('Biogeochem_timeseries' in folder) or ('CTD_timeseries' in folder):
                 folder_names.append(folder)
-        if 'BGC' in variable:
+        if ('BGC' in variable) or ('CTD_timeseries' in folder):
             if ('Biogeochem_timeseries' in folder):
                 folder_names.append(folder)
         if 'CURR' in variable:
