@@ -13,7 +13,9 @@
 # __________________________________________________________________________________________________
 
 import os
-os.chdir('C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
+# account = 'mphem'
+account = 'z3526971'
+os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
          'LTSPs\\python-aodntools-master\\')
 # Velocity LTSPs
 import aodntools.timeseries_products.velocity_aggregated_timeseries as vat
@@ -38,6 +40,7 @@ import requests
 import shutil
 import datetime
 # QCreport modules
+os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\')
 import QCreport_paths as paths
 import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
@@ -48,9 +51,9 @@ import QCreport_setup as setup
 import QCreport_cover as cover
 import QCreport_AdditionalPlots as Addp
 
-os.chdir('C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Code\\LTSPs\\')
+os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\LTSPs\\')
 import LTSP_Functions as LTSPFs
-os.chdir('C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Code\\')
+os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\')
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -64,12 +67,10 @@ os.chdir('C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Code\\')
 # __________________________________________________________________________________________________
 
 
-def get_latest_deployment_date(node, site_code,variable):
+def get_latest_deployment_date(node, site_code, variable):
     if 'TEMP' in variable or 'hourly' in variable:
-        if 'hourly' in variable:
-            variable = 'TEMP'
         # get all file names
-        folders = LTSPFs.get_thredds_folders(node, site_code, variable)
+        folders = LTSPFs.get_thredds_folders(node, site_code, 'TEMP')
         files, locs = LTSPFs.get_thredds_files(node,folders, site_code, '')
         # get start dates for files on thredds
         start_dates_thredds = []
@@ -80,9 +81,12 @@ def get_latest_deployment_date(node, site_code,variable):
             end_dates_thredds.append(f[underscore_index[6]+5:underscore_index[6]+13])
         end_dates_thredds = np.sort(end_dates_thredds)
         latest_date_thredds = end_dates_thredds[-1]
+        # convert latest_date_thredds to correct format
+        latest_date_thredds =   np.datetime64((latest_date_thredds[0:4] + '-' + latest_date_thredds[4:6] + 
+                                 '-' + latest_date_thredds[6:8]))  
     if 'PSAL' in variable:
         # get all file names
-        folders = LTSPFs.get_thredds_folders(node, site_code, variable)
+        folders = LTSPFs.get_thredds_folders(node, site_code, 'PSAL')
         if '[]' not in str(folders):
             files, locs = LTSPFs.get_thredds_files(node,folders, site_code, '')
             # get start dates for files on thredds
@@ -94,6 +98,9 @@ def get_latest_deployment_date(node, site_code,variable):
                 end_dates_thredds.append(f[underscore_index[6]+5:underscore_index[6]+13])
             end_dates_thredds = np.sort(end_dates_thredds)
             latest_date_thredds = end_dates_thredds[-1] 
+            # convert latest_date_thredds to correct format
+            latest_date_thredds =   np.datetime64((latest_date_thredds[0:4] + '-' + latest_date_thredds[4:6] + 
+                                     '-' + latest_date_thredds[6:8]))  
     if 'velocity' in variable:
         # get all file names
         folders = LTSPFs.get_thredds_folders(node, site_code, 'CURR')
@@ -108,10 +115,9 @@ def get_latest_deployment_date(node, site_code,variable):
                 end_dates_thredds.append(f[underscore_index[6]+5:underscore_index[6]+13])
             end_dates_thredds = np.sort(end_dates_thredds)
             latest_date_thredds = end_dates_thredds[-1]  
-            
-    # convert latest_date_thredds to correct format
-    latest_date_thredds =   np.datetime64((latest_date_thredds[0:4] + '-' + latest_date_thredds[4:6] + 
-                             '-' + latest_date_thredds[6:8]))    
+            # convert latest_date_thredds to correct format
+            latest_date_thredds =   np.datetime64((latest_date_thredds[0:4] + '-' + latest_date_thredds[4:6] + 
+                                     '-' + latest_date_thredds[6:8]))    
     
     return latest_date_thredds
 
@@ -334,20 +340,20 @@ for nf in range(len(files_2update_gridded)):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-# aggregated
-if np.sum(needs_updating_agg) > 0:
-    for n in range(len(files_2update_agg)):
-        if bool(needs_updating_agg[n]):
-            f = files_2update_agg[n]
-            if 'TEMP' in f:
-                updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
-                                     'TEMP',paths.TEMPORARY_dir)
-            if 'PSAL' in f:
-                updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
-                                     'PSAL',paths.TEMPORARY_dir)
-            if 'velocity' in f:
-                updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
-                                     'velocity',paths.TEMPORARY_dir)
+# # aggregated
+# if np.sum(needs_updating_agg) > 0:
+#     for n in range(len(files_2update_agg)):
+#         if bool(needs_updating_agg[n]):
+#             f = files_2update_agg[n]
+#             if 'TEMP' in f:
+#                 updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
+#                                      'TEMP',paths.TEMPORARY_dir)
+#             if 'PSAL' in f:
+#                 updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
+#                                      'PSAL',paths.TEMPORARY_dir)
+#             if 'velocity' in f:
+#                 updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
+#                                      'velocity',paths.TEMPORARY_dir)
 
 # hourly
 # if np.sum(needs_updating_hourly) > 0:
