@@ -24,6 +24,7 @@
 
 import os
 import QCreport_setup as setup
+import glob
 
 #------------------------------------------------------------
 # Information 
@@ -68,8 +69,8 @@ main_path_data = starting_path + ending_path_data
 
 # working directory
 
-# account = 'z3526971'
-account = 'mphem'
+account = 'z3526971'
+# account = 'mphem'
 
 working_dir = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\')
 
@@ -249,25 +250,37 @@ md_dir = mddir(setup.site_name)
 
 # Function to choose correct path to Deployment photographs
 #------------------------------------------------------------
-def dppdir(site_name):
+def dppdir(site_name, deployment_file_date_identifier):
     switcher = {
-            'BMP070': main_path + 'Deployment_Photographs\\BMP070\\Deployment_' + setup.deployment + '\\',
-            'BMP120': main_path + 'Deployment_Photographs\\BMP120\\Deployment_' + setup.deployment +'\\',
-            'CH050': main_path + 'Deployment_Photographs\\CH050\\Deployment_' + setup.deployment +'\\',
-            'CH070': main_path + 'Deployment_Photographs\\CH070\\Deployment_' + setup.deployment +'\\',
-            'CH100': main_path + 'Deployment_Photographs\\CH100\\Deployment_' + setup.deployment +'\\',
-            'PH100': main_path + 'Deployment_Photographs\\PH100\\Deployment_' + setup.deployment +'\\',
-            'SYD100': main_path + 'Deployment_Photographs\\SYD100\\Deployment_' + setup.deployment +'\\',
-            'SYD140': main_path + 'Deployment_Photographs\\SYD140\\Deployment_' + setup.deployment +'\\',
-            'ORS065': main_path + 'Deployment_Photographs\\ORS065\\Deployment_' + setup.deployment +'\\',
+            'BMP070': 'Z:\\home\\z3526971\\sci-maths-ocean\\shared\\PICS_VIDEOS\\Moorings\\' + 'Mooring_BMP\\',
+            'BMP090': 'Z:\\home\\z3526971\\sci-maths-ocean\\shared\\PICS_VIDEOS\\Moorings\\' + 'Mooring_BMP\\',
+            'BMP120': 'Z:\\home\\z3526971\\sci-maths-ocean\\shared\\PICS_VIDEOS\\Moorings\\' + 'Mooring_BMP\\',
+            'CH050':  'Z:\\home\\z3526971\\sci-maths-ocean\\shared\\PICS_VIDEOS\\Moorings\\' + 'Mooring_CH\\',
+            'CH070': 'Z:\\home\\z3526971\\sci-maths-ocean\\shared\\PICS_VIDEOS\\Moorings\\' + 'Mooring_CH\\',
+            'CH100': 'Z:\\home\\z3526971\\sci-maths-ocean\\shared\\PICS_VIDEOS\\Moorings\\' + 'Mooring_CH\\',
+            'PH100': 'No photographs available',
+            'SYD100': 'No photographs available',
+            'SYD140': 'No photographs available',
+            'ORS065': 'No photographs available',
             }
-
     dpp_dir = switcher.get(site_name)
+    if 'BMP' in site_name:
+        avail_folders = glob.glob(dpp_dir + '*')
+        for af in avail_folders:
+            if setup.deployment_file_date_identifier in af:
+                dpp_dir = af
+    if 'CH' in site_name:
+        avail_folders = glob.glob(dpp_dir + '*')
+        for af in avail_folders:
+            if setup.deployment_file_date_identifier in af:
+                dpp_dir = af   
+        
+
     return dpp_dir
 
 #------------------------------------------------------------
 # get Mooring diagram path
-dpp_dir = dppdir(setup.site_name) 
+dpp_dir = dppdir(setup.site_name,setup.deployment_file_date_identifier) 
     
 #------------------------------------------------------------
 # Information 
