@@ -101,9 +101,14 @@ timeseries_plots = DepDet.nc.glob.glob(paths.plots_dir + 'TimeSeries\\' + 'TEMP_
                             setup.deployment_file_date_identifier + '*.png')
 NDs = []
 for f in timeseries_plots:
-    NDs.append(f[-9:-6].replace('D',''))
-f = np.argsort(np.int32(NDs))
-NDs = np.int32(NDs)[f]
+    f1 = f.find(setup.deployment_file_date_identifier)
+    f2 = f.find('.png')
+    nd = f[f1+4:f2].replace('_','')
+    nd = nd.replace('D','')
+    NDs.append(nd)
+    # NDs.append(f[-9:-6].replace('D',''))
+f = np.argsort(np.round(np.array(NDs).astype(float)))
+NDs = np.int32(np.round(np.array(NDs).astype(float)))[f]
 timeseries_plots = np.array(timeseries_plots)[f]
 
 def addTimeSeriesplots(doc):
@@ -123,11 +128,11 @@ def addTimeSeriesplots(doc):
 clim_plots = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'TEMP_climatology_' + 
                             setup.site_name + '_' + 
                             setup.deployment_file_date_identifier + '*.png')
-NDs = []
-for f in clim_plots:
-    NDs.append(f[-9:-6].replace('D',''))
-f = np.argsort(np.int32(NDs))
-NDs = np.int32(NDs)[f]
+# NDs = []
+# for f in clim_plots:
+#     NDs.append(f[-9:-6].replace('D',''))
+# f = np.argsort(np.int32(NDs))
+# NDs = np.int32(NDs)[f]
 clim_plots = np.array(clim_plots)[f]
 
 def addClimplots(doc):
