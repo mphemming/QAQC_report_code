@@ -119,7 +119,7 @@ def plotOC(OC_plots_in_dir,site_name,deployment_file_date_identifier,data_type):
         fig = plt.figure(figsize=[2,2],dpi = 400) 
         # add Ocean Current images
         for n_images in range(len(OC_plots_in_dir)):
-            print(n_images)
+            # print(n_images)
             # get image
             date_n = OC_plots_in_dir[n_images][-12:-4]
             try:
@@ -129,7 +129,7 @@ def plotOC(OC_plots_in_dir,site_name,deployment_file_date_identifier,data_type):
                     n = n_images+1
                 else:
                     n = n + 1
-                print(n)
+                # print(n)
                 # setup subplots depending on number of images available
                 subplot(2,2,n)      
                 # plot image                
@@ -253,14 +253,22 @@ def getFilesInRange(site, start_date, end_date, data_type):
             files = np.concatenate([files_1,files_2])
             file_dates = np.concatenate([file_dates_1,file_dates_2])
     
+    if len(files) != len(file_dates):
+        new_files = []
+        for f in files:
+            if '.gif' in f:
+                new_files.append(f)
+        files = new_files
+    
     # select files in range 
     f = np.logical_and(np.array(file_dates) >= start_date,
                        np.array(file_dates) <= end_date)
     files = np.array(files)[f]
     # select a smaller sample for figure, equaly spread out over time period
-    splitter = np.round(len(files)/20)
-    selector = np.int32(np.arange(0,len(files),splitter))
-    files = np.array(files)[selector]
+    if len(files) != 0:
+        splitter = np.round(len(files)/20)
+        selector = np.int32(np.arange(0,len(files),splitter))
+        files = np.array(files)[selector]
             
     # http://oceancurrent.imos.org.au/SNSW/2008/
     # http://oceancurrent.imos.org.au/SNSW_chl/2004/
