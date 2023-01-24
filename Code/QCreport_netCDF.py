@@ -111,18 +111,23 @@ def get_netCDF(path):
             # if containing non-useful strings
             nomD_str = nomD_str[find_hyphen+1::]
             nd.append(nomD_str)
-        nd_sorted = list(np.sort(np.array(nd).astype(float)).astype(str))
+            
+        f = np.argsort(np.array(nd).astype(float))  
+        nd_sorted = np.array(nd).astype(float).astype(str)[f]
         # convert to 'integral' str by removing decimal point and zero, if applicable
         for n in range(len_files):
             if '.5' not in nd_sorted[n]:
-                nd_sorted[n] = str(int(float(nd_sorted[n])))
+                nd_sorted[n] = str(round(float(nd_sorted[n])))
         # shift file order around
-        nc_files_sorted = []
-        for n_sort in range(len_files): 
-            for n_file in range(len_files): 
-                if '-' + nd_sorted[n_sort] + '_' in nc_files[n_file]:
-                    nc_files_sorted.append(nc_files[n_file])
-        nc_files = nc_files_sorted
+        nc_files_sorted = np.array(nc_files)[f]
+        
+        # nc_files_sorted = []
+        # for n_sort in range(len_files): 
+        #     for n_file in range(len_files): 
+        #         if '-' + nd_sorted[n_sort] + '_' in nc_files[n_file]:
+        #             nc_files_sorted.append(nc_files[n_file])
+        # nc_files = nc_files_sorted
+        
         len_files = len(nc_files)
 
     if len_files > 0:
