@@ -11,7 +11,10 @@ import xarray as xr
 from netCDF4 import Dataset, num2date, stringtochar
 from pkg_resources import resource_filename
 
-os.chdir('C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Code\\LTSPs\\python-aodntools-master\\')
+# account = 'mphem'
+account = 'z3526971'
+
+os.chdir('C:\\Users\\' + account +'\\OneDrive - UNSW\\Work\\QC_reports\\Code\\LTSPs\\python-aodntools-master\\')
 
 from aodntools import __version__
 from aodntools.timeseries_products.common import (NoInputFilesError, check_file, in_water, current_utc_timestamp,
