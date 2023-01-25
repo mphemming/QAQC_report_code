@@ -13,8 +13,8 @@
 # __________________________________________________________________________________________________
 
 import os
-# account = 'mphem'
-account = 'z3526971'
+account = 'mphem'
+# account = 'z3526971'
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
          'LTSPs\\python-aodntools-master\\')
 # Velocity LTSPs
@@ -137,7 +137,7 @@ def determUpdate(file_list,temporary_path):
             time_cov.append([d.time_coverage_start,d.time_coverage_end])
             t = get_latest_deployment_date('NSW', setup.site_name, f)
             latest_deployment.append(t)
-            files_2update.append(f)
+            files_2update.append(temporary_path + filename)
             # if latest deployment after time_coverage_end
             if t > np.datetime64(d.time_coverage_end):
                 needs_updating.append(1)
@@ -149,7 +149,7 @@ def determUpdate(file_list,temporary_path):
 
 def updateAggregatedLTSP(node, site_code, ServerFile,latest_deployment_thredds,variable,output_dir):
     ServerFile_endDate = np.datetime64(xr.open_dataset(ServerFile).time_coverage_end[0:10])
-    if ServerFile_endDate < latest_deployment_thredds:
+    if any(val > ServerFile_endDate for val in latest_deployment_thredds):
         print('Updating LTSP: ......... ' + ServerFile)
         # define time range needed to create aggregated LTSP
         time_range = [ServerFile_endDate, latest_deployment_thredds]
@@ -214,19 +214,28 @@ def updateAggregatedLTSP(node, site_code, ServerFile,latest_deployment_thredds,v
             latest.close()
             os.remove(ncout_path)
 
-# !!! Issues: hourly product contains all variables, not just main ones
-# Do I update the product for all variables or just TEMP, PSAL and vel?
-# Issue concatanting existing and latest file because different vars in each :-/
 
 def updateHourlyLTSP(node, site_code, ServerFile,latest_deployment_thredds,variable,output_dir):
     ServerFile_endDate = np.datetime64(xr.open_dataset(ServerFile).time_coverage_end[0:10])
-    if ServerFile_endDate < latest_deployment_thredds:
+    if any(val > ServerFile_endDate for val in latest_deployment_thredds):
         print('Updating LTSP: ......... ' + ServerFile)
         # define time range needed to create aggregated LTSP
-        time_range = [ServerFile_endDate, latest_deployment_thredds]
-        # get files needed
-        folders = LTSPFs.get_thredds_folders(node,site_code,variable)
-        files, locs = LTSPFs.get_thredds_files(node,folders, site_code, time_range)
+        # get files needed (TEMP, PSAL)
+        time_range = [np.datetime64('1990-01-01'),np.datetime64('2030-01-01')]# get all files
+        if 'TEMP' in variable or 'PSAL' in variable:
+            # TEMP
+            folders = LTSPFs.get_thredds_folders(node,site_code,'TEMP')
+            files_T, locs_T = LTSPFs.get_thredds_files(node,folders, site_code, time_range)
+            # PSAL
+            folders = LTSPFs.get_thredds_folders(node,site_code,'PSAL')
+            files_S, locs_S = LTSPFs.get_thredds_files(node,folders, site_code, time_range)
+            # combine together
+            locs = np.concatenate([locs_T,locs_S])
+        else:
+            # velocity
+            folders = LTSPFs.get_thredds_folders(node,site_code,'CURR')
+            files, locs = LTSPFs.get_thredds_files(node,folders, site_code, time_range)
+            
         # create aggregated LTSP
         if '[]' not in str(files): # if there are new files, continue
             # create aggregated LTSP
@@ -236,60 +245,6 @@ def updateHourlyLTSP(node, site_code, ServerFile,latest_deployment_thredds,varia
             else:
                 ncout_path,_ = vatrly.velocity_hourly_aggregated(locs, site_code,'',
                         output_dir, download_url_prefix=None, opendap_url_prefix=None)    
-
-        # load existing LTSP
-        existing = xr.open_dataset(ServerFile)
-        latest = xr.open_dataset(ncout_path)
-        # separate datasets into dims INSTRUMENT and OBSERVATION for merging
-        vs_ex = list(existing.variables)
-        vs_la = list(latest.variables)
-        existing_obs = dict(); existing_ins = dict()
-        for v in vs_ex:
-            if 'OBSERVATION' in existing[v].dims:
-                existing_obs[v] = existing[v];
-            else:
-                existing_ins[v] = existing[v];
-        latest_obs = dict(); latest_ins = dict()
-        for v in vs_la:
-            if 'OBSERVATION' in latest[v].dims:
-                latest_obs[v] = latest[v];
-            else:
-                latest_ins[v] = latest[v];
-        # convert to dataset
-        existing_obs = xr.Dataset(existing_obs)
-        existing_ins = xr.Dataset(existing_ins)
-        latest_obs = xr.Dataset(latest_obs)
-        latest_ins = xr.Dataset(latest_ins)
-        # concatenate
-        combined_obs = xr.merge([existing_obs,latest_obs], compat='override', join='inner')
-        combined_ins = xr.concat([existing_ins,latest_ins],dim='INSTRUMENT')
-        # create one combined LTSP file
-        aligned_ds1, aligned_ds2 = xr.align(existing_obs, latest_obs, join='outer')
-        merged_ds = xr.merge([aligned_ds1, aligned_ds2])
-        
-        
-        combined = xr.merge([combined_obs,combined_ins])
-        # add attributes
-        combined.attrs = existing.attrs
-        combined.attrs['time_coverage_end'] = latest.time_coverage_end
-        combined.attrs['title'] = existing.title.replace(combined.time_coverage_end.to_dict()['data'],
-                                                   latest.time_coverage_end)
-        combined.attrs['history'] = latest.history
-        # create updated filename
-        old_time = "".join([existing.time_coverage_end[0:4],
-                             existing.time_coverage_end[5:7],
-                             existing.time_coverage_end[8:10]])
-        new_time = "".join([latest.time_coverage_end[0:4],
-                             latest.time_coverage_end[5:7],
-                             latest.time_coverage_end[8:10]])
-        old_creation = ServerFile[-11:-3];
-        new_filename = ServerFile.replace(old_time, new_time)
-        new_filename = new_filename.replace(old_creation,datetime.datetime.now().strftime('%Y%m%d'))
-        # save new dataset
-        combined.to_netcdf(new_filename)
-        # remove latest file as not needed anymore
-        latest.close()
-        os.remove(ncout_path)
 
 # %% -----------------------------------------------------------------------------------------------
 # get file names, time coverage, and latest deployment date on thredds
@@ -340,35 +295,71 @@ for nf in range(len(files_2update_gridded)):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-# # aggregated
-# if np.sum(needs_updating_agg) > 0:
-#     for n in range(len(files_2update_agg)):
-#         if bool(needs_updating_agg[n]):
-#             f = files_2update_agg[n]
-#             if 'TEMP' in f:
-#                 updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
-#                                      'TEMP',paths.TEMPORARY_dir)
-#             if 'PSAL' in f:
-#                 updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
-#                                      'PSAL',paths.TEMPORARY_dir)
-#             if 'velocity' in f:
-#                 updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
-#                                      'velocity',paths.TEMPORARY_dir)
+# aggregated
+if np.sum(needs_updating_agg) > 0:
+    for n in range(len(files_2update_agg)):
+        if bool(needs_updating_agg[n]):
+            f = files_2update_agg[n]
+            if 'TEMP' in f:
+                updateAggregatedLTSP('NSW', setup.site_name, f, latest_deployment_agg,
+                                      'TEMP',paths.TEMPORARY_dir)
+            if 'PSAL' in f:
+                updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
+                                      'PSAL',paths.TEMPORARY_dir)
+            if 'velocity' in f:
+                updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
+                                      'CURRENT',paths.TEMPORARY_dir)
 
 # hourly
-# if np.sum(needs_updating_hourly) > 0:
-    
-    
-    
-#     for n in range(len(files_2update_hourly)):
-#         if bool(needs_updating_hourly[n]) \
-#         and 'including-non-QC' not in files_2update_hourly[n]:
-#             if 'TEMP' in f or 'PSAL' in f or 'velocity' in f:
-#                 updateHourlyLTSP('NSW', setup.site_name, f,latest_deployment_agg,
-#                                      'TEMP',paths.TEMPORARY_dir)
-# !!! check that file exists before creating new one
-# !!! skipping for now, will look again next week (notes in above section)
+if np.sum(needs_updating_hourly) > 0:
+    for n in range(len(files_2update_hourly)):
+        if bool(needs_updating_hourly[n]) \
+        and 'including-non-QC' not in files_2update_hourly[n] and 'velocity' not in files_2update_hourly:
+            updateHourlyLTSP('NSW', setup.site_name, f,latest_deployment_agg,
+                                  'TEMP',paths.TEMPORARY_dir)
+        else:
+            updateHourlyLTSP('NSW', setup.site_name, f,latest_deployment_agg,
+                                  'CURR',paths.TEMPORARY_dir)
+                
+# gridded
+if needs_updating_gridded[0] == 1:
+    for f in files_2update_gridded:
+        if 'TEMP' in f[0]:
+            # get latest hourly file
+            hrly_files_in_dir = glob.glob(paths.TEMPORARY_dir + '*' + setup.site_name + '*hourly*.nc')
+            # only QC'd files
+            hrly_files_in_dir_2use = []
+            for f in hrly_files_in_dir:
+                if 'including-non-QC' not in f and 'velocity' not in f:
+                    hrly_files_in_dir_2use.append(f)
+            hrly_files_times = [os.path.getatime(f) for f in hrly_files_in_dir_2use]
+            file2use = np.array(hrly_files_in_dir_2use)[np.argmax(hrly_files_times)]  
+            # Temperature
+            resolution = 1
+            separation = 16
+            grid.grid_variable(file2use, 'TEMP', depth_bins=None, max_separation=separation, 
+                               depth_bins_increment=resolution,input_dir='', 
+                               output_dir=paths.TEMPORARY_dir, download_url_prefix=None, opendap_url_prefix=None)
+        if 'velocity' in f[0]:
+            
 
+
+            depth_bins = list(range(0,150))
+            max_separation=16
+            depth_bins_increment=1
+            vatm.grid_variable(hrly_filename, site_code, depth_bins, max_separation, 
+                                depth_bins_increment,input_dir, output_dir, 
+                                download_url_prefix=None, opendap_url_prefix=None)
+
+    # Velocity
+    # resolution = 1
+    # separation = 16
+    # for f in files_2update_hourly:
+    #     if 'non-QC' not in f and 'velocity' not in f:
+    #         hrly_filename = f
+    # grid.grid_variable(hrly_filename, 'TEMP', depth_bins=None, max_separation=separation, 
+    #                    depth_bins_increment=resolution,input_dir='', 
+    #                    output_dir=paths.TEMPORARY_dir, download_url_prefix=None, opendap_url_prefix=None)
 
 
 # %% -----------------------------------------------------------------------------------------------
