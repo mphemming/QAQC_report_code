@@ -69,8 +69,8 @@ main_path_data = starting_path + ending_path_data
 
 # working directory
 
-account = 'z3526971'
-# account = 'mphem'
+# account = 'z3526971'
+account = 'mphem'
 
 working_dir = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\')
 

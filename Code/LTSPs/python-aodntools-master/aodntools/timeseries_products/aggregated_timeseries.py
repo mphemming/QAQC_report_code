@@ -11,8 +11,8 @@ import xarray as xr
 from netCDF4 import Dataset, num2date, stringtochar
 from pkg_resources import resource_filename
 
-# account = 'mphem'
-account = 'z3526971'
+account = 'mphem'
+# account = 'z3526971'
 
 os.chdir('C:\\Users\\' + account +'\\OneDrive - UNSW\\Work\\QC_reports\\Code\\LTSPs\\python-aodntools-master\\')
 

@@ -8,7 +8,7 @@
 # Import Packages
 
 import os
-os.chdir('C:\\Users\\z3526971\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
+os.chdir('C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
          'LTSPs\\python-aodntools-master\\')
 # Velocity LTSPs
 import aodntools.timeseries_products.velocity_aggregated_timeseries as vat
