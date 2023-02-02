@@ -48,6 +48,7 @@ QCreport.py imports the following 'packages':
 * **QCreport_ToolboxPlots.py** - Contains functions to add plots produced during the toolbox QC process to the report. 
 * **QCreport_cover.py** - Contains functions that create the report cover. 
 * **QCreport_AdditionalPlots** - Contains functions to add additionally created plots (e.g. climatology, OceanCurrents) to the report, if available.
+* **QCreport_CreateReports** - Contains functions to create multiple reports, useful for historical deployments.
 
 These 'packages' are described in more detail below:
 
@@ -80,15 +81,48 @@ QC comments/history are copied into the report using this 'package'. These also 
 
 #### QCreport_DeploymentPhotographs.py (imported as 'DepPhoto')
 
+This is a simple 'package' that loads all deployment photographs available in the path (depphoto_dir) defined in 'QCreport_paths.py' into the report. Only works if deployment photographs are available - many deployments do not have photographs. Loads all photographs in a folder, hence no filtering.  
+
 #### QCreport_ToolboxPlots.py (imported as 'tbp')
 
+This 'package' loads all toolbox plots available in the path (toolbox_dir) defined in 'QCreport_paths.py' into the report. These plots are displayed in sideways mode to fit onto the page.
+
 #### QCreport_cover.py (imported as 'cover')
+
+This 'package' creates the report cover. 
 
 #### QCreport_AdditionalPlots.py (imported as 'Addp')
 
 The code first creates LTSP files using all available mooring files. The hourly LTSP is then used for creating the plot_period and plot_deployment figures, and other useful figures used for the report. Other useful files and statistics are then output, and a QAQC report PDF is created. 
 
 The code relies on the aodntools package to create the LTSPs, xarray, numpy, and matplotlib to create figures, and pylatex and fpdf packages to create the report.
+
+#### QCreport_CreateReports.py
+
+This 'package' essentially runs 'QCreport.py' but first changes the site name and deployment identifier number in 'QCreport_setup.py' within a loop. Hence, multiple reports can be created. It does this by loading in text from 'QCreport_setup.py' as a variable and replacing key text, saving, before then running the code. 
+
+### Other Useful Code
+
+
+### How the LTSPs are updated
+
+LTSPs = Long Time Series Products
+
+The LTSPs are stored on the server, but the code crashes when trying to work with these files due to their location. Hence, the first thing the QAQC report code does is transfer these files to a temporary folder stored locally. This is done in 'QCreport_checkLTSPs.py', which also determines LTSPs that need updating. LTSPs transferred to the temporary folder are updated if necessary, used for plots for the report, and then transferred back to the server. Older Server LTSPs are then deleted. 
+
+For the aggregated and gridded products, the new data is used to create new products and then concatenated with the initial LTSPs. For the hourly product, it is updated from scratch everytime. TEMP, PSAL, and velocity is updated for the gridded and aggregated products, but all variables are updated for the hourly product. 
+
+#### Main LTSP scripts
+
+* QCreport_checkLTSPs.py
+* LTSP_functions.py
+* CreateLTSPs.py
+* CreateVelGridded.py
+* code stored in 'code/LTSPs' and 'Code\LTSPs\python-aodntools-master\aodntools\timeseries_products'
+
+### Environment
+
+The packages used for development can be found in 'requirements.txt'. A Conda environment called 'QAQC' was created and used that includes these packages. 
 
 ### Github
 
