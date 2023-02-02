@@ -2,7 +2,6 @@
  
 This code creates QAQC reports for mooring deployments off NSW using NetCDF files, plots, and photographs. 
  
- 
 ### Installation Steps
 
 The code presently sits on Michael's computer and will require a bit of time to setup on other computers. The following steps are required to install the QAQC report code:
@@ -17,8 +16,9 @@ The code presently sits on Michael's computer and will require a bit of time to 
    * xarray (https://docs.xarray.dev/en/stable/getting-started-guide/installing.html)
    * netcdf4 (https://anaconda.org/anaconda/netcdf4)
    * matplotlib (https://anaconda.org/conda-forge/matplotlib)
-3) Download this Github repository to a local directory (TO DO: NEED TO ENSURE THIS REPOSITORY IS READY TO GO)
-4) Run setup_check.py to check if everything is ready (TO CREATE). The .py script when run will output which packages are missing or whether everything is installed correctly. 
+3) Download this Github repository to a local directory
+
+[//]: # 4) Run setup_check.py to check if everything is ready. The .py script when run will output which packages are missing or whether everything is installed correctly. 
 
 -----------------------------------------------------------------------------
 
@@ -26,16 +26,16 @@ The code presently sits on Michael's computer and will require a bit of time to 
 
 Before running, you will need:
 * Python and packages installed (see above)
-* The repository files stored locally
-* Access to sci-maths-ocean (You may need to run 'network' to mount sci-maths-ocean')
+* The repository code stored locally
+* Access to sci-maths-ocean (You may need to run 'network' to mount sci-maths-ocean'). This is where all the NetCDF files are stored.
 
 Steps:
 
 1) Open 'QC_report_paths.py' either using a text editor (e.g. emacs or vi) or python (e.g. Spyder). Check that the paths are correct, and edit if necessary. 
 2) Open 'QCreport_setup.py' similarly to step (1). Here, choose the site, deployment, deployment ID, and add your name as report maker. Below add any comments relating to the deployment. 
-3) Ensure that toolbox plots are in 'sci-maths-ocean\IMOS\Moorings_Report\Automatic_reporting\Toolbox_Plots\<Site_name>\<dep_number>\'. 
-4) Ensure that deployment photographs are in 'sci-maths-ocean\IMOS\Moorings_Report\Automatic_reporting\Deployment_Photographs\<Site_name>\<dep_number>\'.
-5) In the terminal write 'blah blah blah'. The code should now produce a QAQC report, deployment figures, and output data files. 
+3) Open Spdyer and run 'QCreport.py'. The code should now produce a QAQC report, deployment figures, and (eventually) output data files. 
+
+📝 **_NOTE:_** Edit and run 'QCreports_CreateReports.py' to create multiple reports in one go.  
 
 -----------------------------------------------------------------------------
 
@@ -155,4 +155,19 @@ The working directory for my personal Github repository is: 'C:\Users\mphem\OneD
 
 ### Tips
 
-If you add your email address to the .py file in step (2) in 'How to run' you will receive an email that the report has been created, a list of directories for the data and figures, and the latest statistics. (TO DO LATER)
+If you get an error related to NC / NetCDF close to the beginning of the script, it's probably because you didn't mount sci-maths-ocean
+
+If you get an error when producing additional plots, it might be related to incorrect filenames in the folder. 
+
+[//]: # If you add your email address to the .py file in step (2) in 'How to run' you will receive an email that the report has been created, a list of directories for the data and figures, and the latest statistics.
+
+-----------------------------------------------------------------------------
+
+### Examples of a Report
+
+<img title="a title" alt="Alt text" src="/images/boo.svg">
+
+
+
+
+
