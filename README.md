@@ -1,6 +1,11 @@
 # Code to Create automatic QAQC reports
  
+This code creates QAQC reports for mooring deployments off NSW using NetCDF files, plots, and photographs. 
+ 
+ 
 ### Installation Steps
+
+The code presently sits on Michael's computer and will require a bit of time to setup on other computers. The following steps are required to install the QAQC report code:
 
 1) Install Anaconda here: https://www.anaconda.com/products/distribution
 2) Install these Python packages using conda:
@@ -12,7 +17,7 @@
    * xarray (https://docs.xarray.dev/en/stable/getting-started-guide/installing.html)
    * netcdf4 (https://anaconda.org/anaconda/netcdf4)
    * matplotlib (https://anaconda.org/conda-forge/matplotlib)
-3) Download this repository to a local directory (TO DO: NEED TO ENSURE THIS REPOSITORY IS READY TO GO)
+3) Download this Github repository to a local directory (TO DO: NEED TO ENSURE THIS REPOSITORY IS READY TO GO)
 4) Run setup_check.py to check if everything is ready (TO CREATE). The .py script when run will output which packages are missing or whether everything is installed correctly. 
 
 -----------------------------------------------------------------------------
@@ -117,8 +122,6 @@ LTSPs = Long Time Series Products
 The LTSPs are stored on the server, but the code crashes when trying to work with these files due to their location. Hence, the first thing the QAQC report code does is transfer these files to a temporary folder stored locally. This is done in 'QCreport_checkLTSPs.py', which also determines LTSPs that need updating. LTSPs transferred to the temporary folder are updated if necessary, used for plots for the report, and then transferred back to the server. Older Server LTSPs are then deleted. 
 
 For the aggregated and gridded products, the new data is used to create new products and then concatenated with the initial LTSPs. For the hourly product, it is updated from scratch everytime. TEMP, PSAL, and velocity is updated for the gridded and aggregated products, but all variables are updated for the hourly product. 
-
------------------------------------------------------------------------------
 
 #### Main LTSP scripts
 
