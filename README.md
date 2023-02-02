@@ -165,8 +165,10 @@ If you get an error when producing additional plots, it might be related to inco
 
 ### Examples of a Report
 
-<img title="a title" alt="Alt text" src="/images/boo.svg">
-
+<img title="Report Cover" alt="Front Cover" src="QC_reports\Reports\Example_report_images\Cover.png">
+<img title="Table of Contents" alt="Table of Contents" src="QC_reports\Reports\Example_report_images\TOC.png">
+<img title="Tables" alt="Front Cover" src="QC_reports\Reports\Example_report_images\tables.png">
+<img title="Report attributes" alt="Attributes in report" src="QC_reports\Reports\Example_report_images\Attributes.png">
 
 
 
