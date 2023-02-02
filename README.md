@@ -72,7 +72,11 @@ The report maker needs to double-check that these paths are correct before proce
 
 #### QCreport_DeploymentDetails.py (imported as 'DepDet')
 
+Attributes are obtained from the mooring NetCDF files and concatenated in this 'package'. The attributes are then displayed as tables in the report, including useful deployment information and variables available. Instrument serial numbers and there nominal depths are also displayed.
+
 #### QCreport_QualityControl.py (imported as 'QCR')
+
+QC comments/history are copied into the report using this 'package'. These also include the QC comments included in the setup 'package'.
 
 #### QCreport_DeploymentPhotographs.py (imported as 'DepPhoto')
 
