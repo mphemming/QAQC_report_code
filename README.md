@@ -15,6 +15,7 @@
 3) Download this repository to a local directory (TO DO: NEED TO ENSURE THIS REPOSITORY IS READY TO GO)
 4) Run setup_check.py to check if everything is ready (TO CREATE). The .py script when run will output which packages are missing or whether everything is installed correctly. 
 
+-----------------------------------------------------------------------------
 
 ### How to run
 
@@ -30,6 +31,8 @@ Steps:
 3) Ensure that toolbox plots are in 'sci-maths-ocean\IMOS\Moorings_Report\Automatic_reporting\Toolbox_Plots\<Site_name>\<dep_number>\'. 
 4) Ensure that deployment photographs are in 'sci-maths-ocean\IMOS\Moorings_Report\Automatic_reporting\Deployment_Photographs\<Site_name>\<dep_number>\'.
 5) In the terminal write 'blah blah blah'. The code should now produce a QAQC report, deployment figures, and output data files. 
+
+-----------------------------------------------------------------------------
 
 ### How the code works
 
@@ -101,8 +104,11 @@ The code relies on the aodntools package to create the LTSPs, xarray, numpy, and
 
 This 'package' essentially runs 'QCreport.py' but first changes the site name and deployment identifier number in 'QCreport_setup.py' within a loop. Hence, multiple reports can be created. It does this by loading in text from 'QCreport_setup.py' as a variable and replacing key text, saving, before then running the code. 
 
+-----------------------------------------------------------------------------
+
 ### Other Useful Code
 
+-----------------------------------------------------------------------------
 
 ### How the LTSPs are updated
 
@@ -112,6 +118,8 @@ The LTSPs are stored on the server, but the code crashes when trying to work wit
 
 For the aggregated and gridded products, the new data is used to create new products and then concatenated with the initial LTSPs. For the hourly product, it is updated from scratch everytime. TEMP, PSAL, and velocity is updated for the gridded and aggregated products, but all variables are updated for the hourly product. 
 
+-----------------------------------------------------------------------------
+
 #### Main LTSP scripts
 
 * QCreport_checkLTSPs.py
@@ -120,20 +128,27 @@ For the aggregated and gridded products, the new data is used to create new prod
 * CreateVelGridded.py
 * code stored in 'code/LTSPs' and 'Code\LTSPs\python-aodntools-master\aodntools\timeseries_products'
 
+-----------------------------------------------------------------------------
+
 ### Environment
 
 The packages used for development can be found in 'requirements.txt'. A Conda environment called 'QAQC' was created and used that includes these packages. 
+
+-----------------------------------------------------------------------------
 
 ### Github
 
 The working directory for my personal Github repository is: 'C:\Users\mphem\OneDrive - UNSW\Work\QC_reports\Code'. There is also a UNSW Maths Github repository that will not be updated, stored in 'C:\Users\mphem\OneDrive - UNSW\Work\QC_reports\QC_reports_Github_UNSW'. I will work on branches for the different report versions (e.g. 'version1','version2'). 
 
+-----------------------------------------------------------------------------
 
 #### Directories of output:
 
 * QAQC report:
 * Figures:
 * Files
+
+-----------------------------------------------------------------------------
 
 ### Tips
 
