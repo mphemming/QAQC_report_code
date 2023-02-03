@@ -21,20 +21,24 @@
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+# %% -----------------------------------------------------------------------------------------------
+# Determine which computer this script is on
+
+import os
+if 'mphem' in os.getcwd():
+    account = 'mphem'
+else:
+    account = 'z3526971'
 
 # %% -----------------------------------------------------------------------------------------------
 # Import modules
 
 # set path of QC code
-import os
 import glob
 import warnings
 import importlib
-# account = 'z3526971'
-account = 'mphem'
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code')
 import runpy
-
 # QCreport modules
 import QCreport_setup as setup
 importlib.reload(setup) # needed for creating multiple reports in a loop
@@ -61,6 +65,15 @@ print('Modules loaded')
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# %% -----------------------------------------------------------------------------------------------
+# Check if LTSPs already in TEMPORARY_dir are for this site, if not remove and copy over correct LTSPs
+
+files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*.nc')
+for f in files_in_TEMP:
+    if setup.site_name not in f:
+        print(f)
+        os.remove(f)
 
 # %% -----------------------------------------------------------------------------------------------
 # Determine Paths
@@ -264,7 +277,7 @@ try:
     doc.generate_pdf(filename,compiler='pdflatex')
 except:
     pass
-# doc.generate_tex(filename + '.tex')
+doc.generate_tex(filename)
 print('Report saved.')
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
