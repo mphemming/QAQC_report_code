@@ -4,11 +4,20 @@
 # Written by  Michael Hemming (NSW-IMOS)
 # contact email: m.hemming@unsw.edu.au
 #
+# %% -----------------------------------------------------------------------------------------------
+# Determine which computer this script is on
+
+import os
+if 'mphem' in os.getcwd():
+    account = 'mphem'
+else:
+    account = 'z3526971'
+
 # %% ------------------------------------------------------------------------------------
 # Import Packages
 
 import os
-os.chdir('C:\\Users\\mphem\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
+os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
          'LTSPs\\python-aodntools-master\\')
 # Velocity LTSPs
 import aodntools.timeseries_products.velocity_aggregated_timeseries as vat

@@ -38,3 +38,5 @@ QC_reports/
 *.fls
 *.log
 QC_reports_Github_UNSW/
+Code/Utilities/CreateVelGridded-L-F6DK6Z2.py
+Code/QCreport_PlotDeployment-L-F6DK6Z2.py

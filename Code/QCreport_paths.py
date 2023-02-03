@@ -20,6 +20,15 @@
 # o   PLEASE ENSURE TO INCLUDE FINAL '\\' IN YOUR PATHS
 
 # %% -----------------------------------------------------------------------------------------------
+# Determine which computer this script is on
+
+import os
+if 'mphem' in os.getcwd():
+    account = 'mphem'
+else:
+    account = 'z3526971'
+
+# %% -----------------------------------------------------------------------------------------------
 # Import modules
 
 import os
@@ -68,16 +77,9 @@ main_path_data = starting_path + ending_path_data
 
 
 # working directory
-
-# account = 'z3526971'
-account = 'mphem'
-
 working_dir = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\')
 
-
-
 # temporary directory
-
 TEMPORARY_dir = 'C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\TEMPORARY\\'
 
 #------------------------------------------------------------
