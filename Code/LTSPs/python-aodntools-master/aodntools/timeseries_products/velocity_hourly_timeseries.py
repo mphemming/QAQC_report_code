@@ -118,7 +118,10 @@ def velocity_hourly_aggregated(files_to_agg, site_code, input_dir='', output_dir
 
     ## remove bad files form the list
     for file in bad_files.keys():
-        files_to_agg.remove(file)
+        if 'numpy' in str(type(files_to_agg)):
+            files_to_agg.delete(file)
+        else:
+            files_to_agg.remove(file)
     if len(files_to_agg) == 0:
         raise NoInputFilesError("no valid input files to aggregate")
 

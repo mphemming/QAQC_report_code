@@ -134,7 +134,6 @@ def generate_netcdf_output_filename(nc, facility_code, data_code, VoI, site_code
     return output_name
 
 
-
 ## MAIN FUNCTION
 def grid_variable(input_file, site_code, depth_bins=None, max_separation=50, depth_bins_increment=10,
                   input_dir='', output_dir='.', download_url_prefix=None, opendap_url_prefix=None):
@@ -287,11 +286,14 @@ def grid_variable(input_file, site_code, depth_bins=None, max_separation=50, dep
     griddedUV.UCUR.attrs = nc.UCUR.attrs
     
     # save file
-    filename = ('IMOS_ANMN-' +  node + '_Z_' + nc.time_coverage_start[0:4] + \
+    filename = ('IMOS_ANMN-' +  'NSW' + '_Z_' + nc.time_coverage_start[0:4] + \
                 nc.time_coverage_start[5:7] + nc.time_coverage_start[8:10] + '_' + site_code + \
                 '_FV01_velocity-gridded-timeseries_END-' + nc.time_coverage_end[0:4] + \
                 nc.time_coverage_end[5:7] + nc.time_coverage_end[8:10] + '_C-' + \
                 datetime.now().strftime("%Y%m%d") + '.nc')
     griddedUV.to_netcdf(output_dir + filename)
+    nc_out = (output_dir + filename)
+    
+    return nc_out
 
    

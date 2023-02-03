@@ -10,6 +10,16 @@ from aodntools import __version__
 
 import xarray as xr
 
+#######################################################################
+# Determine which computer this script is on
+import os
+if 'mphem' in os.getcwd():
+    account = 'mphem'
+else:
+    account = 'z3526971'
+# change to correct folder
+os.chdir('C:\\Users\\' + account +'\\OneDrive - UNSW\\Work\\QC_reports\\Code\\LTSPs\\python-aodntools-master\\')
+#######################################################################
 from aodntools.timeseries_products import aggregated_timeseries as utils
 from aodntools.timeseries_products.common import (NoInputFilesError, check_velocity_file, current_utc_timestamp,
                                                   TIMESTAMP_FORMAT, DATESTAMP_FORMAT)
@@ -40,7 +50,6 @@ def flat_variable(nc, varname):
     :return: variable values flattened
     """
     return nc[varname].values.flatten()
-
 
 
 
@@ -84,7 +93,10 @@ def velocity_aggregated(files_to_agg, site_code, input_dir='', output_dir='./',
 
     # remove bad files form the list and sort in chronological order
     for file in bad_files.keys():
-        files_to_agg.remove(file)
+        if 'numpy' in str(type(files_to_agg)):
+            files_to_agg.delete(file)
+        else:
+            files_to_agg.remove(file)
     if len(files_to_agg) == 0:
         raise NoInputFilesError("no valid input files to aggregate")
     files_to_agg = utils.sort_files(files_to_agg, input_dir=input_dir)
