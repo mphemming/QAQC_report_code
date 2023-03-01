@@ -14,11 +14,7 @@
 import QCreport_paths as paths
 import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
-import QCreport_QualityControl as QCR
-import QCreport_DeploymentPhotographs as DepPhoto
-import QCreport_ToolboxPlots as tbp
 import QCreport_setup as setup
-import QCreport_cover as cover
 # This package runs python scripts within a script
 import runpy
 import os
