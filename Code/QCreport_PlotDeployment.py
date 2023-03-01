@@ -25,7 +25,6 @@ import matplotlib
 matplotlib.use('qt5Agg')
 from matplotlib import pyplot as plt
 import matplotlib.dates as mdates
-import datetime as dt
 import glob
 import time
 import os
@@ -34,14 +33,7 @@ import cmocean as cm
 # QCreport modules
 import QCreport_paths as paths
 import QCreport_netCDF as nc
-import QCreport_format as form
-import QCreport_DeploymentDetails as DepDet
-import QCreport_QualityControl as QCR
-import QCreport_DeploymentPhotographs as DepPhoto
-import QCreport_ToolboxPlots as tbp
 import QCreport_setup as setup
-import QCreport_cover as cover
-import QCreport_AdditionalPlots as Addp
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\Utilities\\python-holteandtalley-master\\')
 import holteandtalley as ht
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\')
@@ -250,8 +242,8 @@ TEMP_data = getDeployment(TEMP_data,nc)
 VEL_data = getDeployment(VEL_data,nc)
 
 T = TEMP_data;
-V = VEL_data.VCUR;
-U = VEL_data.UCUR;
+V = VEL_data.VCUR[0,:,:];
+U = VEL_data.UCUR[0,:,:];
 
 CreatePlot(T,U,V,nc)
 
