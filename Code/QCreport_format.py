@@ -14,10 +14,7 @@
 # __________________________________________________________________________________________________
 
 # Python Packages
-from fpdf import FPDF
-import fpdf
 # QC report modules
-import QCreport_paths as paths
 import QCreport_setup as setup
 from pylatex import Document, Section, Hyperref, Subsection, Subsubsection, Tabular, Math, TikZ, Axis, \
     Plot, Figure, Matrix, Alignat, Enumerate, Itemize, Command, Package, NoEscape, \
