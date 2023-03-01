@@ -180,7 +180,7 @@ def intro_comments(doc):
     
     #---------------------------------
     # add sub heading        
-    with doc.create(form.Subsection('Deloyment Assessment')):
+    with doc.create(form.Subsection('Deployment Assessment')):
         doc.append('') 
     #------------------------------------------
     # Add QC assessment details as table
