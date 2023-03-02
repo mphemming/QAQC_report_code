@@ -153,11 +153,15 @@ The working directory for my personal Github repository is: 'C:\Users\mphem\OneD
 
 -----------------------------------------------------------------------------
 
-### Tips
+### Debugging / Tips
 
 If you get an error related to NC / NetCDF close to the beginning of the script, it's probably because you didn't mount sci-maths-ocean
 
 If you get an error when producing additional plots, it might be related to incorrect filenames in the folder. 
+
+If you get an error when saving the report as a PDF, first ensure that a PDF with the same name is closed.
+
+If you get an error relating to oceancurrents / plots, check the folder contents first. For Michael, it is often a OneDrive Syncing issue.
 
 [//]: # If you add your email address to the .py file in step (2) in 'How to run' you will receive an email that the report has been created, a list of directories for the data and figures, and the latest statistics.
 
