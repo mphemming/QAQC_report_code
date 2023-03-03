@@ -36,7 +36,7 @@ Steps:
 3) Open Spdyer and run 'QCreport.py'. The code should now produce a QAQC report, deployment figures, and (eventually) output data files. 
 
 📝 **_NOTE:_** Edit and run 'QCreports_CreateReports.py' to create multiple reports in one go.  
-
+📝 **_NOTE:_** There is a windows batch file that may need editing depending on the version of MATLAB used. The batch file is located in  'QC_reports\Code\Matlab\' and is called 'UpdateMooringCoverage.bat'
 -----------------------------------------------------------------------------
 
 ### How the code works
