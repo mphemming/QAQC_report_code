@@ -21,15 +21,9 @@ import datetime as dt
 import glob
 # QCreport modules
 import QCreport_paths as paths
-import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
-import QCreport_QualityControl as QCR
-import QCreport_DeploymentPhotographs as DepPhoto
-import QCreport_ToolboxPlots as tbp
 import QCreport_setup as setup
-import QCreport_cover as cover
-import QCreport_AdditionalPlots as Addp
-
+import gsw
 
 # %% -----------------------------------------------------------------------------------------------
 # Required functions
@@ -67,12 +61,12 @@ def get_CTD_files(start_date,end_date,site_name):
 
 #--------------------------------------------------------------------------------
 
-def get_data(IMOS_files,CTD_files):
+def get_data(IMOS_files,CTD_file):
     
     # convert to list
     IMOS_file_list = []
     for n in list(IMOS_files):
-        IMOS_file_list.append(IMOS_files[n][0])
+        IMOS_file_list.append(IMOS_files[n])
     
     # load in Mooring data
     mooring = []
@@ -83,8 +77,8 @@ def get_data(IMOS_files,CTD_files):
         ds.close()
     # load in CTD data
     CTD = []
-    for n in range(len(CTD_files)):
-        CTD.append(xr.open_mfdataset(CTD_files[n]))
+    for n in range(len(CTD_file)):
+        CTD.append(xr.open_mfdataset(CTD_file[n]))
     # Return data
     return mooring, CTD  
 
@@ -162,7 +156,7 @@ def bin_data(VAR,DEPTH,NOM_DEPTH):
     
 #--------------------------------------------------------------------------------
 
-def make_plot(TIME_diff, TEMP,TEMP_QC,DEPTH,DEPTH_QC,CTD,NOM_DEPTH,binned):
+def make_plot(TIME_diff, TEMP,TEMP_QC,DEPTH,DEPTH_QC,CTD,NOM_DEPTH,binned,distance):
 
     # setup figure
     fig= plt.figure(figsize=(8,8))
@@ -196,7 +190,7 @@ def make_plot(TIME_diff, TEMP,TEMP_QC,DEPTH,DEPTH_QC,CTD,NOM_DEPTH,binned):
     axes.text(14, 80, (''), fontsize=14, backgroundcolor='gray')
         
     plt.gca().invert_yaxis() 
-    plt.title('Mooring / CTD comparison',fontsize=16)
+    plt.title(('Mooring / CTD comparison [' + str(float(distance)) + ' km between]'),fontsize=16)
     plt.ylabel('Depth [m]',fontsize=16)
     plt.xlabel('Temperature [˚C]',fontsize=16)
     plt.grid()
@@ -230,10 +224,14 @@ mooring, CTD = get_data(IMOS_files,CTD_file)
 CTD_time = np.datetime64(CTD[0].time_coverage_start).tolist()
 time_diff = dt.datetime(2019, 4, 13,1,00,0)-dt.datetime(2019, 4, 13,0,0,0); # 1 hours between one another
 TIME, TIME_diff, TEMP, TEMP_QC, DEPTH, DEPTH_QC, NOM_DEPTH = near_data(mooring,CTD,CTD_time,time_diff)
+# get distance between CTD and mooring
+mooring_coords = [mooring[0].geospatial_lon_max,mooring[0].geospatial_lat_max]
+CTD_coords = [CTD[0].geospatial_lon_max,CTD[0].geospatial_lat_max]
+dist_between = gsw.distance([mooring_coords[0],CTD_coords[0]], [mooring_coords[1],CTD_coords[1]], 0)
 # bin mooring temperature data 
 binned = bin_data(TEMP,DEPTH,NOM_DEPTH)
 # create figure
-make_plot(TIME_diff, TEMP,TEMP_QC,DEPTH,DEPTH_QC,CTD,NOM_DEPTH,binned)
+make_plot(TIME_diff, TEMP,TEMP_QC,DEPTH,DEPTH_QC,CTD,NOM_DEPTH,binned,dist_between)
 
 
 
