@@ -17,21 +17,14 @@ import os.path
 import numpy as np
 import datetime as dt
 from datetime import datetime as dtdt
-import matplotlib as mat
 from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
-from pylab import *
 import glob as glob
 
 # QCreport modules
 import QCreport_paths as paths
-import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
-import QCreport_QualityControl as QCR
-import QCreport_DeploymentPhotographs as DepPhoto
-import QCreport_ToolboxPlots as tbp
 import QCreport_setup as setup
-import QCreport_cover as cover
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -131,7 +124,7 @@ def plotOC(OC_plots_in_dir,site_name,deployment_file_date_identifier,data_type):
                     n = n + 1
                 # print(n)
                 # setup subplots depending on number of images available
-                subplot(2,2,n)      
+                plt.subplot(2,2,n)      
                 # plot image                
                 plt.imshow(img) 
                 plt.tight_layout()
@@ -184,31 +177,31 @@ def getFilesInRange(site, start_date, end_date, data_type):
     
     if 'SST' in data_type:
         # if start and end date years are the same
-        if start_date.astype(datetime.datetime).year == end_date.astype(datetime.datetime).year:
+        if start_date.astype(dt.datetime).year == end_date.astype(dt.datetime).year:
             if 'CH' not in site:
                 link = ('http://oceancurrent.imos.org.au/SNSW/' + 
-                        str(start_date.astype(datetime.datetime).year) + '/')
+                        str(start_date.astype(dt.datetime).year) + '/')
             else:
                link = ('http://oceancurrent.imos.org.au/Coffs/' + 
-                       str(start_date.astype(datetime.datetime).year) + '/') 
+                       str(start_date.astype(dt.datetime).year) + '/') 
             files, file_dates = getFiles(link,data_type)
         else:
             # if start and end date years are not the same
             # get first list of files
             if 'CH' not in site:
                 link = ('http://oceancurrent.imos.org.au/SNSW/' + 
-                        str(start_date.astype(datetime.datetime).year) + '/')
+                        str(start_date.astype(dt.datetime).year) + '/')
             else:
                 link = ('http://oceancurrent.imos.org.au/Coffs/' + 
-                        str(start_date.astype(datetime.datetime).year) + '/')
+                        str(start_date.astype(dt.datetime).year) + '/')
             files_1, file_dates_1 = getFiles(link,data_type)
             # get second list of files
             if 'CH' not in site:
                 link = ('http://oceancurrent.imos.org.au/SNSW/' + 
-                        str(end_date.astype(datetime.datetime).year) + '/')
+                        str(end_date.astype(dt.datetime).year) + '/')
             else:
                 link = ('http://oceancurrent.imos.org.au/Coffs/' + 
-                        str(end_date.astype(datetime.datetime).year) + '/')
+                        str(end_date.astype(dt.datetime).year) + '/')
             files_2, file_dates_2 = getFiles(link,data_type)
             # combine
             files = np.concatenate([files_1,files_2])
@@ -223,31 +216,31 @@ def getFilesInRange(site, start_date, end_date, data_type):
   
     if 'chl' in data_type:
         # if start and end date years are the same
-        if start_date.astype(datetime.datetime).year == end_date.astype(datetime.datetime).year:
+        if start_date.astype(dt.datetime).year == end_date.astype(dt.datetime).year:
             if 'CH' not in site:
                 link = ('http://oceancurrent.imos.org.au/SNSW_chl/' + 
-                        str(start_date.astype(datetime.datetime).year) + '/')
+                        str(start_date.astype(dt.datetime).year) + '/')
             else:
                link = ('http://oceancurrent.imos.org.au/Coffs_chl/' + 
-                       str(start_date.astype(datetime.datetime).year) + '/') 
+                       str(start_date.astype(dt.datetime).year) + '/') 
             files, file_dates = getFiles(link,data_type)
         else:
             # if start and end date years are not the same
             # get first list of files
             if 'CH' not in site:
                 link = ('http://oceancurrent.imos.org.au/SNSW_chl/' + 
-                        str(start_date.astype(datetime.datetime).year) + '/')
+                        str(start_date.astype(dt.datetime).year) + '/')
             else:
                 link = ('http://oceancurrent.imos.org.au/Coffs_chl/' + 
-                        str(start_date.astype(datetime.datetime).year) + '/')
+                        str(start_date.astype(dt.datetime).year) + '/')
             files_1, file_dates_1 = getFiles(link,data_type)
             # get second list of files
             if 'CH' not in site:
                 link = ('http://oceancurrent.imos.org.au/SNSW_chl/' + 
-                        str(end_date.astype(datetime.datetime).year) + '/')
+                        str(end_date.astype(dt.datetime).year) + '/')
             else:
                 link = ('http://oceancurrent.imos.org.au/Coffs_chl/' + 
-                        str(end_date.astype(datetime.datetime).year) + '/')
+                        str(end_date.astype(dt.datetime).year) + '/')
             files_2, file_dates_2 = getFiles(link,data_type)
             # combine
             files = np.concatenate([files_1,files_2])
@@ -308,7 +301,7 @@ sizes_percentiles = [os.path.getsize(f) for f in OC_plots_in_dir]
 if len(OC_plots_in_dir) != 0 and sum(sizes_percentiles) !=0:
     plotOC(OC_plots_in_dir, setup.site_name, 
            setup.deployment_file_date_identifier,'percentiles')
- 
+    
 #-------------------------------------------------------------   
 # SST plot 
 #-------------- 

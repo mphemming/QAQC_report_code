@@ -17,7 +17,6 @@
 # __________________________________________________________________________________________________
 
 # Python Packages
-import netCDF4 as nc
 import xarray as xr
 import glob
 import numpy as np

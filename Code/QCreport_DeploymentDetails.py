@@ -504,13 +504,13 @@ def intro_table(doc):
         table.add_hline()
         table.add_row(('End Date',end_date))
         table.add_hline()
-        table.add_row(('Longitude',lon + form.degree_symbol + ' E'))
+        table.add_row(('Recorded Longitude',lon + form.degree_symbol + ' E'))
         table.add_hline()
-        table.add_row(('Latitude',lat + form.degree_symbol + ' S'))
+        table.add_row(('Recorded Latitude',lat + form.degree_symbol + ' S'))
         table.add_hline()
         table.add_row(('Principle Investigator', PO))
         table.add_hline()
-        table.add_row(('Field Team', FT))
+        table.add_row(('Field Team Lead', FT))
         table.add_hline()
     
 #------------------------------------------------------------

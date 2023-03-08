@@ -9,12 +9,6 @@
 # %% -----------------------------------------------------------------------------------------------
 # Import packages
 
-import QCreport_paths as paths
-import glob
-from fpdf import FPDF
-import QCreport_format as form
-import QCreport_DeploymentDetails as DepDet
-import QCreport_netCDF as nc
 
 # %% -----------------------------------------------------------------------------------------------
 # further comments

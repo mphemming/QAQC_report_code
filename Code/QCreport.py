@@ -147,7 +147,7 @@ print('Front Cover Created')
 # %% -----------------------------------------------------------------------------------------------
 # Create Table of Contents
 
-doc.append(form.Command('newpage'))
+# doc.append(form.Command('newpage'))
 doc.append(form.Command('tableofcontents'))
 
 
