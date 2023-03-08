@@ -40,3 +40,10 @@ QC_reports/
 QC_reports_Github_UNSW/
 Code/Utilities/CreateVelGridded-L-F6DK6Z2.py
 Code/QCreport_PlotDeployment-L-F6DK6Z2.py
+-L-F6DK6Z2.gitignore
+-LAPTOP-R01N5RRD.gitignore
+Code/QCreport_setup-L-F6DK6Z2.py
+*.out
+*.out
+Reports/BMP120_2008_QC_report.synctex(busy)
+Reports/BMP120_2008_QC_report.out
