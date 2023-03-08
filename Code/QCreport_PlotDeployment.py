@@ -33,6 +33,10 @@ import cmocean as cm
 # QCreport modules
 import QCreport_paths as paths
 import QCreport_netCDF as nc
+<<<<<<< Updated upstream
+=======
+import QCreport_DeploymentDetails as DepDet
+>>>>>>> Stashed changes
 import QCreport_setup as setup
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\Utilities\\python-holteandtalley-master\\')
 import holteandtalley as ht
@@ -84,13 +88,16 @@ def getMLDs(ds,ax):
     t = ds.TIME.values
     MLDs = []
     for n in range(len(t)):
-        Tint = np.interp(ds.DEPTH.values,ds.DEPTH.values[np.isfinite(T[n,:])],T[n,:][np.isfinite(T[n,:])])
-        h = ht.HolteAndTalley(ds.DEPTH.values,Tint)
-        ml = h.temp.calculateTTMLD()
-        shallowest_D = np.nanmin(ds.DEPTH.values[np.isfinite(T[n,:])])
-        if ml > shallowest_D:
-            MLDs.append(ml) # 0.2 degrees threshold method
-        else:
+        try:
+            Tint = np.interp(ds.DEPTH.values,ds.DEPTH.values[np.isfinite(T[n,:])],T[n,:][np.isfinite(T[n,:])])
+            h = ht.HolteAndTalley(ds.DEPTH.values,Tint)
+            ml = h.temp.calculateTTMLD()
+            shallowest_D = np.nanmin(ds.DEPTH.values[np.isfinite(T[n,:])])
+            if ml > shallowest_D:
+                MLDs.append(ml) # 0.2 degrees threshold method
+            else:
+                MLDs.append(np.nan)
+        except:
             MLDs.append(np.nan)
     # bin data
     bins = np.arange(min(t), max(t), np.timedelta64(1, 'h'))
@@ -117,8 +124,8 @@ def plot_14deg(t,D,T,ax):
 
 # add nominal depths to plot
 
-def plot_nomDepth(t,nc,ax):
-    ND = [v for k, v in nc.instrument_nominal_depth.items()]
+def plot_nomDepth(t,DepDet,ax):
+    ND = [v for k, v in DepDet.atts_instrument_nominal_depth.items()]
     ts = np.repeat(np.nanmin(t),len(ND))
     ax.scatter(ts,ND,marker='>',c='r')
 
@@ -177,13 +184,14 @@ def CreatePlot(T,U,V,nc):
    axs[0].set_ylabel('DEPTH [m]')
    axs[0].set_title('TEMP | ' + setup.site_name + ' | Dpl:' + setup.deployment_file_date_identifier)
    cbar = fig.colorbar(cf, ax=axs[0])
+   cbar.set_label('Temperature [$^\circ$C]')
    axs[0].grid()
    # Set the x-axis time format
    xfmt = mdates.AutoDateFormatter(mdates.AutoDateLocator())
    axs[0].xaxis.set_major_formatter(xfmt)
    axs[0].xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
    # add nominal depths
-   plot_nomDepth(t,nc,axs[0])
+   plot_nomDepth(t,DepDet,axs[0])
    # add 14 deg isotherm
    plot_14deg(t,D,T,axs[0])
    # get MLDs
@@ -196,7 +204,7 @@ def CreatePlot(T,U,V,nc):
    #################################################################################
    # VCUR
    t,D = np.meshgrid(V.TIME.values,V.DEPTH.values)
-   cf = axs[1].contourf(t,D,Vrotated.transpose(),cmap=cm.cm.balance,levels=15)
+   cf = axs[1].pcolor(t,D,Vrotated.transpose(),cmap=cm.cm.balance,vmin=-1.2,vmax=1.2)
    # beautify subplot
    axs[1].set_ylim(axs[0].get_ylim())
    axs[1].set_xlim(axs[0].get_xlim())
@@ -205,18 +213,19 @@ def CreatePlot(T,U,V,nc):
    axs[1].set_title('VCUR | ' + setup.site_name + ' | Dpl:' + setup.deployment_file_date_identifier 
                     + ' | Rotated ' + str(ang) + ' degrees')
    cbar = fig.colorbar(cf, ax=axs[1])
+   cbar.set_label('VCUR [m s$^{-1}$]')
    axs[1].grid()
    # Set the x-axis time format
    xfmt = mdates.AutoDateFormatter(mdates.AutoDateLocator())
    axs[1].xaxis.set_major_formatter(xfmt)
    axs[1].xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
    # add nominal depths
-   plot_nomDepth(t,nc,axs[1])
+   plot_nomDepth(t,DepDet,axs[1])
    #################################################################################
    #################################################################################
    # UCUR
    t,D = np.meshgrid(U.TIME.values,U.DEPTH.values)
-   cf = axs[2].contourf(t,D,Urotated.transpose(),cmap=cm.cm.balance,levels=15)
+   cf = axs[2].pcolor(t,D,Urotated.transpose(),cmap=cm.cm.balance,vmin=-0.6,vmax=0.6)
    # beautify subplot
    axs[2].set_ylim(axs[0].get_ylim())
    axs[2].set_xlim(axs[0].get_xlim())
@@ -225,13 +234,14 @@ def CreatePlot(T,U,V,nc):
    axs[2].set_title('UCUR | ' + setup.site_name + ' | Dpl:' + setup.deployment_file_date_identifier 
                     + ' | Rotated ' + str(ang) + ' degrees')
    cbar = fig.colorbar(cf, ax=axs[2])
+   cbar.set_label('UCUR [m s$^{-1}$]')
    axs[2].grid()
    # Set the x-axis time format
    xfmt = mdates.AutoDateFormatter(mdates.AutoDateLocator())
    axs[2].xaxis.set_major_formatter(xfmt)
    axs[2].xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
    # add nominal depths
-   plot_nomDepth(t,nc,axs[2])   
+   plot_nomDepth(t,DepDet,axs[2])   
 
 
 
@@ -245,7 +255,7 @@ T = TEMP_data;
 V = VEL_data.VCUR[0,:,:];
 U = VEL_data.UCUR[0,:,:];
 
-CreatePlot(T,U,V,nc)
+CreatePlot(T,U,V,DepDet)
 
 # save figures
 filename = (paths.plots_dir + 'DeploymentPeriod\\T_UVrotated_' + setup.site_name + '_Deployment' + 

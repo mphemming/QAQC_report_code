@@ -23,6 +23,11 @@ import requests
 import QCreport_paths as paths
 import QCreport_DeploymentDetails as DepDet
 import QCreport_setup as setup
+<<<<<<< Updated upstream
+=======
+import glob
+import QCreport_netCDF as nc
+>>>>>>> Stashed changes
 
 # %% -----------------------------------------------------------------------------------------------
 # Function to get LTSP filename
@@ -68,34 +73,50 @@ def getLTSPfilenames(node,site,folder):
 # __________________________________________________________________________________________________
 
 
-files,locs = getLTSPfilenames('NSW',setup.site_name,'aggregated_timeseries')
-for l in locs:
-    if 'TEMP' in l:
-        t = xr.open_dataset(l).TIME.values
-        D = xr.open_dataset(l).DEPTH.values
-        D_QC = xr.open_dataset(l).DEPTH_quality_control.values
+# files,locs = getLTSPfilenames('NSW',setup.site_name,'aggregated_timeseries')
+# for l in locs:
+#     if 'TEMP' in l:
+#         t = xr.open_dataset(l).TIME.values
+#         D = xr.open_dataset(l).DEPTH.values
+#         D_QC = xr.open_dataset(l).DEPTH_quality_control.values
 
+# get temperature and vel LTSP filename
+files = glob.glob(paths.TEMPORARY_dir + '*.nc');
+for f in files:
+    if 'TEMP-aggregated-timeseries' in f:
+        file2use = f
+t = xr.open_dataset(file2use).TIME.values
+D = xr.open_dataset(file2use).DEPTH.values
+D_QC = xr.open_dataset(file2use).DEPTH_quality_control.values
 D[D_QC != 1] = np.nan
-# define mooring files (TEMP files only)    
-IMOS_f = DepDet.atts_files_list
-IMOS_files = {}
-for n in range(len(IMOS_f)):
-    IMOS_f_string = str(IMOS_f[n])
-    if IMOS_f_string.find('TEMPERATURE') > 0:
-        IMOS_files[n] = IMOS_f[n]
-        
-# get time and depth from selected deployment
-Mt = []; Md = []; Md_QC = []
-for n in range(len(IMOS_files)):
-      Mt.append(xr.open_dataset(IMOS_files[n][0]).TIME) 
-      Md.append(xr.open_dataset(IMOS_files[n][0]).DEPTH)   
-      Md_QC.append(xr.open_dataset(IMOS_files[n][0]).DEPTH_quality_control)  
-      
-Mt = np.concatenate(Mt)        
-Md = np.concatenate(Md)         
-Md_QC = np.concatenate(Md_QC)
 
-Md[Md_QC != 1] = np.nan    
+# get depths during deployment
+c = np.logical_and(t >= np.datetime64(nc.time_coverage_start[0]),
+                   t <= np.datetime64(nc.time_coverage_end[0]))
+
+
+# # define mooring files (TEMP files only)    
+# IMOS_f = DepDet.atts_files_list
+# IMOS_files = {}
+# for n in range(len(IMOS_f)):
+#     IMOS_f_string = str(IMOS_f[n])
+#     if IMOS_f_string.find('TEMPERATURE') > 0:
+#         IMOS_files[n] = IMOS_f[n]
+        
+# # get time and depth from selected deployment
+# Mt = []; Md = []; Md_QC = []
+# for n in range(len(IMOS_files)):
+#       Mt.append(xr.open_dataset(IMOS_files[n][0]).TIME) 
+#       Md.append(xr.open_dataset(IMOS_files[n][0]).DEPTH)   
+#       Md_QC.append(xr.open_dataset(IMOS_files[n][0]).DEPTH_quality_control)  
+      
+# Mt = np.concatenate(Mt)        
+# Md = np.concatenate(Md)         
+# Md_QC = np.concatenate(Md_QC)
+
+# Md[Md_QC != 1] = np.nan    
+
+Mt=t[c]; Md = D[c]
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -109,8 +130,8 @@ Md[Md_QC != 1] = np.nan
 
 plt.figure(figsize=(12,8))
 
-plt.plot(t[0::10],D[0::10],'.',label='Historical')
-plt.plot(Mt[0::10],Md[0::10],'.',label='Deployment')
+plt.scatter(t[0::10],D[0::10],1,label='Historical')
+plt.scatter(Mt[0::10],Md[0::10],1,label='Deployment')
 
 # appearance
 plt.legend(loc='lower left',fontsize=14,ncol=2)
@@ -119,7 +140,7 @@ plt.grid()
 ax = plt.gca(); ax.invert_yaxis()
 plt.ylabel('Depth [m]',fontsize=16)
 plt.title('Deployment ' + setup.deployment_file_date_identifier +
-          ' historical TEMP comparison',fontsize=16)
+          ' historical Depth comparison',fontsize=16)
 # Set the font size for the tick labels
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
