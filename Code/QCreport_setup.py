@@ -20,7 +20,7 @@ import datetime
 
 site_name = 'BMP120'
 deployment = ''
-deployment_file_date_identifier = '2008'
+deployment_file_date_identifier = '2209'
 name_of_reportmaker = 'NSW-IMOS'
 
 # __________________________________________________________________________________________________

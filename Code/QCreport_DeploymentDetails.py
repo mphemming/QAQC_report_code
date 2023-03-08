@@ -59,42 +59,46 @@ class_fields = class_fields[-27:-1]; # index determined after looking at class_f
 # the result: variables for each attribute and file ('atts_{attribute name>')
 for n_atts in range(len(class_fields)):
     # create empty dictionary
-    exec('atts_' + str(class_fields[n_atts]) + ' = {}')
+    exec('atts_' + str(class_fields[n_atts]) + ' = []')
     # combine all attributes from each sensor file
     if isinstance(attributes_TEMP,str) == 0:
         for n_keys in range(len(attributes_TEMP.abstract)):
             try:
-                exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_TEMP.' + str(class_fields[n_atts]) + '[n_keys]]')  
+                exec('atts_' + str(class_fields[n_atts]) + '.append(attributes_TEMP.' + str(class_fields[n_atts]) + '[n_keys])')  
             except:
                 pass
     if isinstance(attributes_SBE37,str) == 0:
         for n_keys in range(len(attributes_SBE37.abstract)):
             try:
-                exec('atts_' + str(class_fields[n_atts]) + '[n_keys] = [attributes_SBE37.' + str(class_fields[n_atts]) + '[n_keys]]')     
+                exec('atts_' + str(class_fields[n_atts]) + '.append(attributes_SBE37.' + str(class_fields[n_atts]) + '[n_keys])')     
             except:
                 pass
     if isinstance(attributes_CURR,str) == 0:    
         for n_keys in range(len(attributes_CURR.abstract)):
             try:
                 n_keys_n = n_keys+len(attributes_TEMP.abstract)
-                exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CURR.' + str(class_fields[n_atts]) + '[n_keys]]')          
+                exec('atts_' + str(class_fields[n_atts]) + '.append(attributes_CURR.' + str(class_fields[n_atts]) + '[n_keys])')          
             except:
                 pass
     if isinstance(attributes_BGC,str) == 0:    
         for n_keys in range(len(attributes_BGC.abstract)):
             try:
                 n_keys_n = n_keys+len(attributes_TEMP.abstract)+len(attributes_CURR.abstract)
-                exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_BGC.' + str(class_fields[n_atts]) + '[n_keys]]')  
+                exec('atts_' + str(class_fields[n_atts]) + '.append(attributes_BGC.' + str(class_fields[n_atts]) + '[n_keys])')  
             except:
                 pass
     if isinstance(attributes_CTD,str) == 0:    
         for n_keys in range(len(attributes_CTD.abstract)):
             try:
                 n_keys_n = n_keys+len(attributes_CTD.abstract)+len(attributes_CTD.abstract)
-                exec('atts_' + str(class_fields[n_atts]) + '[n_keys_n] = [attributes_CTD.' + str(class_fields[n_atts]) + '[n_keys]]')  
+                exec('atts_' + str(class_fields[n_atts]) + '.append(attributes_CTD.' + str(class_fields[n_atts]) + '[n_keys])')  
             except:
                 pass
-# remove full file directory from 'atts_toolbox_input_file'
+            
+    exec('atts_' + str(class_fields[n_atts]) + 
+         ' = {i:atts_' + str(class_fields[n_atts]) + 
+         '[i] for i in range(len(atts_' + str(class_fields[n_atts]) + '))}')            
+   # remove full file directory from 'atts_toolbox_input_file'
 atts_toolbox_input_file_name = [] 
 for n_atts in range(len(atts_toolbox_input_file)):
     
@@ -105,7 +109,33 @@ for n_atts in range(len(atts_toolbox_input_file)):
             last_char = n_char       
     atts_toolbox_input_file_name.append(a[last_char+1:-1])
 
-            
+ 
+# Sort all attributes based on nominal depth, shallowest to deepest
+values = list(atts_instrument_nominal_depth.values())
+f = np.argsort(values)
+for n_atts in range(len(class_fields)):
+    new_dict = {}
+    try:
+        exec('values_sorted = np.array(list(atts_' + 
+             str(class_fields[n_atts]) + '.values()))[f]')
+        for n in range(len(values)):
+            exec('new_dict[n] = values_sorted[n]')
+    except:
+         pass     
+    exec('atts_' + str(class_fields[n_atts]) + ' = new_dict')
+        
+    #     exec('atts_' + str(class_fields[n_atts]) + 
+    #          ' = {list(atts_' + str(class_fields[n_atts]) + '.keys())[i]: ' + 
+    #          'atts_' + str(class_fields[n_atts]) + '[list(' + 
+    #          'atts_' + str(class_fields[n_atts]) + '.keys())[i]] for i in f}')
+    #     # need to sort the item numbers too
+    #     exec('atts_' + str(class_fields[n_atts]) + ' = {i: ' + 
+    #     'atts_' + str(class_fields[n_atts]) + '[k] for i, k in enumerate(sorted(' + 
+    #     'atts_' + str(class_fields[n_atts]) + '))}')
+    # except:
+    #     pass
+
+           
 #------------------------------------------------------------
 # Information 
 #-------------
@@ -580,24 +610,27 @@ def instrument_table(doc):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________        
         
+
 def create_parameter_table(doc,tab_str,n_depths,param_list,split,atts_instrument):
-    input_str = '|' + tab_str*(n_depths+1)
+    #---------------------------------
+    # Header
+    header = ['Parameter']
+    if 'split' not in split and n_depths == len(atts_instrument):
+        r = range(len(atts_instrument))
+        input_str = '|' + tab_str*(n_depths+1)
+    if 'split1' in split:
+        r = range(0,10)
+        input_str = '|' + tab_str*(11)
+    if 'split2' in split:
+        r = range(10,n_depths)  
+        input_str = '|' + tab_str*(len(range(10,n_depths))+1)
+    for n_inst in r: 
+        nd = remove_characters(str(atts_instrument_nominal_depth[n_inst]))
+        if '.0' in nd:
+            nd = str(int(float(nd))) 
+        header.append(nd + ' m')
     with doc.create(form.Tabular(input_str)) as table:
         table.add_hline() 
-        #---------------------------------
-        # Header
-        header = ['Parameter']
-        if '' in split and n_depths == len(atts_instrument):
-            r = range(len(atts_instrument))
-        if 'split' in split and n_depths < 8:
-            r = range(8,len(atts_instrument))
-        if 'split' in split and n_depths == 8:
-            r = range(8)    
-        for n_inst in r: 
-            nd = remove_characters(str(atts_instrument_nominal_depth[n_inst]))
-            if '.0' in nd:
-                nd = str(int(float(nd))) 
-            header.append(nd + ' m')
         table.add_row((header))
         table.add_hline()             
         # #---------------------------------
@@ -756,17 +789,21 @@ def parameter_table(doc):
     n_depths = len(atts_instrument)    
     tab_str = 'l|'
     input_str = '|' + tab_str*(n_depths+1)
+    # determine whether split needed and what is the split
+    if n_depths > 10:
+        split_1 = range(0,10)
+        split_2 = range(10,n_depths)
     #---------------------------------    
     #---------------------------------
     # Table   
-    if n_depths < 9:
+    if n_depths < 11:
         create_parameter_table(doc,tab_str,n_depths,param_list,'',atts_instrument)
     else:
-        create_parameter_table(doc,tab_str,8,param_list,'split',atts_instrument)
+        create_parameter_table(doc,tab_str,len(split_1),param_list,'split1',atts_instrument)
         doc.append('\n') 
         doc.append('')
         doc.append('\n') 
-        create_parameter_table(doc,tab_str,n_depths-8,param_list,'split',atts_instrument)
+        create_parameter_table(doc,tab_str,n_depths,param_list,'split2',atts_instrument)
 
 #------------------------------------------------------------
 # Information 
@@ -820,7 +857,33 @@ def timeinout_table(doc):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________   
-     
+  
+# %% -----------------------------------------------------------------------------------------------
+# Create Thredds OPeNDAP links for report table
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________   
+
+files_avail = atts_files_list
+# Create Thredds OPeNDAP links
+first_part = 'http://thredds.aodn.org.au/thredds/dodsC/IMOS/ANMN/NSW/'
+# combine string parts to create thredds links
+OPeNDAP_links = []
+for n_files in range(len(files_avail)):
+    fname = files_avail[n_files]
+    # find point in string where 'PROCESSED_2_5/'
+    find_start = fname.find('2_5/')
+    OPeNDAP_string = first_part + fname[find_start+67:]
+    OPeNDAP_string = OPeNDAP_string.replace('\\', '/')
+    OPeNDAP_string = OPeNDAP_string.replace('TEMPERATURE','Temperature') 
+    OPeNDAP_string = OPeNDAP_string.replace('SBE37','CTD_timeseries') 
+    OPeNDAP_string = OPeNDAP_string + '.html' 
+    OPeNDAP_links.append(OPeNDAP_string)
+            
+# ________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+# __________________________________________________________________________________________________
+
 # %% -----------------------------------------------------------------------------------------------
 # Create instrument file table and details bullet list
 # __________________________________________________________________________________________________
@@ -831,7 +894,6 @@ def toolbox_bullet(doc):
     
     with doc.create(form.Subsection('Toolbox Version')):
         doc.append('Toolbox version: ' + tb_vers) 
-
 
 def file_tables(doc):
 
@@ -878,7 +940,7 @@ def file_tables(doc):
         nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
         if '.0' in nd:
             nd = str(int(float(nd)))          
-        OPenDAP = nc.OPeNDAP_links[row_n]
+        OPenDAP = OPeNDAP_links[row_n]
         link = form.hyperlink(OPenDAP,'OPenDAP_link')
         # Need to split up string so that it fits into column
         # OPenDAP = (OPenDAP[0:73] + ' ' + OPenDAP[41:107] + ' ' + OPenDAP[107::])
@@ -898,7 +960,6 @@ def file_tables(doc):
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________    
-    
     
     
     

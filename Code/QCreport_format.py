@@ -19,7 +19,8 @@ import QCreport_setup as setup
 from pylatex import Document, Section, Hyperref, Subsection, Subsubsection, Tabular, Math, TikZ, Axis, \
     Plot, Figure, Matrix, Alignat, Enumerate, Itemize, Command, Package, NoEscape, \
         StandAloneGraphic, MultiColumn, NewPage
-from pylatex.utils import escape_latex, NoEscape        
+from pylatex.utils import escape_latex, NoEscape       
+from pylatex.base_classes import Environment 
 #------------------------------------------------------------
 # Information 
 #-------------
@@ -80,6 +81,11 @@ def TOC():
 def noindent():
     doc.create('\tableofcontents')
     return doc
+
+class Appendix(Environment):
+    """A class representing the appendix environment."""
+
+    _latex_name = 'appendix'
 
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
