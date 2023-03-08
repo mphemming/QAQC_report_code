@@ -14,18 +14,34 @@
 import QCreport_paths as paths
 import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
-import QCreport_QualityControl as QCR
-import QCreport_DeploymentPhotographs as DepPhoto
-import QCreport_ToolboxPlots as tbp
 import QCreport_setup as setup
-import QCreport_cover as cover
 # This package runs python scripts within a script
 import runpy
 import os
 import glob
 import numpy as np
+import subprocess
+import time
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# %% -----------------------------------------------------------------------------------------------
+# Determine which computer this script is on
+
+import os
+if 'mphem' in os.getcwd():
+    account = 'mphem'
+else:
+    account = 'z3526971'
+
+# %% -----------------------------------------------------------------------------------------------
+# Run MATLAB code to update the Mooring coverage plot
+
+script_path = r'C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\Matlab\\UpdateMooringCoverage.bat'
+subprocess.call([script_path])
+
+# pause the script by 30 seconds to wait for the deployment coverage plot to be updated
+time.sleep(20)
 
 # %% -----------------------------------------------------------------------------------------------
 # Run code to create OceanCurrent plots
@@ -40,6 +56,27 @@ runpy.run_path('QCreport_OceanCurrents.py')
 # ensure at correct path first
 os.chdir(paths.working_dir + '\\Code')
 runpy.run_path('QCreport_climatology.py')
+
+# %% -----------------------------------------------------------------------------------------------
+# Run code to create time-depth plot
+
+# ensure at correct path first
+os.chdir(paths.working_dir + '\\Code')
+runpy.run_path('QCreport_TimeDepthView.py')
+
+# %% -----------------------------------------------------------------------------------------------
+# Run code to create deployment T,V,U plot
+
+# ensure at correct path first
+os.chdir(paths.working_dir + '\\Code')
+runpy.run_path('QCreport_PlotDeployment.py')
+
+# %% -----------------------------------------------------------------------------------------------
+# Run code to create CTD comparison
+
+# ensure at correct path first
+os.chdir(paths.working_dir + '\\Code')
+runpy.run_path('QCreport_CTDcomparison.py')
 
 # %% -----------------------------------------------------------------------------------------------
 # Add Map figure
@@ -77,19 +114,19 @@ def addOCplots(doc):
     for p in SST_plots:
         doc.append(form.Command('newpage'))
         with doc.create(form.Figure(position='h!')) as SST_pic:
-                SST_pic.add_image(p, width=form.NoEscape(r'0.85\linewidth'))
+                SST_pic.add_image(p, width=form.NoEscape(r'0.75\linewidth'))
                 SST_pic.add_caption('SST snapshots from Ocean Currents')  
     # Add Percentile plot   
     for p in perc_plots:    
         doc.append(form.Command('newpage'))
         with doc.create(form.Figure(position='h!')) as perc_pic:
-                perc_pic.add_image(p, width=form.NoEscape(r'0.85\linewidth'))
+                perc_pic.add_image(p, width=form.NoEscape(r'0.75\linewidth'))
                 perc_pic.add_caption('Percentile snapshots from Ocean Currents')   
     # Add Ocean Color plot     
     for p in chl_plots:
         doc.append(form.Command('newpage'))
         with doc.create(form.Figure(position='h!')) as oc_pic:
-            oc_pic.add_image(p, width=form.NoEscape(r'0.85\linewidth'))
+            oc_pic.add_image(p, width=form.NoEscape(r'0.75\linewidth'))
             oc_pic.add_caption('Ocean color snapshots from Ocean Currents')  
     
 # %% -----------------------------------------------------------------------------------------------
@@ -143,7 +180,36 @@ def addClimplots(doc):
                               width=form.NoEscape(r'0.85\linewidth'))
             clim_pics.add_caption('Climatology comparison at a nominal depth of ' 
                                   + str(NDs[n]) + ' m.')          
-   
+            
+# Velocity climatology plots
+boxp_plots_VCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'VCUR_climatology_' + 
+                            setup.site_name + '_*.png')
+boxp_plots_UCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'UCUR_climatology_' + 
+                            setup.site_name + '_*.png')
+
+def addVelBoxplots_VCUR(doc):
+    # Add climatology plots
+    for n in range(len(boxp_plots_VCUR)):
+        with doc.create(form.Figure()) as boxp_pics:
+            boxp_pics.add_image(boxp_plots_VCUR[n], 
+                              width=form.NoEscape(r'0.75\linewidth'))
+            f1 = boxp_plots_VCUR[n].find('_D'); f2 = boxp_plots_VCUR[n].find('.png')
+            depth = boxp_plots_VCUR[n][f1+2:f2]
+            boxp_pics.add_caption('VCUR climatology at a nominal depth of ' 
+                                  + depth + ' m.') 
+
+def addVelBoxplots_UCUR(doc):
+    # Add climatology plots
+    for n in range(len(boxp_plots_UCUR)):
+        print(boxp_plots_UCUR[n])
+        with doc.create(form.Figure()) as boxp_pics:
+            boxp_pics.add_image(boxp_plots_UCUR[n], 
+                              width=form.NoEscape(r'0.75\linewidth'))
+            f1 = boxp_plots_UCUR[n].find('_D'); f2 = boxp_plots_UCUR[n].find('.png')
+            depth = boxp_plots_UCUR[n][f1+2:f2]
+            boxp_pics.add_caption('UCUR climatology at a nominal depth of ' 
+                                  + depth + ' m.') 
+                
 # %% -----------------------------------------------------------------------------------------------
 # Add CTD-mooring comparison
 
@@ -166,8 +232,73 @@ def addTDplot(doc,site_name,deployment_file_date_identifier):
     if os.path.exists(file):
         with doc.create(form.Figure(position='h!')) as TD_pics:
             TD_pics.add_image(file, 
-                              width=form.NoEscape(r'0.85\linewidth'))
+                              width=form.NoEscape(r'1\linewidth'))
             TD_pics.add_caption('Time-depth plot of historical mooring temperatures' + 
                                   ', alongside the selected deployment.')                
+            
+# %% -----------------------------------------------------------------------------------------------
+# Add T,V,U deployment plot to the document
+
+def addPlotDeployment(doc,site_name,deployment_file_date_identifier):
+    file = (paths.plots_dir + 'DeploymentPeriod\\T_UVrotated_' + site_name + '_Deployment' + 
+            deployment_file_date_identifier + '.png')
+    if os.path.exists(file):
+        with doc.create(form.Figure(position='h!')) as PD_pic:
+            PD_pic.add_image(file, 
+                              width=form.NoEscape(r'1\linewidth'))
+            PD_pic.add_caption('Temperature and rotated velocities over time and depth' + 
+                               ' during the deployment. The white line indicates the 14 deg. celsius isotherm,' + 
+                               ' while the black line is the MLD (only shown if deeper than the shallowest'+
+                               ' temperature measurement.')   
+
+# %% -----------------------------------------------------------------------------------------------
+# Add deployment coverage plot created using MATLAB
+
+def addDepCoverage(doc):
+    file = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\Matlab\\NSW_mooring_coverage.png')
+    if os.path.exists(file):
+        with doc.create(form.Figure(position='h!')) as DC_pic:
+            DC_pic.add_image(file, 
+                              width=form.NoEscape(r'1\linewidth'))
+            DC_pic.add_caption('Data coverage at all NSW-IMOS sites. Note that coverage here is defined' +
+                               ' as being when an instrument is in the water measuring a particular variable,' + 
+                               ' not necessarily when "good" data is present.' + 
+                               ' This plot has been updated for this report.')   
+             
+            
+# %% -----------------------------------------------------------------------------------------------
+# Add Depth-coverage plot (created for another project)
+
+def addVertCoverage(doc):
+    file = ('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\plots\\Other' + 
+            '\\Figure_MooringDataDepths.png')
+    if os.path.exists(file):
+        with doc.create(form.Figure(position='h!')) as DC_pic:
+            DC_pic.add_image(file, 
+                              width=form.NoEscape(r'1\linewidth'))
+            DC_pic.add_caption('Data Availability at the NSW-IMOS mooring sites off Coffs Harbour' +
+                               ' (CH100,CH070, CH050), Sydney (ORS065, SYD100, SYD140, PH100),' + 
+                               ' and Narooma (BMP070, BMP090, BMP120). Depths with low to high coverage' + 
+                               ' are shaded from grey to black, respectively, and are surrounded by colored' + 
+                               ' boxes indicating the vertical range and type of measurements: temperature' +
+                               ' (blue), salinity (orange), velocity (brown), dissolved oxygen (light blue),' +
+                               ' and chlorophyll-a flourescence (green). Data availability is approximate' +
+                               ' as we do not accountfor any differences in temporal resolution.')   
+                         
+# %% -----------------------------------------------------------------------------------------------
+# Add deployment coverage plot created using MATLAB
+
+def addVelEllipse(doc):
+    file =  (paths.plots_dir + 'VelEllipses\\VEl_Ellipse_' + setup.site_name + '_' + 
+             setup.deployment_file_date_identifier + '_DepthAveraged.png')
+    if os.path.exists(file):
+        with doc.create(form.Figure(position='h!')) as Ell_pic:
+            Ell_pic.add_image(file, 
+                              width=form.NoEscape(r'1\linewidth'))
+            Ell_pic.add_caption('Comparing velocity ellipses for all historical data collected over the same ' + 
+                                'time of the year as the deployment, and deployment data. The ellipses use ' +
+                                'data over the whole water column.')             
+
+
             
             
