@@ -11,8 +11,6 @@
 # Import packages
 
 # Python Packages
-from fpdf import FPDF
-import fpdf
 # QC report modules
 import QCreport_paths as paths
 import QCreport_setup as setup
