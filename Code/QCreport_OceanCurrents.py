@@ -13,6 +13,7 @@
 from urllib import request
 import requests
 import re
+import os
 import os.path
 import numpy as np
 import datetime as dt
@@ -192,6 +193,7 @@ def getFilesInRange(site, start_date, end_date, data_type):
                 link = ('http://oceancurrent.imos.org.au/SNSW/' + 
                         str(start_date.astype(dt.datetime).year) + '/')
             else:
+<<<<<<< Updated upstream
                 link = ('http://oceancurrent.imos.org.au/Coffs/' + 
                         str(start_date.astype(dt.datetime).year) + '/')
             files_1, file_dates_1 = getFiles(link,data_type)
@@ -202,6 +204,24 @@ def getFilesInRange(site, start_date, end_date, data_type):
             else:
                 link = ('http://oceancurrent.imos.org.au/Coffs/' + 
                         str(end_date.astype(dt.datetime).year) + '/')
+=======
+                    link = ('http://oceancurrent.imos.org.au/Coffs/' + 
+                            str(start_date.astype(dt.datetime).year) + '/')
+            files_1, file_dates_1 = getFiles(link,data_type)
+            # get second list of files
+            if 'CH' not in site:
+                if end_date.astype(dt.datetime).year != dt.datetime.now().year:
+                    link = ('http://oceancurrent.imos.org.au/SNSW/' + 
+                            str(end_date.astype(dt.datetime).year) + '/')
+                else:
+                    link = ('http://oceancurrent.imos.org.au/SNSW/')
+            else:
+                if end_date.astype(dt.datetime).year != dt.datetime.now().year:
+                    link = ('http://oceancurrent.imos.org.au/Coffs/' + 
+                            str(end_date.astype(dt.datetime).year) + '/')
+                else:
+                    link = ('http://oceancurrent.imos.org.au/Coffs/')
+>>>>>>> Stashed changes
             files_2, file_dates_2 = getFiles(link,data_type)
             # combine
             files = np.concatenate([files_1,files_2])
@@ -236,11 +256,25 @@ def getFilesInRange(site, start_date, end_date, data_type):
             files_1, file_dates_1 = getFiles(link,data_type)
             # get second list of files
             if 'CH' not in site:
+<<<<<<< Updated upstream
                 link = ('http://oceancurrent.imos.org.au/SNSW_chl/' + 
                         str(end_date.astype(dt.datetime).year) + '/')
             else:
                 link = ('http://oceancurrent.imos.org.au/Coffs_chl/' + 
                         str(end_date.astype(dt.datetime).year) + '/')
+=======
+                if end_date.astype(dt.datetime).year != dt.datetime.now().year:
+                    link = ('http://oceancurrent.imos.org.au/SNSW_chl/' + 
+                            str(end_date.astype(dt.datetime).year) + '/')
+                else:
+                    link = ('http://oceancurrent.imos.org.au/SNSW_chl/')
+            else:
+                if end_date.astype(dt.datetime).year != dt.datetime.now().year:
+                    link = ('http://oceancurrent.imos.org.au/Coffs_chl/' + 
+                            str(end_date.astype(dt.datetime).year) + '/')
+                else:
+                    link = ('http://oceancurrent.imos.org.au/Coffs_chl/')
+>>>>>>> Stashed changes
             files_2, file_dates_2 = getFiles(link,data_type)
             # combine
             files = np.concatenate([files_1,files_2])
@@ -269,6 +303,13 @@ def getFilesInRange(site, start_date, end_date, data_type):
             
     return files
     
+# delete OC plots first
+CPHL_plots = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\CPHL\\*.png')
+SST_plots = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\SST\\*.png')
+perc_plots = glob.glob(paths.plots_dir + 'OceanCurrent_Plots\\percentiles\\*.png')
+All_plots = np.concatenate((CPHL_plots,SST_plots,perc_plots))
+for p in All_plots:
+    os.remove(p)
 
 start_date = np.datetime64(DepDet.start_date)
 end_date = np.datetime64(DepDet.end_date)        
@@ -302,6 +343,14 @@ if len(OC_plots_in_dir) != 0 and sum(sizes_percentiles) !=0:
     plotOC(OC_plots_in_dir, setup.site_name, 
            setup.deployment_file_date_identifier,'percentiles')
     
+<<<<<<< Updated upstream
+=======
+# plotOC(OC_plots_in_dir,site_name,deployment_file_date_identifier,data_type)  
+# site_name = setup.site_name
+# deployment_file_date_identifier = setup.deployment_file_date_identifier
+# data_type = 'percentiles'
+
+>>>>>>> Stashed changes
 #-------------------------------------------------------------   
 # SST plot 
 #-------------- 
