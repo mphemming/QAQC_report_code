@@ -108,6 +108,8 @@ geometry_options = {"tmargin": "2cm", "lmargin": "2cm"}
 doc = form.Document(geometry_options=geometry_options,
                     font_size='large')
 doc.append(form.Command('fontsize', arguments = ['18', '16']))
+# set TOC depth to 4
+doc.preamble.append(form.Command('setcounter', arguments=['tocdepth', '4']))
 
 # Latex packages
 doc.packages.append(form.Package('rotating')) # for rotating toolbox plots
@@ -116,9 +118,10 @@ doc.packages.append(form.Package('sectsty'))
 doc.packages.append(form.Package('titlesec','compact, big'))
 doc.packages.append(form.Package('placeins','section')) # ensures plots stay in correct section, and don't float around
 doc.packages.append(form.Package('graphicx')) # for front cover images
-doc.packages.append(form.Package('hyperref','[colorlinks=false]')) # for opendap links
+doc.packages.append(form.Package('hyperref')) # for opendap links
+# doc.packages.append(form.Package('hyperref','[colorlinks=false]')) # for opendap links
 # doc.packages.append(form.NoEscape(r'\usepackage[bgcolor=transparent]{minted}'))# to remove colored boxes
-doc.packages.append(form.NoEscape(r'\usepackage[colorlinks=false]{hyperref}'))
+# doc.packages.append(form.NoEscape(r'\usepackage[colorlinks=false]{hyperref}'))
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -181,24 +184,30 @@ print('Section added: ''Deployment Details''')
 with doc.create(form.Section('Plots')):
     
     Addp.addMap(doc,setup.site_name)
-    Addp.addOCplots(doc)
-    Addp.addTimeSeriesplots(doc)
-    Addp.addClimplots(doc)
-    Addp.addCTDMooringplot(doc,setup.site_name,setup.deployment_file_date_identifier)
+    doc.append(form.Command('newpage'))
     Addp.addTDplot(doc,setup.site_name,setup.deployment_file_date_identifier)
+    doc.append(form.Command('newpage'))
+    Addp.addPlotDeployment(doc,setup.site_name,setup.deployment_file_date_identifier)
+    doc.append(form.Command('newpage'))
+    Addp.addDepCoverage(doc)
+    doc.append(form.Command('newpage'))
+    Addp.addVertCoverage(doc)
+    doc.append(form.Command('newpage'))
+    Addp.addTimeSeriesplots(doc)
+    doc.append(form.Command('newpage'))
+    Addp.addClimplots(doc)
+    doc.append(form.Command('newpage'))
+    Addp.addVelEllipse(doc)
+    doc.append(form.Command('newpage'))
+    Addp.addVelBoxplots_VCUR(doc)
+    doc.append(form.Command('newpage'))
+    Addp.addVelBoxplots_UCUR(doc)
+    doc.append(form.Command('newpage'))
+    Addp.addCTDMooringplot(doc,setup.site_name,setup.deployment_file_date_identifier)
+
 
 print('Section added: ''Plots''')
 
-# %% -----------------------------------------------------------------------------------------------
-# --------------------------------------------
-# Section: Deployment Photographs
-# --------------------------------------------
-
-with doc.create(form.Section('Deployment Photographs')):
-    
-    DepPhoto.include_photos(depphoto_dir,doc)
-
-print('Section added: ''Deployment Photographs''')
 
 # %% -----------------------------------------------------------------------------------------------
 # --------------------------------------------
@@ -255,6 +264,22 @@ print('Section added: ''Mooring Diagrams''')
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # %% -----------------------------------------------------------------------------------------------
+# --------------------------------------------
+# Section: Appendix
+# --------------------------------------------
+
+with doc.create(form.Appendix()):
+    with doc.create(form.Section('Appendix: Ocean Current Images')):
+        Addp.addOCplots(doc)    
+    with doc.create(form.Section('Appendix: Deployment Photographs')):
+        DepPhoto.include_photos(depphoto_dir,doc)
+        
+print('Section added: ''Appendix''')
+
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# %% -----------------------------------------------------------------------------------------------
 # Save report
 
 print('Saving report in: ' + saving_dir)
@@ -287,24 +312,24 @@ print('Report saved.')
 # %% -----------------------------------------------------------------------------------------------
 # tidy-up (remove unnecessary files in directory)
 
-os.chdir(saving_dir)
-aux_files = glob.glob(saving_dir + '*.aux')
-toc_files = glob.glob(saving_dir + '*.toc')
-out_files = glob.glob(saving_dir + '*.out')
-log_files = glob.glob(saving_dir + '*.log')
-tex_files = glob.glob(saving_dir + '*.tex')
+# os.chdir(saving_dir)
+# aux_files = glob.glob(saving_dir + '*.aux')
+# toc_files = glob.glob(saving_dir + '*.toc')
+# out_files = glob.glob(saving_dir + '*.out')
+# log_files = glob.glob(saving_dir + '*.log')
+# tex_files = glob.glob(saving_dir + '*.tex')
 
-# remove all but PDFs
-for n in range(len(aux_files)):
-    os.remove(aux_files[n])
-for n in range(len(toc_files)):
-    os.remove(toc_files[n])    
-for n in range(len(out_files)):
-    os.remove(out_files[n])      
-for n in range(len(log_files)):
-    os.remove(log_files[n])      
-for n in range(len(tex_files)):
-    os.remove(tex_files[n])      
+# # remove all but PDFs
+# for n in range(len(aux_files)):
+#     os.remove(aux_files[n])
+# for n in range(len(toc_files)):
+#     os.remove(toc_files[n])    
+# for n in range(len(out_files)):
+#     os.remove(out_files[n])      
+# for n in range(len(log_files)):
+#     os.remove(log_files[n])      
+# for n in range(len(tex_files)):
+#     os.remove(tex_files[n])      
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
