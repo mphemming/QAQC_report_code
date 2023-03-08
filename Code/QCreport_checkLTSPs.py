@@ -254,104 +254,108 @@ def updateGriddedLTSP(node, site_code, ServerFile,latest_deployment_thredds,vari
         print('Updating LTSP: ......... ' + ServerFile)
         # define time range needed to create aggregated LTSP
         time_range = [ServerFile_endDate, np.datetime64('now')]
-        if '[]' not in str(files): # if there are new files, continue
-            # create aggregated LTSP
-            if 'TEMP' in ServerFile:
-                # get latest hourly file
-                hrly_files_in_dir = glob.glob(paths.TEMPORARY_dir + '*' + setup.site_name + '*hourly*.nc')
-                # only QC'd files
-                hrly_files_in_dir_2use = []
-                for f in hrly_files_in_dir:
-                    if 'including-non-QC' not in f and 'velocity' not in f:
-                        hrly_files_in_dir_2use.append(f)
-                hrly_files_times = [os.path.getatime(f) for f in hrly_files_in_dir_2use]
-                file2use = np.array(hrly_files_in_dir_2use)[np.argmax(hrly_files_times)]  
-                # slice hourly file to smaller chunk for concatenating later
-                ds = xr.open_dataset(file2use)[['TEMP','DEPTH','LONGITUDE','LATITUDE']]
-                mask = ds['TIME'] >= time_range[0]
-                selected_data = ds.where(mask, drop=True)
-                filename = file2use.replace('.nc','') + '_selected.nc'
-                selected_data.to_netcdf(filename)
-                # create new gridded data
-                resolution = 1
-                separation = 16
-                ncout_path = grid.grid_variable(filename, 'TEMP', depth_bins=None, max_separation=separation, 
-                                   depth_bins_increment=resolution,input_dir='', 
-                                   output_dir=paths.TEMPORARY_dir, download_url_prefix=None, opendap_url_prefix=None)
-            if 'velocity' in ServerFile:
-                # get latest hourly file
-                hrly_files_in_dir = glob.glob(paths.TEMPORARY_dir + '*' + setup.site_name + '*hourly*.nc')
-                # only QC'd files
-                hrly_files_in_dir_2use = []
-                for f in hrly_files_in_dir:
-                    if 'including-non-QC' not in f and 'velocity' in f:
-                        hrly_files_in_dir_2use.append(f)
-                hrly_files_times = [os.path.getatime(f) for f in hrly_files_in_dir_2use]
-                file2use = np.array(hrly_files_in_dir_2use)[np.argmax(hrly_files_times)]  
-                # slice hourly file to smaller chunk for concatenating later
-                ds = xr.open_dataset(file2use)[['VCUR','UCUR','WCUR','DEPTH','LONGITUDE','LATITUDE']]
-                mask = ds['TIME'] >= time_range[0]
-                selected_data = ds.where(mask, drop=True)
-                filename = file2use.replace('.nc','') + '_selected.nc'
-                selected_data.to_netcdf(filename)
-                # create new gridded data
-                resolution = 1
-                separation = 16
-                ncout_path = vatm.grid_variable(filename, setup.site_name, depth_bins=None, max_separation=16, 
-                                   depth_bins_increment=1, input_dir='', output_dir=paths.TEMPORARY_dir, 
-                                   download_url_prefix=None, opendap_url_prefix=None)  
-            # load existing LTSP
-            existing = xr.open_dataset(ServerFile)
-            latest = xr.open_dataset(ncout_path)
-            # separate datasets into dims INSTRUMENT and OBSERVATION for merging
-            vs = list(existing.variables)
-            existing_obs = dict(); existing_ins = dict()
-            for v in vs:
-                if 'OBSERVATION' in existing[v].dims:
-                    existing_obs[v] = existing[v];
-                else:
-                    existing_ins[v] = existing[v];
-            latest_obs = dict(); latest_ins = dict()
-            for v in vs:
-                if 'OBSERVATION' in latest[v].dims:
-                    latest_obs[v] = latest[v];
-                else:
-                    latest_ins[v] = latest[v];
-            # convert to dataset
-            existing_obs = xr.Dataset(existing_obs)
-            existing_ins = xr.Dataset(existing_ins)
-            latest_obs = xr.Dataset(latest_obs)
-            latest_ins = xr.Dataset(latest_ins)
-            # concatenate
-            combined_obs = xr.concat([existing_obs,latest_obs],dim='OBSERVATION')
-            combined_ins = xr.concat([existing_ins,latest_ins],dim='INSTRUMENT')
-            # create one combined LTSP file
-            combined = xr.merge([combined_obs,combined_ins])
-            # add attributes
-            combined.attrs = existing.attrs
-            combined.attrs['time_coverage_end'] = latest.time_coverage_end
-            combined.attrs['title'] = existing.title.replace(combined.time_coverage_end,
-                                                       latest.time_coverage_end)
-            combined.attrs['history'] = latest.history
-            # create updated filename
-            old_time = "".join([existing.time_coverage_end[0:4],
-                                 existing.time_coverage_end[5:7],
-                                 existing.time_coverage_end[8:10]])
-            new_time = "".join([latest.time_coverage_end[0:4],
-                                 latest.time_coverage_end[5:7],
-                                 latest.time_coverage_end[8:10]])
-            old_creation = ServerFile[-11:-3];
-            new_filename = output_dir + ServerFile[ServerFile.find('IMOS_ANMN')::]
-            new_filename = ServerFile.replace(old_time, new_time)
-            new_filename = new_filename.replace(old_creation,datetime.datetime.now().strftime('%Y%m%d'))
-            # save new dataset
-            combined.to_netcdf(new_filename)
-            # remove latest file as not needed anymore
-            latest.close()
-            try:
-                os.remove(ncout_path)
-            except:
-                pass
+        # create aggregated LTSP
+        if 'TEMP' in ServerFile:
+            # get latest hourly file
+            hrly_files_in_dir = glob.glob(paths.TEMPORARY_dir + '*' + setup.site_name + '*hourly*.nc')
+            # only QC'd files
+            hrly_files_in_dir_2use = []
+            for f in hrly_files_in_dir:
+                if 'including-non-QC' not in f and 'velocity' not in f:
+                    hrly_files_in_dir_2use.append(f)
+            hrly_files_times = [os.path.getatime(f) for f in hrly_files_in_dir_2use]
+            file2use = np.array(hrly_files_in_dir_2use)[np.argmax(hrly_files_times)]  
+            # slice hourly file to smaller chunk for concatenating later
+            ds = xr.open_dataset(file2use)[['TEMP','DEPTH','LONGITUDE','LATITUDE']]
+            mask = ds['TIME'] >= time_range[0]
+            selected_data = ds.where(mask, drop=True)
+            filename = file2use.replace('.nc','') + '_selected.nc'
+            selected_data.to_netcdf(filename)
+            # create new gridded data
+            resolution = 1
+            separation = 16
+            ncout_path = grid.grid_variable(filename, 'TEMP', depth_bins=None, max_separation=separation, 
+                               depth_bins_increment=resolution,input_dir='', 
+                               output_dir=paths.TEMPORARY_dir, download_url_prefix=None, opendap_url_prefix=None)
+        if 'velocity' in ServerFile:
+            # get latest hourly file
+            hrly_files_in_dir = glob.glob(paths.TEMPORARY_dir + '*' + setup.site_name + '*hourly*.nc')
+            # only QC'd files
+            hrly_files_in_dir_2use = []
+            for f in hrly_files_in_dir:
+                if 'including-non-QC' not in f and 'velocity' in f:
+                    hrly_files_in_dir_2use.append(f)
+            hrly_files_times = [os.path.getatime(f) for f in hrly_files_in_dir_2use]
+            file2use = np.array(hrly_files_in_dir_2use)[np.argmax(hrly_files_times)]  
+            # slice hourly file to smaller chunk for concatenating later
+            ds = xr.open_dataset(file2use)[['VCUR','UCUR','WCUR','DEPTH','LONGITUDE','LATITUDE']]
+            mask = ds['TIME'] >= time_range[0]
+            selected_data = ds.where(mask, drop=True)
+            filename = file2use.replace('.nc','') + '_selected.nc'
+            selected_data.to_netcdf(filename)
+            # create new gridded data
+            resolution = 1
+            separation = 16
+            ncout_path = vatm.grid_variable(filename, setup.site_name, depth_bins=None, max_separation=16, 
+                               depth_bins_increment=1, input_dir='', output_dir=paths.TEMPORARY_dir, 
+                               download_url_prefix=None, opendap_url_prefix=None)  
+        # load existing LTSP
+        existing = xr.open_dataset(ServerFile)
+        latest = xr.open_dataset(ncout_path)
+        # separate datasets into dims INSTRUMENT and OBSERVATION for merging
+        vs = list(existing.variables)
+        existing_obs = dict(); existing_ins = dict()
+        for v in vs:
+            if 'OBSERVATION' in existing[v].dims:
+                existing_obs[v] = existing[v];
+            else:
+                existing_ins[v] = existing[v];
+        latest_obs = dict(); latest_ins = dict()
+        for v in vs:
+            if 'OBSERVATION' in latest[v].dims:
+                latest_obs[v] = latest[v];
+            else:
+                latest_ins[v] = latest[v];
+        # convert to dataset
+        existing_obs = xr.Dataset(existing_obs)
+        existing_ins = xr.Dataset(existing_ins)
+        latest_obs = xr.Dataset(latest_obs)
+        latest_ins = xr.Dataset(latest_ins)
+        # concatenate
+        combined_obs = xr.concat([existing_obs,latest_obs],dim='OBSERVATION')
+        combined_ins = xr.concat([existing_ins,latest_ins],dim='INSTRUMENT')
+        # create one combined LTSP file
+        combined = xr.merge([combined_obs,combined_ins])
+        # add attributes
+        combined.attrs = existing.attrs
+        combined.attrs['time_coverage_end'] = latest.time_coverage_end
+        combined.attrs['title'] = existing.title.replace(combined.time_coverage_end,
+                                                   latest.time_coverage_end)
+        combined.attrs['history'] = latest.history
+        # create updated filename
+        old_time = "".join([existing.time_coverage_end[0:4],
+                             existing.time_coverage_end[5:7],
+                             existing.time_coverage_end[8:10]])
+        new_time = "".join([latest.time_coverage_end[0:4],
+                             latest.time_coverage_end[5:7],
+                             latest.time_coverage_end[8:10]])
+        old_creation = ServerFile[-11:-3];
+        new_filename = output_dir + ServerFile[ServerFile.find('IMOS_ANMN')::]
+        new_filename = ServerFile.replace(old_time, new_time)
+        new_filename = new_filename.replace(old_creation,datetime.datetime.now().strftime('%Y%m%d'))
+        # drop INSTRUMENT dimension and combine 
+        if 'INSTRUMENT' in combined.dims:
+            if len(combined.INSTRUMENT) > 1:
+                comb = xr.concat([combined.sel(INSTRUMENT=0),
+                                  combined.sel(INSTRUMENT=1)],dim='TIME').sortby('TIME')
+        # save new dataset
+        combined.to_netcdf(new_filename)
+        # remove latest file as not needed anymore
+        latest.close()
+        try:
+            os.remove(ncout_path)
+        except:
+            pass
 
 def getLatestProduct(variable,product,path):
     files = glob.glob(path + '*' + variable + '*' + product + '*.nc') 
