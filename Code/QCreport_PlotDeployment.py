@@ -33,10 +33,7 @@ import cmocean as cm
 # QCreport modules
 import QCreport_paths as paths
 import QCreport_netCDF as nc
-<<<<<<< Updated upstream
-=======
 import QCreport_DeploymentDetails as DepDet
->>>>>>> Stashed changes
 import QCreport_setup as setup
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\Utilities\\python-holteandtalley-master\\')
 import holteandtalley as ht
@@ -252,8 +249,8 @@ TEMP_data = getDeployment(TEMP_data,nc)
 VEL_data = getDeployment(VEL_data,nc)
 
 T = TEMP_data;
-V = VEL_data.VCUR[0,:,:];
-U = VEL_data.UCUR[0,:,:];
+V = VEL_data.VCUR[:,:];
+U = VEL_data.UCUR[:,:];
 
 CreatePlot(T,U,V,DepDet)
 
