@@ -251,7 +251,7 @@ def calc_clim_monthly(YEARDAY,VAR,DEPTH,depths):
         MINsOut.append(mins)
     return MNsOut, STDsOut, MAXsOut, MINsOut
 
-def CreateBoxPlot(TIME,YEARDAY,VAR,DEPTH,depths,site_name,var_name,save_path,DepDates):
+def CreateBoxPlot(TIME,YEARDAY,VAR,DEPTH,depths,site_name,var_name,save_path,deployment_file_date_identifier,DepDates):
     # A boxplot is a way to visualize the distribution of a dataset. 
     # It shows the median of the data as a horizontal line inside a rectangle, 
     # which represents the middle 50% of the data (the interquartile range, or IQR). 
@@ -270,34 +270,35 @@ def CreateBoxPlot(TIME,YEARDAY,VAR,DEPTH,depths,site_name,var_name,save_path,Dep
         month.append(date[n].month)
     if 'depth-averaged' not in str(depths):
         for n in range(len(depths)):   
-            plt.figure(figsize=(10,5))
-            ax = plt.gca()
             # plot data during ddeployment
             cdep = np.logical_and(TIME >= DepDates[0],
                                 TIME < DepDates[1])
             cd = np.logical_and(DEPTH >= depths[n]-3,
                                 DEPTH < depths[n]+3)
             check = np.logical_and(cd,cdep)
-            plt.plot(YEARDAY[check],VAR[check],'.',c='gray',label='Deployment')
-            calpositions = np.array([1,32,60,91,121,152,182,213,244,274,305,335,365])
-            for n_mon in range(len(calpositions)):
-                if n_mon < 13:
-                    cm = np.array(month) == n_mon
-                    cd = np.logical_and(DEPTH >= depths[n]-3,
-                                        DEPTH < depths[n]+3)
-                    check = np.logical_and(cm,cd)
-                    data = np.array(VAR)[check]
-                else:
-                    cm = np.array(month) == 1
-                    cd = np.logical_and(DEPTH >= depths[n]-3,
-                                        DEPTH < depths[n]+3)
-                    check = np.logical_and(cm,cd)
-                    data = np.array(VAR)[check]
-                # plt.scatter(np.ones(check.sum())*n_mon,np.array(VAR)[check],1,c='k')
-                ax.boxplot(data[np.isfinite(data)], positions=[calpositions[n_mon-1]],
-                           showfliers=False,showmeans=True,widths=10)
-            plt.show()
-            if np.isfinite(data).sum() != 0:
+            if check.sum() != 0:
+                plt.figure(figsize=(10,5))
+                ax = plt.gca()
+                plt.plot(YEARDAY[check],VAR[check],'.',c='gray',label='Deployment')
+                calpositions = np.array([1,32,60,91,121,152,182,213,244,274,305,335,365])
+                for n_mon in range(len(calpositions)):
+                    if n_mon < 13:
+                        cm = np.array(month) == n_mon
+                        cd = np.logical_and(DEPTH >= depths[n]-3,
+                                            DEPTH < depths[n]+3)
+                        check = np.logical_and(cm,cd)
+                        data = np.array(VAR)[check]
+                    else:
+                        cm = np.array(month) == 1
+                        cd = np.logical_and(DEPTH >= depths[n]-3,
+                                            DEPTH < depths[n]+3)
+                        check = np.logical_and(cm,cd)
+                        data = np.array(VAR)[check]
+                    # plt.scatter(np.ones(check.sum())*n_mon,np.array(VAR)[check],1,c='k')
+                    ax.boxplot(data[np.isfinite(data)], positions=[calpositions[n_mon-1]],
+                               showfliers=False,showmeans=True,widths=10)
+                plt.show()
+            if check.sum() != 0:
                 plt.plot(calpositions,np.concatenate([np.array(MNsOut[n]), np.array([MNsOut[n][0]])]),label='Mean Climatology')
                 upper = np.concatenate([np.array(MNsOut[n]), np.array([MNsOut[n][0]])]) + np.concatenate([np.array(STDsOut[n]), np.array([STDsOut[n][0]])])
                 plt.plot(calpositions,upper,c='r',label='Standard Deviation Climatology')   
@@ -316,11 +317,13 @@ def CreateBoxPlot(TIME,YEARDAY,VAR,DEPTH,depths,site_name,var_name,save_path,Dep
                 plt.ylim(np.nanmin(MINsOut[n])-0.5,
                          np.nanmax(MAXsOut[n])+0.5)
                 plt.xlim([0, 366])
-            filename = (save_path + 'Climatology\\' + var_name + '_climatology_' + site_name + '_D' + 
-                            str(int(depths[n])) + '.png')
+                filename = (save_path + 'Climatology\\' + var_name + '_climatology_' + site_name + '_' + 
+                            deployment_file_date_identifier + '_D' + 
+                                str(int(depths[n])) + '.png')
             # save figures
-            plt.savefig(filename,dpi=300)
-            plt.close()
+            if check.sum() != 0:
+                plt.savefig(filename,dpi=300)
+                plt.close()
     else:
         plt.figure(figsize=(10,5))
         ax = plt.gca()
@@ -354,7 +357,8 @@ def CreateBoxPlot(TIME,YEARDAY,VAR,DEPTH,depths,site_name,var_name,save_path,Dep
             plt.legend(loc='lower left', ncol=4, frameon=False)
             plt.ylim(np.nanmin(MINsOut[0])-0.5,
                      np.nanmax(MAXsOut[0])+0.5)
-        filename = (save_path + 'Climatology\\' + var_name + '_climatology_' + site_name + '_D' + 'depth-averaged.png')
+        filename = (save_path + 'Climatology\\' + var_name + '_climatology_' + site_name + '_' + 
+                    deployment_file_date_identifier + '_depth-averaged.png')
         # save figures
         plt.savefig(filename,dpi=300)
         plt.close()
@@ -888,42 +892,54 @@ for nt in range(len(date_string)):
 NDord = np.argsort(NDs)
 NDsorted = np.array(NDs)[NDord]
 
+# Testing
+# TIME = np.array(grid_t)
+# YEARDAY = np.array(yearday)
+# VAR = np.array(grid_VCUR)
+# DEPTH = np.array(grid_D)
+# depths = np.array(NDsorted)
+# site_name = grid_VEL.site_code
+# var_name = 'VCUR'
+# save_path = paths.plots_dir
+# deployment_file_date_identifier = setup.deployment_file_date_identifier
 
 # do plots already exist?
 boxp_plots_VCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'VCUR_climatology_' + 
                             setup.site_name + '_*.png')
 if len(boxp_plots_VCUR) == 0:
+    print('Creating VCUR climatology plots')
     # if plots don't already exist, create them
     DepDates = [np.datetime64(nc.time_coverage_start[0]),
                 np.datetime64(nc.time_coverage_end[0])]
     # VCUR
     CreateBoxPlot(np.array(grid_t),np.array(yearday),np.array(grid_VCUR),
                   np.array(grid_D),np.array(NDsorted),
-                  grid_VEL.site_code,'VCUR',paths.plots_dir,DepDates)
+                  grid_VEL.site_code,'VCUR',paths.plots_dir,setup.deployment_file_date_identifier,DepDates)
     CreateBoxPlot(np.array(grid_t),np.array(yearday),np.array(grid_VCUR),
                   np.array(grid_D),'depth-averaged',
-                  grid_VEL.site_code,'VCUR',paths.plots_dir,DepDates)
-    PlotPDFs(np.array(yearday),np.array(grid_VCUR),
-                  np.array(grid_D),np.array(NDsorted),
-                  grid_VEL.site_code,'VCUR',paths.plots_dir)
+                  grid_VEL.site_code,'VCUR',paths.plots_dir,setup.deployment_file_date_identifier,DepDates)
+    # PlotPDFs(np.array(yearday),np.array(grid_VCUR),
+    #               np.array(grid_D),np.array(NDsorted),
+    #               grid_VEL.site_code,'VCUR',paths.plots_dir)
 
 # do plots already exist?
 boxp_plots_UCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'UCUR_climatology_' + 
                             setup.site_name + '_*.png')
 if len(boxp_plots_UCUR) == 0:
+    print('Creating UCUR climatology plots')
     # if plots don't already exist, create them
     DepDates = [np.datetime64(nc.time_coverage_start[0]),
                 np.datetime64(nc.time_coverage_end[0])]
     # UCUR
     CreateBoxPlot(np.array(grid_t),np.array(yearday),np.array(grid_UCUR),
                   np.array(grid_D),np.array(NDsorted),
-                  grid_VEL.site_code,'UCUR',paths.plots_dir,DepDates)
+                  grid_VEL.site_code,'UCUR',paths.plots_dir,setup.deployment_file_date_identifier,DepDates)
     CreateBoxPlot(np.array(grid_t),np.array(yearday),np.array(grid_VCUR),
                   np.array(grid_D),'depth-averaged',
-                  grid_VEL.site_code,'UCUR',paths.plots_dir,DepDates)
-    PlotPDFs(np.array(yearday),np.array(grid_UCUR),
-                  np.array(grid_D),np.array(NDsorted),
-                  grid_VEL.site_code,'UCUR',paths.plots_dir)
+                  grid_VEL.site_code,'UCUR',paths.plots_dir,setup.deployment_file_date_identifier,DepDates)
+    # PlotPDFs(np.array(yearday),np.array(grid_UCUR),
+    #               np.array(grid_D),np.array(NDsorted),
+    #               grid_VEL.site_code,'UCUR',paths.plots_dir)
 
 # CSPD = np.sqrt( (np.array(grid_UCUR))**2 + (np.array(grid_VCUR))**2)
 # CreateBoxPlot(np.array(grid_t),np.array(yearday),CSPD,
