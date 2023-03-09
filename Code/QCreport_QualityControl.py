@@ -19,6 +19,7 @@ import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
 import QCreport_netCDF as nc
 import QCreport_setup as setup
+import re
 
 #------------------------------------------------------------
 # Information 
@@ -104,6 +105,31 @@ def separate_log(QClog):
 
 ###################################################################
 
+
+###################################################################
+#__________________________________________________________________
+# Reason: highlight flagged data in red
+# Usage: this script only
+    
+
+def SeparateTests(QClog):
+    
+    nl = [m.start() for m in re.finditer('\n', QClog[0])]
+    QClog_separated = []
+    for n in range(len(nl)):
+        if n == 0:
+            QClog_separated.append(QClog[0][0:nl[n]])
+        else:
+            try:
+                QClog_separated.append(QClog[0][nl[n]+1:nl[n+1]-1])
+            except:
+                QClog_separated.append(QClog[0][nl[n]+1::])
+    return QClog_separated
+
+###################################################################
+
+
+
 #------------------------------------------------------------
 # Information 
 #-------------
@@ -148,11 +174,13 @@ def QC_comments(doc):
             with doc.create(form.Subsubsection('Quality Control Log')):    
                 # obtain string information from attribute 'quality_control_log'
                     QClog = separate_log(DepDet.atts_quality_control_log[inst_n])
-                    # for each quality control log account, create bullet point
-                    for log_n in range(len(QClog)):    
-                        with doc.create(form.Itemize()) as itemize:
-                            itemize.add_item(DepDet.remove_characters_QC(QClog[log_n]))
-        
+                    QClog_separated = SeparateTests(QClog)
+                    for QCs in QClog_separated:
+                            with doc.create(form.Itemize()) as itemize:
+                                if 'flagged' in QCs:
+                                    itemize.add_item(form.TextColor("red", DepDet.remove_characters_QC(QCs)))
+                                else:
+                                    itemize.add_item(form.TextColor("green", DepDet.remove_characters_QC(QCs)))                 
             #---------------------------------
             # add QC history for each instrument
             history = separate_hist(DepDet.atts_history[inst_n])
