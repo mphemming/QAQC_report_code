@@ -18,7 +18,7 @@
 import QCreport_setup as setup
 from pylatex import Document, Section, Hyperref, Subsection, Subsubsection, Tabular, Math, TikZ, Axis, \
     Plot, Figure, Matrix, Alignat, Enumerate, Itemize, Command, Package, NoEscape, \
-        StandAloneGraphic, MultiColumn, NewPage
+        StandAloneGraphic, MultiColumn, NewPage, TextColor
 from pylatex.utils import escape_latex, NoEscape       
 from pylatex.base_classes import Environment 
 #------------------------------------------------------------
