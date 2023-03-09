@@ -119,6 +119,7 @@ doc.packages.append(form.Package('titlesec','compact, big'))
 doc.packages.append(form.Package('placeins','section')) # ensures plots stay in correct section, and don't float around
 doc.packages.append(form.Package('graphicx')) # for front cover images
 doc.packages.append(form.Package('hyperref')) # for opendap links
+doc.packages.append(form.Package('morefloats')) # To allow for more floats (graphics/plots) in the report
 # doc.packages.append(form.Package('hyperref','[colorlinks=false]')) # for opendap links
 # doc.packages.append(form.NoEscape(r'\usepackage[bgcolor=transparent]{minted}'))# to remove colored boxes
 # doc.packages.append(form.NoEscape(r'\usepackage[colorlinks=false]{hyperref}'))
