@@ -23,11 +23,8 @@ import requests
 import QCreport_paths as paths
 import QCreport_DeploymentDetails as DepDet
 import QCreport_setup as setup
-<<<<<<< Updated upstream
-=======
 import glob
 import QCreport_netCDF as nc
->>>>>>> Stashed changes
 
 # %% -----------------------------------------------------------------------------------------------
 # Function to get LTSP filename
