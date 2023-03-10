@@ -576,19 +576,33 @@ def instrument_table(doc):
     with doc.create(form.Subsection('Instrument Serial Numbers and Nominal Depths')):
         doc.append('') 
     
-    with doc.create(form.Tabular('|l|l|l|')) as table:
+    with doc.create(form.Tabular('|l|l|l|l|')) as table:
         table.add_hline()
-        table.add_row(('Instrument','Serial Number','Nominal Depth'))
+        table.add_row(('Instrument','Type','Serial Number','Nominal Depth'))
         table.add_hline()
         # add rows using loop
         for row_n in range(len(atts_instrument)):
             inst = remove_characters(str(atts_instrument[row_n]))
             sn = remove_characters(str(atts_instrument_serial_number[row_n]))
             nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
+            tp = ''
+            if '-' in sn:
+                if 'PT' in inst:
+                    tp = 'PRES-TEMP'
+                else:
+                    tp = 'TEMP'
+            if 'SBE37' in inst:
+                tp = 'PSAL-TEMP-PRES'
+            if 'Teledyne' in inst or 'Workhorse' in inst:
+                tp = 'VEL'
+            if 'WQM' in inst:
+                tp = 'BGC'
+            if len(tp) == 0:
+                tp = 'TEMP'
             if '.0' in nd:
                 nd = str(int(float(nd)))
             
-            table.add_row((inst,sn,nd + ' m'))
+            table.add_row((inst,tp,sn,nd + ' m'))
             table.add_hline()
 
 #------------------------------------------------------------
