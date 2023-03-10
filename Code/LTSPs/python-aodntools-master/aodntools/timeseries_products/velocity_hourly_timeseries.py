@@ -118,6 +118,7 @@ def velocity_hourly_aggregated(files_to_agg, site_code, input_dir='', output_dir
 
     ## remove bad files form the list
     for file in bad_files.keys():
+        print(type(files_to_agg))    
         if 'numpy' in str(type(files_to_agg)):
             files_to_agg.delete(file)
         else:
