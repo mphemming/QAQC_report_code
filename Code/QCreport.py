@@ -39,6 +39,10 @@ import warnings
 import importlib
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code')
 import runpy
+
+# %% -----------------------------------------------------------------------------------------------
+# import remaining modules
+
 # QCreport modules
 import QCreport_setup as setup
 importlib.reload(setup) # needed for creating multiple reports in a loop
@@ -49,7 +53,6 @@ import QCreport_QualityControl as QCR
 import QCreport_DeploymentPhotographs as DepPhoto
 import QCreport_ToolboxPlots as tbp
 import QCreport_cover as cover
-import QCreport_AdditionalPlots as Addp
 
 #------------------------------------------------------------
 # Information 
@@ -74,6 +77,16 @@ for f in files_in_TEMP:
     if setup.site_name not in f:
         print(f)
         os.remove(f)
+
+# %% -----------------------------------------------------------------------------------------------
+# Run code to transfer LTSPs to temporary folder, and update if necessary
+runpy.run_path('QCreport_checkLTSPs.py')
+
+# NOTE: This script has to be run before importing some modules, as they require LTSPs to be present
+#       (e.g. QCreport_AdditionalPlots)
+
+# import remaining package that required LTSPs updated/organised first
+import QCreport_AdditionalPlots as Addp
 
 # %% -----------------------------------------------------------------------------------------------
 # Determine Paths
@@ -125,11 +138,6 @@ doc.packages.append(form.Package('morefloats')) # To allow for more floats (grap
 # doc.packages.append(form.NoEscape(r'\usepackage[colorlinks=false]{hyperref}'))
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-# %% -----------------------------------------------------------------------------------------------
-# Run code to transfer LTSPs to temporary folder, and update if necessary
-
-runpy.run_path('QCreport_checkLTSPs.py')
 
 # %% -----------------------------------------------------------------------------------------------
 # Sections
@@ -313,24 +321,24 @@ print('Report saved.')
 # %% -----------------------------------------------------------------------------------------------
 # tidy-up (remove unnecessary files in directory)
 
-# os.chdir(saving_dir)
-# aux_files = glob.glob(saving_dir + '*.aux')
-# toc_files = glob.glob(saving_dir + '*.toc')
-# out_files = glob.glob(saving_dir + '*.out')
-# log_files = glob.glob(saving_dir + '*.log')
-# tex_files = glob.glob(saving_dir + '*.tex')
+os.chdir(saving_dir)
+aux_files = glob.glob(saving_dir + '*.aux')
+toc_files = glob.glob(saving_dir + '*.toc')
+out_files = glob.glob(saving_dir + '*.out')
+log_files = glob.glob(saving_dir + '*.log')
+tex_files = glob.glob(saving_dir + '*.tex')
 
-# # remove all but PDFs
-# for n in range(len(aux_files)):
-#     os.remove(aux_files[n])
-# for n in range(len(toc_files)):
-#     os.remove(toc_files[n])    
-# for n in range(len(out_files)):
-#     os.remove(out_files[n])      
-# for n in range(len(log_files)):
-#     os.remove(log_files[n])      
-# for n in range(len(tex_files)):
-#     os.remove(tex_files[n])      
+# remove all but PDFs
+for n in range(len(aux_files)):
+    os.remove(aux_files[n])
+for n in range(len(toc_files)):
+    os.remove(toc_files[n])    
+for n in range(len(out_files)):
+    os.remove(out_files[n])      
+for n in range(len(log_files)):
+    os.remove(log_files[n])      
+for n in range(len(tex_files)):
+    os.remove(tex_files[n])      
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
