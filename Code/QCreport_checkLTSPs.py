@@ -22,6 +22,7 @@ else:
 # __________________________________________________________________________________________________
 
 import os
+import psutil
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\' + 
          'LTSPs\\python-aodntools-master\\')
 # Velocity LTSPs
@@ -229,16 +230,20 @@ def updateHourlyLTSP(node, site_code, ServerFile,latest_deployment_thredds,varia
             files_T, locs_T = LTSPFs.get_thredds_files(node,folders, site_code, time_range)
             # PSAL
             folders = LTSPFs.get_thredds_folders(node,site_code,'PSAL')
-            files_S, locs_S = LTSPFs.get_thredds_files(node,folders, site_code, time_range)
-            # combine together
-            locs = np.concatenate([locs_T,locs_S])
-            files = np.concatenate([files_T,files_S])
+            if len(folders) != 0:
+                files_S, locs_S = LTSPFs.get_thredds_files(node,folders, site_code, time_range)   
+                # combine together
+                locs = np.concatenate([locs_T,locs_S])
+                files = np.concatenate([files_T,files_S])
+            else:
+                locs = locs_T
+                files = files_T
         else:
             # velocity
             folders = LTSPFs.get_thredds_folders(node,site_code,'CURR')
             files, locs = LTSPFs.get_thredds_files(node,folders, site_code, time_range)
             
-        # create aggregated LTSP
+        # create hourly LTSP
         if '[]' not in str(files): # if there are new files, continue
             # create aggregated LTSP
             if 'velocity' not in ServerFile:
@@ -423,6 +428,7 @@ for nf in range(len(files_2update_gridded)):
     if np.unique(np.diff(xr.open_dataset(files_2update_gridded[nf]).DEPTH.values)) != 1:
         needs_updating_gridded[nf] = 2
      
+        
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
@@ -448,19 +454,19 @@ if np.sum(needs_updating_agg) > 0:
             if 'velocity' in f:
                 updateAggregatedLTSP('NSW', setup.site_name, f,latest_deployment_agg,
                                       'CURRENT',paths.TEMPORARY_dir)
-
+    
 # hourly
 if np.sum(needs_updating_hourly) > 0:
     for n in range(len(files_2update_hourly)):
         if bool(needs_updating_hourly[n]) \
         and 'including-non-QC' not in files_2update_hourly[n] and 'velocity' not in files_2update_hourly:
             f = files_2update_hourly[n]
-            updateHourlyLTSP('NSW', setup.site_name, f,latest_deployment_agg,
+            updateHourlyLTSP('NSW', setup.site_name, f,latest_deployment_hourly,
                                   'TEMP',paths.TEMPORARY_dir)
         else:
             if bool(needs_updating_hourly[n]) and 'including-non-QC' not in files_2update_hourly[n]:
                 f = files_2update_hourly[n]
-                updateHourlyLTSP('NSW', setup.site_name, f,latest_deployment_agg,
+                updateHourlyLTSP('NSW', setup.site_name, f,latest_deployment_hourly,
                                       'CURR',paths.TEMPORARY_dir)
                 
 # gridded
@@ -528,7 +534,10 @@ for nf in files2remove:
     
 # determine newest products in TEMPORARY_dir
 Tagg = getLatestProduct('TEMP','aggregated',paths.TEMPORARY_dir) 
-Sagg = getLatestProduct('PSAL','aggregated',paths.TEMPORARY_dir) 
+try:
+    Sagg = getLatestProduct('PSAL','aggregated',paths.TEMPORARY_dir) 
+except:
+    pass
 Velagg = getLatestProduct('velocity','aggregated',paths.TEMPORARY_dir) 
 Thourly = getLatestProduct('','hourly',paths.TEMPORARY_dir) 
 Velhourly = getLatestProduct('velocity','hourly',paths.TEMPORARY_dir) 
@@ -537,7 +546,10 @@ Velgridded = getLatestProduct('velocity','gridded',paths.TEMPORARY_dir)
 
 # determine old products on the server
 TaggOld = getLatestProduct('TEMP','aggregated',paths.main_path_data + setup.site_name + '\\LTSPs\\aggregated_timeseries\\') 
-SaggOld = getLatestProduct('PSAL','aggregated',paths.main_path_data + setup.site_name + '\\LTSPs\\aggregated_timeseries\\') 
+try:
+    SaggOld = getLatestProduct('PSAL','aggregated',paths.main_path_data + setup.site_name + '\\LTSPs\\aggregated_timeseries\\') 
+except:
+    pass
 VelaggOld = getLatestProduct('velocity','aggregated',paths.main_path_data + setup.site_name + '\\LTSPs\\aggregated_timeseries\\') 
 ThourlyOld = getLatestProduct('','hourly',paths.main_path_data + setup.site_name + '\\LTSPs\\hourly_timeseries\\') 
 VelhourlyOld = getLatestProduct('velocity','hourly',paths.main_path_data + setup.site_name + '\\LTSPs\\hourly_timeseries\\') 
@@ -558,6 +570,41 @@ SwapProducts(VelgriddedOld,Velgridded)
 
 # %% -----------------------------------------------------------------------------------------------
 # Final message and tidy-up
+
+
+if np.sum(needs_updating_agg) != 0 or np.sum(needs_updating_hourly) != 0 or np.sum(needs_updating_gridded) != 0:
+
+    # Get a list of all open file handles
+    open_fds = set(psutil.Process().open_files())
+    
+    for fd in list(open_fds):
+        if '.nc' in str(fd):
+           print(fd) 
+           try:
+               os.close(fd.fd)
+           except:
+               pass
+
+# if files were updated delete LTSPs from Temporary directory, 
+# and reload updated files
+
+if np.sum(needs_updating_agg) != 0:
+    files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*aggregated*.nc')
+    for f in files_in_TEMP:
+            os.remove(f)
+            
+if np.sum(needs_updating_hourly) != 0:
+    files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*hourly*.nc')
+    for f in files_in_TEMP:
+            os.remove(f)
+
+if np.sum(needs_updating_gridded) != 0:
+    files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*gridded*.nc')
+    for f in files_in_TEMP:
+            os.remove(f)
+
+
+
 
 print('LTSPs ready to use.')
 
