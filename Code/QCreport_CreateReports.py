@@ -19,11 +19,21 @@
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # %% -----------------------------------------------------------------------------------------------
+# Determine which computer this script is on
+
+import os
+if 'mphem' in os.getcwd():
+    account = 'mphem'
+else:
+    account = 'z3526971'
+
+# %% -----------------------------------------------------------------------------------------------
 # Import modules
 
 import runpy
 import os
 import glob
+import numpy as np
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -31,10 +41,10 @@ import glob
 # %% -----------------------------------------------------------------------------------------------
 # Create the reports using a loop
 
-sites = ['BMP070','BMP090','BMP120','SYD140','SYD100','PH100','ORS065','CH050','CH070','CH100']
+# sites = ['BMP070','BMP090','BMP120','SYD140','SYD100','PH100','ORS065','CH050','CH070','CH100']
 
-# account = 'z3526971'
-account = 'mphem'
+sites = ['BMP070','BMP090','BMP120']
+
 path = 'C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\'
 os.chdir(path)
 
@@ -45,17 +55,22 @@ for s in sites:
                             'sci-maths-ocean\\IMOS\\DATA\\MOORINGS\\PROCESSED_2_5\\' + s + 
                             '\\TEMPERATURE\\*.nc')
     depnumbs = []
-    for ndeps in range(4,40):
+    for ndeps in range(len(files_avail)):
         f = files_avail[ndeps].find('-Aqualogger')
         depnumbs.append(files_avail[ndeps][f-4:f])
-        # # Load in the setup script as a string
-        # with open('QCreport_setup.py', 'r') as f:
-        #     # Read the contents of the file into a string
-        #     script = f.read()
-        # # edit the site and deployment identifier for code execution
-        # script = script.replace("site_name = ''","site_name = " + "'" + s + "'")
-        # script = script.replace("deployment_file_date_identifier = ''",
-        #                "deployment_file_date_identifier = " + "'" + depnumbs[ndeps] + "'")
+    # get unique depnumbs    
+    depnumbs = np.unique(depnumbs)
+    
+    for ndeps in range(len(depnumbs)):
+        
+        # Load in the setup script as a string
+        with open('QCreport_setup.py', 'r') as f:
+            # Read the contents of the file into a string
+            script = f.read()
+        # edit the site and deployment identifier for code execution
+        script = script.replace("site_name = ''","site_name = " + "'" + s + "'")
+        script = script.replace("deployment_file_date_identifier = ''",
+                        "deployment_file_date_identifier = " + "'" + depnumbs[ndeps] + "'")
         print('--------------------------')
         print(s + '   |   ' + depnumbs[ndeps])
         print('--------------------------')
@@ -64,7 +79,7 @@ for s in sites:
         edited = open(path + 'QCreport_setup.py', 'a')
         edited.write("site_name = " + "'" + s + "'; \n")
         edited.write("deployment_file_date_identifier = " + "'" + depnumbs[ndeps] + "'; \n")
-        edited.write("print(site_name + '   |   ' + deployment_file_date_identifier)")
+        edited.write("print(site_name + '   |   ' + deployment_file_date_identifier); \n")
         edited.close()
 
         print('--------------------------')
@@ -97,15 +112,4 @@ for s in sites:
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-
-
-[autoreload of QCreport_setup failed: Traceback (most recent call last):
-  File "C:\Users\mphem\Anaconda3\lib\site-packages\IPython\extensions\autoreload.py", line 261, in check
-    superreload(m, reload, self.old_objects)
-  File "C:\Users\mphem\Anaconda3\lib\site-packages\IPython\extensions\autoreload.py", line 459, in superreload
-    module = reload(module)
-  File "C:\Users\mphem\Anaconda3\lib\importlib\__init__.py", line 168, in reload
-    raise ModuleNotFoundError(f"spec not found for the module {name!r}", name=name)
-ModuleNotFoundError: spec not found for the module 'QCreport_setup'
-]
 
