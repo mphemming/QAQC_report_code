@@ -26,6 +26,8 @@ import glob as glob
 import QCreport_paths as paths
 import QCreport_DeploymentDetails as DepDet
 import QCreport_setup as setup
+import importlib
+importlib.reload(setup) # needed for creating multiple reports in a loop
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

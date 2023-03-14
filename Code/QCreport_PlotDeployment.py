@@ -35,6 +35,8 @@ import QCreport_paths as paths
 import QCreport_netCDF as nc
 import QCreport_DeploymentDetails as DepDet
 import QCreport_setup as setup
+import importlib
+importlib.reload(setup) # needed for creating multiple reports in a loop
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\Utilities\\python-holteandtalley-master\\')
 import holteandtalley as ht
 os.chdir('C:\\Users\\' + account + '\\OneDrive - UNSW\\Work\\QC_reports\\Code\\')
@@ -71,8 +73,8 @@ VEL_data = xr.open_dataset(griddedfilesintemp_VEL[fVEL])
 # select this deployment only
 def getDeployment(ds,nc):
     # get range
-    start_time = np.datetime64(nc.time_coverage_start[0])
-    end_time = np.datetime64(nc.time_coverage_end[0])
+    start_time = np.datetime64(nc.time_coverage_start[0])+np.timedelta64(3,'D')
+    end_time = np.datetime64(nc.time_coverage_end[0])-np.timedelta64(3,'D')
     # select data
     ds = ds.sel(TIME=slice(start_time, end_time))
     

@@ -134,7 +134,7 @@ def determUpdate(file_list,temporary_path):
         print(filename)
         if os.path.exists(temporary_path + filename) == False:
             shutil.copy(f,temporary_path)
-        d = xr.open_dataset(temporary_path + filename);
+        d = xr.open_dataset(temporary_path + filename,engine='netcdf4');
         if 'PSAL' in f or 'TEMP' in f or 'velocity' in f or 'hourly' in f:
             time_cov.append([d.time_coverage_start,d.time_coverage_end])
             t = get_latest_deployment_date('NSW', setup.site_name, f)
@@ -525,12 +525,12 @@ selected = glob.glob(paths.TEMPORARY_dir + '*selected.nc')
 tmpfiles = glob.glob(paths.TEMPORARY_dir + 'tmp*.nc')
 
 files2remove = np.concatenate([selected,tmpfiles])
-
-for nf in files2remove:
-    try:
-        os.remove(nf)
-    except:
-        pass
+if len(files2remove) != 0:
+    for nf in files2remove:
+        try:
+            os.remove(nf)
+        except:
+            pass
     
 # determine newest products in TEMPORARY_dir
 Tagg = getLatestProduct('TEMP','aggregated',paths.TEMPORARY_dir) 
@@ -572,36 +572,37 @@ SwapProducts(VelgriddedOld,Velgridded)
 # Final message and tidy-up
 
 
-if np.sum(needs_updating_agg) != 0 or np.sum(needs_updating_hourly) != 0 or np.sum(needs_updating_gridded) != 0:
+# if np.sum(needs_updating_agg) != 0 or np.sum(needs_updating_hourly) != 0 or np.sum(needs_updating_gridded) != 0:
 
-    # Get a list of all open file handles
-    open_fds = set(psutil.Process().open_files())
+#     # Get a list of all open file handles
+#     open_fds = set(psutil.Process().open_files())
     
-    for fd in list(open_fds):
-        if '.nc' in str(fd):
-           print(fd) 
-           try:
-               os.close(fd.fd)
-           except:
-               pass
+#     for fd in list(open_fds):
+#         if '.nc' in str(fd):
+#            print(fd) 
+#            try:
+#                os.close(fd.fd)
+#            except:
+#                pass
 
 # if files were updated delete LTSPs from Temporary directory, 
 # and reload updated files
 
-if np.sum(needs_updating_agg) != 0:
-    files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*aggregated*.nc')
-    for f in files_in_TEMP:
-            os.remove(f)
+# if np.sum(needs_updating_agg) != 0:
+#     files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*aggregated*.nc')
+#     for f in files_in_TEMP:
+#             os.remove(f)
             
-if np.sum(needs_updating_hourly) != 0:
-    files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*hourly*.nc')
-    for f in files_in_TEMP:
-            os.remove(f)
+# if np.sum(needs_updating_hourly) != 0:
+#     if 'including-non-QC' not in np.array(files_2update_hourly)[np.bool(needs_updating_hourly)]
+#     files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*hourly*.nc')
+#     for f in files_in_TEMP:
+#             os.remove(f)
 
-if np.sum(needs_updating_gridded) != 0:
-    files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*gridded*.nc')
-    for f in files_in_TEMP:
-            os.remove(f)
+# if np.sum(needs_updating_gridded) != 0:
+#     files_in_TEMP = glob.glob(paths.TEMPORARY_dir + '*gridded*.nc')
+#     for f in files_in_TEMP:
+#             os.remove(f)
 
 
 

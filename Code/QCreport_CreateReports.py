@@ -61,8 +61,9 @@ for s in sites:
     # get unique depnumbs    
     depnumbs = np.unique(depnumbs)
     
-    for ndeps in range(len(depnumbs)):
-        
+    # for ndeps in range(len(depnumbs)):
+    for ndeps in range(0,len(depnumbs)):
+        os.chdir(path)
         # Load in the setup script as a string
         with open('QCreport_setup.py', 'r') as f:
             # Read the contents of the file into a string
@@ -80,6 +81,7 @@ for s in sites:
         edited.write("site_name = " + "'" + s + "'; \n")
         edited.write("deployment_file_date_identifier = " + "'" + depnumbs[ndeps] + "'; \n")
         edited.write("print(site_name + '   |   ' + deployment_file_date_identifier); \n")
+        edited.write("CreationMode = 1")
         edited.close()
 
         print('--------------------------')
@@ -106,7 +108,7 @@ for s in sites:
                 # delete line 5 and 8. or pass any Nth line you want to remove
                 # note list index starts from 0
                 n_lines = len(lines)
-                if number not in [n_lines-3,n_lines-2,n_lines-1]:
+                if number not in [n_lines-4,n_lines-3,n_lines-2,n_lines-1]:
                     fp.write(line)
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

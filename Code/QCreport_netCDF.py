@@ -23,6 +23,8 @@ import numpy as np
 # QC report modules
 import QCreport_paths as paths
 import QCreport_setup as setup
+import importlib
+importlib.reload(setup) # needed for creating multiple reports in a loop
 
 #------------------------------------------------------------
 # Information 

@@ -22,7 +22,8 @@ import QCreport_paths as paths
 import QCreport_format as form
 import QCreport_netCDF as nc
 import QCreport_setup as setup
-
+import importlib
+importlib.reload(setup) # needed for creating multiple reports in a loop
 
 #------------------------------------------------------------
 # Information 

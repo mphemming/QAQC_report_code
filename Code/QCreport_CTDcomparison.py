@@ -23,6 +23,8 @@ import glob
 import QCreport_paths as paths
 import QCreport_DeploymentDetails as DepDet
 import QCreport_setup as setup
+import importlib
+importlib.reload(setup) # needed for creating multiple reports in a loop
 import gsw
 
 # %% -----------------------------------------------------------------------------------------------
@@ -219,19 +221,20 @@ CTD_folder = glob.glob(paths.netCDF_TEMP_dir.replace('TEMPERATURE\\','') + '*CTD
 identifier = '20' + setup.deployment_file_date_identifier
 CTD_file = glob.glob(CTD_folder[0] + '\\*' + identifier + '*FV01*.nc');        
 
-# define time difference between mooring and CTD data 
-mooring, CTD = get_data(IMOS_files,CTD_file)
-CTD_time = np.datetime64(CTD[0].time_coverage_start).tolist()
-time_diff = dt.datetime(2019, 4, 13,1,00,0)-dt.datetime(2019, 4, 13,0,0,0); # 1 hours between one another
-TIME, TIME_diff, TEMP, TEMP_QC, DEPTH, DEPTH_QC, NOM_DEPTH = near_data(mooring,CTD,CTD_time,time_diff)
-# get distance between CTD and mooring
-mooring_coords = [mooring[0].geospatial_lon_max,mooring[0].geospatial_lat_max]
-CTD_coords = [CTD[0].geospatial_lon_max,CTD[0].geospatial_lat_max]
-dist_between = gsw.distance([mooring_coords[0],CTD_coords[0]], [mooring_coords[1],CTD_coords[1]], 0)
-# bin mooring temperature data 
-binned = bin_data(TEMP,DEPTH,NOM_DEPTH)
-# create figure
-make_plot(TIME_diff, TEMP,TEMP_QC,DEPTH,DEPTH_QC,CTD,NOM_DEPTH,binned,dist_between)
+if len(CTD_file) != 0:
+    # define time difference between mooring and CTD data 
+    mooring, CTD = get_data(IMOS_files,CTD_file)
+    CTD_time = np.datetime64(CTD[0].time_coverage_start).tolist()
+    time_diff = dt.datetime(2019, 4, 13,1,00,0)-dt.datetime(2019, 4, 13,0,0,0); # 1 hours between one another
+    TIME, TIME_diff, TEMP, TEMP_QC, DEPTH, DEPTH_QC, NOM_DEPTH = near_data(mooring,CTD,CTD_time,time_diff)
+    # get distance between CTD and mooring
+    mooring_coords = [mooring[0].geospatial_lon_max,mooring[0].geospatial_lat_max]
+    CTD_coords = [CTD[0].geospatial_lon_max,CTD[0].geospatial_lat_max]
+    dist_between = gsw.distance([mooring_coords[0],CTD_coords[0]], [mooring_coords[1],CTD_coords[1]], 0)
+    # bin mooring temperature data 
+    binned = bin_data(TEMP,DEPTH,NOM_DEPTH)
+    # create figure
+    make_plot(TIME_diff, TEMP,TEMP_QC,DEPTH,DEPTH_QC,CTD,NOM_DEPTH,binned,dist_between)
 
 
 

@@ -28,6 +28,8 @@ import datetime
 import QCreport_paths as paths
 import QCreport_DeploymentDetails as DepDet
 import QCreport_setup as setup
+import importlib
+importlib.reload(setup) # needed for creating multiple reports in a loop
 import QCreport_netCDF as nc
 import seaborn as sns
 import pandas as pd
@@ -131,6 +133,12 @@ def calc_clim_daily(YEARDAY,VAR):
     
     return clim
 
+# doy = np.array(yearday)
+# VAR = agg_T
+# DEPTH = agg_D 
+# depths = np.array(NDs)
+# day_smooth = 31
+
 def getDailyClim(doy,VAR,DEPTH,depths,day_smooth):
 
     if 'all depths' not in depths:
@@ -167,11 +175,12 @@ def getDailyClim(doy,VAR,DEPTH,depths,day_smooth):
                     P10[day,D] = np.percentile(V[c][np.isfinite(V[c])],10)
                     std[day,D] = np.nanstd(V[c])
             else:
-                clim[day,D] = np.nan
-                P90[day,D] = np.nan
-                P50[day,D] = np.nan
-                P10[day,D] = np.nan
-                std[day,D] = np.nan
+                for day in range(len(day_grid)):
+                    clim[day,D] = np.nan
+                    P90[day,D] = np.nan
+                    P50[day,D] = np.nan
+                    P10[day,D] = np.nan
+                    std[day,D] = np.nan
             sm_array = np.concatenate([clim[:,D],clim[:,D],clim[:,D]])
             sm_array = smooth(sm_array,day_smooth,window='hanning')
             clim[:,D] = sm_array[366+round(day_smooth/2)-1:366+365+round(day_smooth/2)-1]
@@ -620,6 +629,7 @@ timeseries_plots = DepDet.nc.glob.glob(paths.plots_dir + 'TimeSeries\\' + 'TEMP_
                             setup.site_name + '_' + 
                             setup.deployment_file_date_identifier + '*.png')
 
+
 if len(timeseries_plots) == 0:
     # if plots don't already exist, create them
     for n in range(len(NDs)):
@@ -731,10 +741,14 @@ if len(clim_plots) == 0:
         # Set the font size for the tick labels
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
+        
         # format x ticks to show the months instead of yearday
-        month_fmt = mdates.DateFormatter('%b')
+        locator = mdates.MonthLocator()
+        formatter = mdates.DateFormatter('%b')
         ax = plt.gca()
-        ax.xaxis.set_major_formatter(month_fmt)
+        ax.xaxis.set_major_locator(locator)
+        ax.xaxis.set_major_formatter(formatter)
+    
         # save figures
         filename = (paths.plots_dir + 'Climatology\\TEMP_climatology_' + setup.site_name + '_' + setup.deployment_file_date_identifier + '_D' + 
                         str(NDs[n]) + '.png')
@@ -905,7 +919,7 @@ NDsorted = np.array(NDs)[NDord]
 
 # do plots already exist?
 boxp_plots_VCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'VCUR_climatology_' + 
-                            setup.site_name + '_*.png')
+                            setup.site_name + '_' + setup.deployment_file_date_identifier + '_*.png')
 if len(boxp_plots_VCUR) == 0:
     print('Creating VCUR climatology plots')
     # if plots don't already exist, create them
@@ -924,7 +938,7 @@ if len(boxp_plots_VCUR) == 0:
 
 # do plots already exist?
 boxp_plots_UCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'UCUR_climatology_' + 
-                            setup.site_name + '_*.png')
+                            setup.site_name + '_' + setup.deployment_file_date_identifier + '_*.png')
 if len(boxp_plots_UCUR) == 0:
     print('Creating UCUR climatology plots')
     # if plots don't already exist, create them

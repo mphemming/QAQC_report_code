@@ -20,7 +20,7 @@ import datetime
 
 site_name = 'BMP120'
 deployment = ''
-deployment_file_date_identifier = '2209'
+# deployment_file_date_identifier = '2209'
 name_of_reportmaker = 'NSW-IMOS'
 
 # __________________________________________________________________________________________________
@@ -127,13 +127,4 @@ surname = name_of_reportmaker[findspace+1:]
 #     ' UNSW - Integrated Marine Observing System, Australia.'    
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
-# __________________________________________________________________________________________________site_name = 'BMP070'; 
-site_name = 'BMP070'; 
-deployment_file_date_identifier = '1411'; 
-print(site_name + '   |   ' + deployment_file_date_identifier); 
-site_name = 'BMP070'; 
-deployment_file_date_identifier = '1411'; 
-print(site_name + '   |   ' + deployment_file_date_identifier); 
-site_name = 'BMP070'; 
-deployment_file_date_identifier = '1411'; 
-print(site_name + '   |   ' + deployment_file_date_identifier); 
+# __________________________________________________________________________________________________

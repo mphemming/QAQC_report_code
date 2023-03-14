@@ -34,6 +34,10 @@ else:
 import os
 import QCreport_setup as setup
 import glob
+import importlib
+
+if hasattr(setup, 'CreationMode'):
+    importlib.reload(setup) 
 
 #------------------------------------------------------------
 # Information 
@@ -249,7 +253,6 @@ md_dir = mddir(setup.site_name)
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
-
 # Function to choose correct path to Deployment photographs
 #------------------------------------------------------------
 def dppdir(site_name, deployment_file_date_identifier):

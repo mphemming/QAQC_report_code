@@ -23,6 +23,8 @@ import requests
 import QCreport_paths as paths
 import QCreport_DeploymentDetails as DepDet
 import QCreport_setup as setup
+import importlib
+importlib.reload(setup) # needed for creating multiple reports in a loop
 import glob
 import QCreport_netCDF as nc
 
@@ -85,11 +87,13 @@ for f in files:
 t = xr.open_dataset(file2use).TIME.values
 D = xr.open_dataset(file2use).DEPTH.values
 D_QC = xr.open_dataset(file2use).DEPTH_quality_control.values
+T_QC = xr.open_dataset(file2use).TEMP_quality_control.values
 D[D_QC != 1] = np.nan
+D[T_QC != 1] = np.nan
 
 # get depths during deployment
-c = np.logical_and(t >= np.datetime64(nc.time_coverage_start[0]),
-                   t <= np.datetime64(nc.time_coverage_end[0]))
+c = np.logical_and(t > np.datetime64(nc.time_coverage_start[0])+np.timedelta64(3,'D'),
+                   t < np.datetime64(nc.time_coverage_end[0])-np.timedelta64(3,'D'))
 
 
 # # define mooring files (TEMP files only)    

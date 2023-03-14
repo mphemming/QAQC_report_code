@@ -16,6 +16,7 @@
 
 # Python Packages
 import glob
+import os
 import QCreport_format as form
 
 #------------------------------------------------------------
@@ -38,11 +39,16 @@ import QCreport_format as form
 # __________________________________________________________________________________________________
 # __________________________________________________________________________________________________
 
-
 def include_photos(path, doc):   
  
     # Get list of toolbox plots
-    images = glob.glob(path + '\\*')
+    # images = glob.glob(path + '\\*')
+    images = []
+
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if file.endswith(('.jpg', '.JPG','.png','.PNG')):
+                images.append(os.path.join(root, file))
     # include toolbox plots
     for im in images:
         if 'jpg' in im or 'png' in im:

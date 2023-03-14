@@ -17,6 +17,8 @@
 # Python Packages
 import glob
 import QCreport_setup as setup
+import importlib
+importlib.reload(setup) # needed for creating multiple reports in a loop
 import QCreport_format as form
 #------------------------------------------------------------
 # Information 

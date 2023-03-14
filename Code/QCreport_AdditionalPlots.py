@@ -15,6 +15,8 @@ import QCreport_paths as paths
 import QCreport_format as form
 import QCreport_DeploymentDetails as DepDet
 import QCreport_setup as setup
+import importlib
+importlib.reload(setup) # needed for creating multiple reports in a loop
 # This package runs python scripts within a script
 import runpy
 import os
@@ -85,7 +87,7 @@ def addMap(doc,site_name):
     file = (paths.plots_dir + 'Maps\\Moorings_map.png')
     with doc.create(form.Figure(position='h!')) as map_pic:
         map_pic.add_image(file, 
-                          width=form.NoEscape(r'0.85\linewidth'))
+                          width=form.NoEscape(r'0.65\linewidth'))
         if 'BMP' in site_name:
             map_pic.add_caption('Mooring locations along New South Wales. Site ' +
                                 site_name + ' is close to Narooma shown in panel (d).')  
@@ -183,9 +185,9 @@ def addClimplots(doc):
             
 # Velocity climatology plots
 boxp_plots_VCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'VCUR_climatology_' + 
-                            setup.site_name + '_*.png')
+                            setup.site_name + '_' + setup.deployment_file_date_identifier + '_*.png')
 boxp_plots_UCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'UCUR_climatology_' + 
-                            setup.site_name + '_*.png')
+                            setup.site_name + '_' + setup.deployment_file_date_identifier + '_*.png')
 
 def addVelBoxplots_VCUR(doc):
     # Add climatology plots
