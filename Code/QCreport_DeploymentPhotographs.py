@@ -51,7 +51,6 @@ def include_photos(path, doc):
                 images.append(os.path.join(root, file))
     # include toolbox plots
     for im in images:
-        if 'jpg' in im or 'png' in im:
             with doc.create(form.Figure()) as pic:        
                 pic.add_image(im,width=form.NoEscape(r'0.7\linewidth'))
              
