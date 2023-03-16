@@ -62,7 +62,7 @@ for s in sites:
     depnumbs = np.unique(depnumbs)
     
     # for ndeps in range(len(depnumbs)):
-    for ndeps in range(0,len(depnumbs)):
+    for ndeps in range(12,len(depnumbs)):
         os.chdir(path)
         # Load in the setup script as a string
         with open('QCreport_setup.py', 'r') as f:
