@@ -179,10 +179,12 @@ def QC_comments(doc):
                     QClog_separated = SeparateTests(QClog)
                     for QCs in QClog_separated:
                             with doc.create(form.Itemize()) as itemize:
+                                doc.append(form.Command('normalsize'))
                                 if 'flagged' in QCs:
                                     itemize.add_item(form.TextColor("red", DepDet.remove_characters_QC(QCs)))
                                 else:
                                     itemize.add_item(form.TextColor("green", DepDet.remove_characters_QC(QCs)))                 
+                                doc.append(form.Command('large'))
             #---------------------------------
             # add QC history for each instrument
             history = separate_hist(DepDet.atts_history[inst_n])
