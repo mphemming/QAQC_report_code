@@ -92,8 +92,8 @@ D[D_QC != 1] = np.nan
 D[T_QC != 1] = np.nan
 
 # get depths during deployment
-c = np.logical_and(t > np.datetime64(nc.time_coverage_start[0])+np.timedelta64(3,'D'),
-                   t < np.datetime64(nc.time_coverage_end[0])-np.timedelta64(3,'D'))
+c = np.logical_and(t > np.datetime64(DepDet.attributes_TEMP().time_coverage_start[0])+np.timedelta64(3,'D'),
+                   t < np.datetime64(DepDet.attributes_TEMP().time_coverage_end[0])-np.timedelta64(3,'D'))
 
 
 # # define mooring files (TEMP files only)    
