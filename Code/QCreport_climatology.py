@@ -31,6 +31,7 @@ import QCreport_setup as setup
 import importlib
 importlib.reload(setup) # needed for creating multiple reports in a loop
 import QCreport_netCDF as nc
+importlib.reload(nc)
 import seaborn as sns
 import pandas as pd
 
@@ -534,10 +535,17 @@ Ts = []
 ts = []
 
 for f in IMOS_files:
-    NDs.append(xr.open_dataset(f).instrument_nominal_depth)
+    try:
+        NDs.append(xr.open_dataset(f).instrument_nominal_depth)
+    except AttributeError: 
+        NDs.append(xr.open_dataset(f).site_nominal_depth)
     D = xr.open_dataset(f).DEPTH.values;
-    D_QC = xr.open_dataset(f).DEPTH_quality_control.values;
-    D[D_QC != 1] = np.nan
+    try:
+        D_QC = xr.open_dataset(f).DEPTH_quality_control.values;
+    except AttributeError: 
+        D_QC = np.ones(np.size(D))
+    D[D_QC != 1] = np.nan 
+
     t = xr.open_dataset(f).TIME.values;
     T = xr.open_dataset(f).TEMP.values;
     T_QC = xr.open_dataset(f).TEMP_quality_control.values;
@@ -549,8 +557,11 @@ for f in IMOS_files:
 # get actual depth range for these deployment files
 D_range = []
 for n in range(len(NDs)):
-    D_range.append(np.round([np.percentile(Ds[n][np.isfinite(Ds[n])],5), 
-              np.percentile(Ds[n][np.isfinite(Ds[n])],95)],2))
+    try:
+        D_range.append(np.round([np.percentile(Ds[n][np.isfinite(Ds[n])],5), 
+                  np.percentile(Ds[n][np.isfinite(Ds[n])],95)],2))
+    except IndexError:
+        D_range.append(D_range[n-1])
 
 # %% Velocity
 
@@ -634,35 +645,40 @@ if len(timeseries_plots) == 0:
     # if plots don't already exist, create them
     for n in range(len(NDs)):
         
-        plt.figure(figsize=(10,5))
+        try:
         
-        # plot the historical record for this depth range
-        c = np.logical_and(agg_D >= D_range[n][0],
-                           agg_D < D_range[n][1])
-        plt.scatter(agg_t[c],agg_T[c],2,label='Historical')
-        # plot the deployment
-        plt.scatter(ts[n],Ts[n],2,label='This Deployment')
-        # appearance
-        plt.legend(loc='lower left',fontsize=14,ncol=2)
-        plt.show()
-        plt.grid()
-        plt.ylabel('Temperature [$^\circ$C]',fontsize=16)
-        plt.title('Deployment: ' + setup.deployment_file_date_identifier + ', Nominal Depth: ' +
-                  str(NDs[n]) +' m, depth range: ' + str(D_range[n][0]) + ' - ' + 
-                  str(D_range[n][1]) + ' m',fontsize=16)
-        # Set the font size for the tick labels
-        plt.xticks(fontsize=16)
-        plt.yticks(fontsize=16)
-        if np.nanmax(ts[n]) > np.nanmax(agg_t):
-            plt.xlim(np.nanmin(agg_t)-np.timedelta64(365,'D'),np.nanmax(ts[n])+np.timedelta64(365,'D'))
-        else:
-            plt.xlim(np.nanmin(agg_t)-np.timedelta64(365,'D'),np.nanmax(agg_t)+np.timedelta64(365,'D'))
+            plt.figure(figsize=(10,5))
             
-        # save figures
-        filename = (paths.plots_dir + 'TimeSeries\\TEMP_' + setup.site_name + '_' + setup.deployment_file_date_identifier + '_D' + 
-                        str(NDs[n]) + '.png')
-        plt.savefig(filename)
-        plt.close()
+            # plot the historical record for this depth range
+            c = np.logical_and(agg_D >= D_range[n][0],
+                               agg_D < D_range[n][1])
+            plt.scatter(agg_t[c],agg_T[c],2,label='Historical')
+            # plot the deployment
+            plt.scatter(ts[n],Ts[n],2,label='This Deployment')
+            # appearance
+            plt.legend(loc='lower left',fontsize=14,ncol=2)
+            plt.show()
+            plt.grid()
+            plt.ylabel('Temperature [$^\circ$C]',fontsize=16)
+            plt.title('Deployment: ' + setup.deployment_file_date_identifier + ', Nominal Depth: ' +
+                      str(NDs[n]) +' m, depth range: ' + str(D_range[n][0]) + ' - ' + 
+                      str(D_range[n][1]) + ' m',fontsize=16)
+            # Set the font size for the tick labels
+            plt.xticks(fontsize=16)
+            plt.yticks(fontsize=16)
+            if np.nanmax(ts[n]) > np.nanmax(agg_t):
+                plt.xlim(np.nanmin(agg_t)-np.timedelta64(365,'D'),np.nanmax(ts[n])+np.timedelta64(365,'D'))
+            else:
+                plt.xlim(np.nanmin(agg_t)-np.timedelta64(365,'D'),np.nanmax(agg_t)+np.timedelta64(365,'D'))
+                
+            # save figures
+            filename = (paths.plots_dir + 'TimeSeries\\TEMP_' + setup.site_name + '_' + setup.deployment_file_date_identifier + '_D' + 
+                            str(NDs[n]) + '.png')
+            plt.savefig(filename)
+            plt.close()
+            
+        except TypeError:
+            pass
         
     
 
@@ -923,8 +939,8 @@ boxp_plots_VCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'VCUR_
 if len(boxp_plots_VCUR) == 0:
     print('Creating VCUR climatology plots')
     # if plots don't already exist, create them
-    DepDates = [np.datetime64(nc.time_coverage_start[0]),
-                np.datetime64(nc.time_coverage_end[0])]
+    DepDates = [np.datetime64(DepDet.attributes_TEMP().time_coverage_start[0]),
+                np.datetime64(DepDet.attributes_TEMP().time_coverage_end[0])]
     # VCUR
     CreateBoxPlot(np.array(grid_t),np.array(yearday),np.array(grid_VCUR),
                   np.array(grid_D),np.array(NDsorted),
@@ -942,8 +958,8 @@ boxp_plots_UCUR = DepDet.nc.glob.glob(paths.plots_dir + 'Climatology\\' + 'UCUR_
 if len(boxp_plots_UCUR) == 0:
     print('Creating UCUR climatology plots')
     # if plots don't already exist, create them
-    DepDates = [np.datetime64(nc.time_coverage_start[0]),
-                np.datetime64(nc.time_coverage_end[0])]
+    DepDates = [np.datetime64(DepDet.attributes_TEMP().time_coverage_start[0]),
+                np.datetime64(DepDet.attributes_TEMP().time_coverage_end[0])]
     # UCUR
     CreateBoxPlot(np.array(grid_t),np.array(yearday),np.array(grid_UCUR),
                   np.array(grid_D),np.array(NDsorted),
@@ -981,8 +997,8 @@ if len(boxp_plots_UCUR) == 0:
 #####################################################
 # 
 
-DepDates = [np.datetime64(nc.time_coverage_start[0]),
-            np.datetime64(nc.time_coverage_end[0])]
+DepDates = [np.datetime64(DepDet.attributes_TEMP().time_coverage_start[0]),
+            np.datetime64(DepDet.attributes_TEMP().time_coverage_end[0])]
 
 compareVelEllipse(grid_t,yearday,grid_UCUR,grid_VCUR,
                   setup.site_name,paths.plots_dir,setup.deployment_file_date_identifier,DepDates)
