@@ -272,7 +272,7 @@ def dppdir(site_name, deployment_file_date_identifier):
     if 'BMP' in site_name:
         avail_folders = glob.glob(dpp_dir + '*')
         for af in avail_folders:
-            if setup.deployment_file_date_identifier in af:
+            if ('_' + setup.deployment_file_date_identifier + '_') in af:
                 dpp_dir = af
     if 'CH' in site_name:
         avail_folders = glob.glob(dpp_dir + '*')
