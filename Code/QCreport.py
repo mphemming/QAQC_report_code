@@ -56,10 +56,13 @@ import QCreport_cover as cover
 # needed for creating multiple reports in a loop
 importlib.reload(setup)
 if hasattr(setup, 'CreationMode'):
+    importlib.reload(paths)
+    importlib.reload(form)
     importlib.reload(DepDet)
     importlib.reload(QCR)
     importlib.reload(DepPhoto)
     importlib.reload(tbp)
+    importlib.reload(cover)
 
 #------------------------------------------------------------
 # Information 
