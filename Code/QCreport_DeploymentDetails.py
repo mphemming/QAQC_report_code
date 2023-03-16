@@ -24,6 +24,7 @@ import QCreport_netCDF as nc
 import QCreport_setup as setup
 import importlib
 importlib.reload(setup) # needed for creating multiple reports in a loop
+importlib.reload(nc)
 
 #------------------------------------------------------------
 # Information 
@@ -856,8 +857,12 @@ def timeinout_table(doc):
         nd = remove_characters(str(atts_instrument_nominal_depth[row_n]))
         if '.0' in nd:
             nd = str(int(float(nd)))
-        ti = remove_characters(str(atts_in_water[row_n]))
-        to = remove_characters(str(atts_out_water[row_n]))  
+        if len(atts_in_water) != 0:
+            ti = remove_characters(str(atts_in_water[row_n]))
+            to = remove_characters(str(atts_out_water[row_n]))  
+        else:
+            ti = 'info not in file'
+            to = 'info not in file'
         table.add_row(inst,ti,to)
         table.add_hline()         
         
