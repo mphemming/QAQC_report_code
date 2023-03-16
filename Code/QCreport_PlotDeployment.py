@@ -73,8 +73,8 @@ VEL_data = xr.open_dataset(griddedfilesintemp_VEL[fVEL])
 # select this deployment only
 def getDeployment(ds,nc):
     # get range
-    start_time = np.datetime64(nc.time_coverage_start[0])+np.timedelta64(3,'D')
-    end_time = np.datetime64(nc.time_coverage_end[0])-np.timedelta64(3,'D')
+    start_time = np.datetime64(DepDet.attributes_TEMP().time_coverage_start[0])+np.timedelta64(3,'D')
+    end_time = np.datetime64(DepDet.attributes_TEMP().time_coverage_end[0])-np.timedelta64(3,'D')
     # select data
     ds = ds.sel(TIME=slice(start_time, end_time))
     
