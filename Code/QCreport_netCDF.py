@@ -211,6 +211,24 @@ def get_netCDF(path):
                 time_coverage_end[n_file] = f_info.time_coverage_end
             else:
                 time_coverage_end[n_file] = 'No data'
+                
+            # to deal with xarray bug
+            if time_coverage_start[n_file] == time_coverage_end[n_file]:
+                # get from filename
+                # start
+                f = nc_files[n_file].find('TZ_')
+                time_coverage_start[n_file] = (nc_files[n_file][f+3:f+7] + '-' + 
+                                             nc_files[n_file][f+7:f+9] + '-' +
+                                             nc_files[n_file][f+9:f+11] + 'T' + 
+                                             nc_files[n_file][f+12:f+14] + ':' + 
+                                             nc_files[n_file][f+14:f+16] + ':00Z')
+                # end
+                f = nc_files[n_file].find('END-')
+                time_coverage_end[n_file] = (nc_files[n_file][f+4:f+8] + '-' + 
+                                             nc_files[n_file][f+8:f+10] + '-' +
+                                             nc_files[n_file][f+10:f+12] + 'T' + 
+                                             nc_files[n_file][f+13:f+15] + ':' + 
+                                             nc_files[n_file][f+15:f+17] + ':00Z')
     
             if hasattr(f_info,'toolbox_input_file'):
                 toolbox_input_file[n_file] = f_info.toolbox_input_file
